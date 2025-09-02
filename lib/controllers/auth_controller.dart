@@ -8,8 +8,14 @@ class AuthController extends GetxController {
   var password = ''.obs;
 
   // Simulación de base de datos en memoria
-  final _fakeUsers = <String, String>{}; // email: password
-  final _fakeNames = <String, String>{}; // email: name
+  final _fakeUsers = <String, String>{
+    "manuel@test.com": "123456",
+    "ana@test.com": "qwerty",
+  }; // email: password
+  final _fakeNames = <String, String>{
+    "manuel@test.com": "Manuel",
+    "ana@test.com": "Ana",
+  }; // email: name
 
   // Cambiar entre login y registro
   void toggleForm() {
