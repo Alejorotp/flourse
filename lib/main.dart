@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/controllers/auth_controller.dart';
 import 'package:flourse/pages/home.dart';
+import 'package:flourse/pages/courses.dart';
+import 'package:flourse/pages/evaluations.dart';
 
 void main() {
   Get.put(AuthController()); // Iniciar el controlador de autenticación
@@ -21,6 +23,8 @@ class MainApp extends StatelessWidget {
       routes: {
         LoginPage.id: (_) => const LoginPage(),
         HomePage.id: (_) => const HomePage(),
+        CoursesPage.id: (_) => const CoursesPage(),
+        EvaluationsPage.id: (_) => const EvaluationsPage(),
       },
     );
   }
