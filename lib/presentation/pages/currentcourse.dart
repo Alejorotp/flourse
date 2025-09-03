@@ -20,7 +20,7 @@ class CurrentCoursePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Role: ${course.role}",
+              "Professor: ${course.professorID}",
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),

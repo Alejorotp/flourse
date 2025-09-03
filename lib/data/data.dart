@@ -2,9 +2,9 @@ import 'package:flourse/domain/models/course.dart';
 import 'package:flourse/domain/models/evaluation.dart';
 
 final List<Course> myCourses = [
-  Course(title: 'Introducción a Flutter', role: 'Estudiante', members: 3, memberIds: ['id1', 'id2', 'id3'], categories: ['Mobile', 'Development']),
-  Course(title: 'Diseño UX/UI', role: 'Profesor', members: 4, memberIds: ['id1', 'id2', 'id3', 'id4'], categories: ['Design', 'UX']),
-  Course(title: 'Desarrollo de Apps Nativas', role: 'Estudiante', members: 2, memberIds: ['id1', 'id2'], categories: ['Mobile', 'Development']),
+  Course(title: 'Introducción a Flutter', professorID: '3', members: 3, memberIds: ['1', '2'], categories: ['Mobile', 'Development']),
+  Course(title: 'Diseño UX/UI', professorID: '3', members: 4, memberIds: ['1', '2'], categories: ['Design', 'UX']),
+  Course(title: 'Desarrollo de Apps Nativas', professorID: '3', members: 2, memberIds: ['1'], categories: ['Mobile', 'Development']),
 ];
 
 final List<Evaluation> upcomingEvaluations = [

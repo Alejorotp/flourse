@@ -38,7 +38,7 @@ class CourseCard extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(course.role),
+            Text(course.professorID),
             Text('${course.members} Members'),
             const SizedBox(height: 8),
             Row(

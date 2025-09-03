@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/data/data.dart'; 
 import 'package:flourse/presentation/widgets/course_card.dart'; 
+import 'package:get/get.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';
@@ -8,6 +10,14 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
+    final auth = Get.find<AuthController>();
+    final userId = auth.currentUser.value?.id ?? '';
+    final filteredCourses = myCourses.where((course) =>
+      course.memberIds.contains(userId) || course.professorID == userId
+    ).toList();
+
     return Scaffold(
       // --- AppBar de la página ---
       appBar: AppBar(
@@ -95,10 +105,9 @@ class CoursesPage extends StatelessWidget {
                   mainAxisSpacing: 16.0,
                   childAspectRatio: 0.9,
                 ),
-                itemCount: myCourses.length,
+                itemCount: filteredCourses.length,
                 itemBuilder: (context, index) {
-                  final course = myCourses[index];
-                  // Usamos el widget CourseCard y le pasamos el objeto 'course'
+                  final course = filteredCourses[index];
                   return CourseCard(course: course);
                 },
               ),

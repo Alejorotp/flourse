@@ -5,6 +5,9 @@ import 'package:flourse/presentation/pages/evaluations.dart';
 import 'package:flourse/presentation/pages/currentevaluation.dart';
 import 'package:flourse/domain/models/evaluation.dart';
 import 'package:flourse/presentation/widgets/course_card.dart'; // El widget CourseCard
+import 'package:get/get.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/domain/use_case/user_courses.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -12,6 +15,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
+    final auth = Get.find<AuthController>();
+    final userId = auth.currentUser.value?.id ?? '';
+    final filteredCourses = getUserCourses(myCourses, userId);
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flourse"),
@@ -55,9 +65,9 @@ class HomePage extends StatelessWidget {
               height: 180,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: myCourses.length,
+                itemCount: filteredCourses.length,
                 itemBuilder: (context, index) {
-                  final course = myCourses[index];
+                  final course = filteredCourses[index];
                   // Llama al widget y le pasa el contexto y el objeto `course`
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),

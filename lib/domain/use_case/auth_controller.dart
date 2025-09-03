@@ -13,6 +13,7 @@ class AuthController extends GetxController {
 
   // Simulación de base de datos en memoria
   final _fakeUsers = <String, User>{
+    // No sé que hace o porqué está ahí el primer string antes de los 2 puntos :)
     "manuel@test.com": User(
       id: "1",
       userName: "Manuel",
@@ -25,6 +26,18 @@ class AuthController extends GetxController {
       email: "ana@test.com",
       password: "qwerty",
     ),
+    "gaco@test.com": User(
+      id: "3",
+      userName: "Gaco",
+      email: "gaco@test.com",
+      password: "abcd",
+    ),
+    "none@test.com": User(
+      id: "4",
+      userName: "none",
+      email: "none@test.com",
+      password: "abcd",
+    )
   };
 
   void toggleForm() {
