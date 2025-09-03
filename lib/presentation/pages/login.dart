@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flourse/controllers/auth_controller.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
 
 class LoginPage extends StatelessWidget {
   static const String id = '/login';

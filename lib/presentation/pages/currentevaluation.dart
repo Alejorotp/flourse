@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/classes/evaluation.dart';
+import 'package:flourse/domain/models/evaluation.dart';
 
 class CurrentEvaluationPage extends StatelessWidget {
   static const String id = '/evaluation-detail';

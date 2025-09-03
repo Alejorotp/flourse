@@ -1,0 +1,82 @@
+import 'package:flourse/domain/models/category.dart';
+import 'package:get/get.dart';
+import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/domain/models/evaluation.dart';
+
+var myCourses = <Course>[
+  Course(
+    title: 'Introducción a Flutter',
+    courseCode: 'GACO26',
+    professorID: '3',
+    memberIDs: ['1', '2'],
+    categoryIDs: [1, 2],
+  ),
+  Course(
+    title: 'Diseño UX/UI',
+    courseCode: 'ACHEYO',
+    professorID: '3',
+    memberIDs: ['1', '2'],
+    categoryIDs: [3],
+  ),
+  Course(
+    title: 'Desarrollo de Apps Nativas',
+    courseCode: 'TORO03',
+    professorID: '3',
+    memberIDs: ['1'],
+    categoryIDs: [],
+  ),
+].obs;
+
+final List<Evaluation> upcomingEvaluations = [
+  Evaluation(
+    title: 'Quiz de Fundamentos',
+    course: 'Introducción a Flutter',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+    timeRemaining: 'Today · 23 min',
+  ),
+  Evaluation(
+    title: 'Examen de Usabilidad',
+    course: 'Diseño UX/UI',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+    timeRemaining: 'Tomorrow · 23h 23 min',
+  ),
+  Evaluation(
+    title: 'Proyecto Final',
+    course: 'Desarrollo de Apps Nativas',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+    timeRemaining: '2 Days Left · 47h 23 min',
+  ),
+];
+
+final List<Category> myCategories = [
+  Category(
+    id: 1,
+    name: 'Mobile Assignment 1',
+    groupingMethod: 'Random',
+    maxMembers: 5,
+  ),
+  Category(
+    id: 2,
+    name: 'Mobile Assignment 2',
+    groupingMethod: 'Self-assigned',
+    maxMembers: 3,
+  ),
+  Category(
+    id: 3,
+    name: 'Mobile Assignment 3',
+    groupingMethod: 'Random',
+    maxMembers: 4,
+  ),
+  Category(
+    id: 4,
+    name: 'Mobile Assignment 4',
+    groupingMethod: 'Self-assigned',
+    maxMembers: 2,
+  ),
+  Category(
+    id: 5,
+    name: 'Mobile Assignment 5',
+    groupingMethod: 'Random',
+    maxMembers: 6,
+  ),
+];

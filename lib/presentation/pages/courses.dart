@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data.dart'; 
-import 'package:flourse/widgets/course_card.dart'; 
+import 'package:flourse/data/data.dart';
+import 'package:flourse/presentation/widgets/course_card.dart';
+import 'package:get/get.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/domain/use_case/user_courses.dart';
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';
@@ -8,10 +11,12 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Get.find<AuthController>();
+
     return Scaffold(
       // --- AppBar de la página ---
       appBar: AppBar(
-        title: const Text('App title'),
+        title: const Text('Flourse'),
         centerTitle: true,
         actions: const [
           Padding(
@@ -45,7 +50,7 @@ class CoursesPage extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Lógica para añadir un nuevo curso
+                    Navigator.of(context).pushNamed('/create-course');
                   },
                   icon: const Icon(Icons.add_circle_outline),
                 ),
@@ -86,34 +91,29 @@ class CoursesPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // --- GridView de los cursos ---
+            // --- GridView de los cursos (reactivo con Obx) ---
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.9,
-                ),
-                itemCount: myCourses.length,
-                itemBuilder: (context, index) {
-                  final course = myCourses[index];
-                  // Usamos el widget CourseCard y le pasamos el objeto 'course'
-                  return CourseCard(course: course);
-                },
-              ),
+              child: Obx(() {
+                final userId = auth.currentUser.value?.id ?? '';
+                final filteredCourses = getUserCoursesInfo(myCourses.toList(), userId);
+
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                    childAspectRatio: 0.9,
+                  ),
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return CourseCard(courseInfo: course);
+                  },
+                );
+              }),
             ),
           ],
         ),
-      ),
-      // --- Botón flotante ---
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Lógica para el botón flotante
-        },
-        backgroundColor: Colors.blue,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.arrow_back),
       ),
     );
   }
