@@ -20,6 +20,11 @@ class CurrentCoursePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
+              "Código del curso: ${courseInfo.course.courseCode}",
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
               "Profesor: ${courseInfo.professorName}",
               style: const TextStyle(fontSize: 18),
             ),
@@ -34,7 +39,7 @@ class CurrentCoursePage extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            ...courseInfo.memberNames.map((name) => Text('- $name')).toList(),
+            ...courseInfo.memberNames.map((name) => Text('- $name')),
           ],
         ),
       ),

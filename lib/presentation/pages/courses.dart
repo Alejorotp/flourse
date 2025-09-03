@@ -54,7 +54,7 @@ class CoursesPage extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Lógica para añadir un nuevo curso
+                    Navigator.of(context).pushNamed('/create-course');
                   },
                   icon: const Icon(Icons.add_circle_outline),
                 ),

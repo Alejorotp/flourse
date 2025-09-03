@@ -5,6 +5,7 @@ import 'package:flourse/domain/use_case/auth_controller.dart';
 import 'package:flourse/presentation/pages/home.dart';
 import 'package:flourse/presentation/pages/courses.dart';
 import 'package:flourse/presentation/pages/evaluations.dart';
+import 'package:flourse/presentation/pages/createCourse.dart';
 
 void main() {
   Get.put(AuthController()); // Iniciar el controlador de autenticación
@@ -25,6 +26,7 @@ class MainApp extends StatelessWidget {
         HomePage.id: (_) => const HomePage(),
         CoursesPage.id: (_) => const CoursesPage(),
         EvaluationsPage.id: (_) => const EvaluationsPage(),
+        CreateCoursePage.id: (_) => const CreateCoursePage(),
       },
     );
   }
