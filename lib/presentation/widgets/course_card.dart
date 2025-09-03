@@ -19,7 +19,7 @@ class CourseCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CurrentCoursePage(course: courseInfo.course),
+            builder: (context) => CurrentCoursePage(courseInfo: courseInfo),
           ),
         );
       },

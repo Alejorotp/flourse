@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/domain/models/course_info.dart';
 
 class CurrentCoursePage extends StatelessWidget {
   static const String id = '/course-detail';
-  final Course course;
+  final UserCourseInfo courseInfo;
 
-  const CurrentCoursePage({super.key, required this.course});
+  const CurrentCoursePage({super.key, required this.courseInfo});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(course.title),
+        title: Text(courseInfo.course.title),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -20,23 +20,21 @@ class CurrentCoursePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Professor: ${course.professorID}",
+              "Profesor: ${courseInfo.professorName}",
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
-              "Total Members: ${course.members}",
+              "Total de miembros: ${courseInfo.memberNames.length}",
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
             const Text(
-              "Members IDs:",
+              "Lista de estudiantes:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            // Muestra la lista de IDs de miembros
-            ...course.memberIds.map((id) => Text('- $id')).toList(),
-            // Aquí podrías añadir más información del curso
+            ...courseInfo.memberNames.map((name) => Text('- $name')).toList(),
           ],
         ),
       ),
