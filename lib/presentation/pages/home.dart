@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
     //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
     final auth = Get.find<AuthController>();
     final userId = auth.currentUser.value?.id ?? '';
-    final filteredCourses = getUserCourses(myCourses, userId);
+    final filteredCourses = getUserCoursesInfo(myCourses, userId);
 
 
     return Scaffold(
@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
                   // Llama al widget y le pasa el contexto y el objeto `course`
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child: CourseCard(course: course),
+                    child: CourseCard(courseInfo: course),
                   );
                 },
               ),

@@ -3,6 +3,7 @@ import 'package:flourse/data/data.dart';
 import 'package:flourse/presentation/widgets/course_card.dart'; 
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/domain/use_case/user_courses.dart';
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';
@@ -14,9 +15,7 @@ class CoursesPage extends StatelessWidget {
     //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
     final auth = Get.find<AuthController>();
     final userId = auth.currentUser.value?.id ?? '';
-    final filteredCourses = myCourses.where((course) =>
-      course.memberIds.contains(userId) || course.professorID == userId
-    ).toList();
+    final filteredCourses = getUserCoursesInfo(myCourses, userId);
 
     return Scaffold(
       // --- AppBar de la página ---
@@ -108,7 +107,7 @@ class CoursesPage extends StatelessWidget {
                 itemCount: filteredCourses.length,
                 itemBuilder: (context, index) {
                   final course = filteredCourses[index];
-                  return CourseCard(course: course);
+                  return CourseCard(courseInfo: course);
                 },
               ),
             ),

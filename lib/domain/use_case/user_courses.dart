@@ -1,7 +1,27 @@
 import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/domain/models/course_info.dart';
 
-List<Course> getUserCourses(List<Course> allCourses, String userId) {
+// map de ejemplo usurios regitrados (borrar más adelante)
+final Map<String, String> userNames = {
+  "1": "Manuel",
+  "2": "Ana",
+  "3": "Gaco",
+  "4": "none",
+};
+
+List<UserCourseInfo> getUserCoursesInfo(List<Course> allCourses, String userId) {
   return allCourses.where((course) =>
     course.memberIds.contains(userId) || course.professorID == userId
-  ).toList();
+  ).map((course) {
+    final userRole = course.professorID == userId ? "Profesor" : "Miembro";
+    final professorName = userNames[course.professorID] ?? "Desconocido";
+    final memberNames = course.memberIds.map((id) => userNames[id] ?? "Desconocido").toList();
+
+    return UserCourseInfo(
+      course: course,
+      userRole: userRole,
+      professorName: professorName,
+      memberNames: memberNames,
+    );
+  }).toList();
 }

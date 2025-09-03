@@ -2,12 +2,14 @@ import 'package:flourse/domain/models/course.dart';
 
 class UserCourseInfo {
   final Course course;
+  final String userRole;
+  final String professorName;
   final List<String> memberNames;
-  final String userRole; // "profesor" o "miembro"
 
   UserCourseInfo({
     required this.course,
-    required this.memberNames,
     required this.userRole,
+    required this.professorName,
+    required this.memberNames,
   });
 }
