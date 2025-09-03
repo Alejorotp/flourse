@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data.dart'; // Importa el archivo de datos compartidos
-import 'package:flourse/pages/courses.dart';
-import 'package:flourse/pages/evaluations.dart';
-import 'package:flourse/pages/currentevaluation.dart';
-import 'package:flourse/classes/evaluation.dart';
-import 'package:flourse/widgets/course_card.dart'; // El widget CourseCard
+import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
+import 'package:flourse/presentation/pages/courses.dart';
+import 'package:flourse/presentation/pages/evaluations.dart';
+import 'package:flourse/presentation/pages/currentevaluation.dart';
+import 'package:flourse/domain/models/evaluation.dart';
+import 'package:flourse/presentation/widgets/course_card.dart'; // El widget CourseCard
+import 'package:get/get.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/domain/use_case/user_courses.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -12,6 +15,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Get.find<AuthController>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flourse"),
@@ -51,21 +56,26 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: myCourses.length,
-                itemBuilder: (context, index) {
-                  final course = myCourses[index];
-                  // Llama al widget y le pasa el contexto y el objeto `course`
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: CourseCard(course: course),
-                  );
-                },
-              ),
-            ),
+
+            Obx(() {
+              final userId = auth.currentUser.value?.id ?? '';
+              final filteredCourses = getUserCoursesInfo(myCourses, userId);
+
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
+                    );
+                  },
+                ),
+              );
+            }),
 
             // Upcoming Evaluations
             Row(
@@ -94,7 +104,6 @@ class HomePage extends StatelessWidget {
             // Upcoming Evaluations
             Column(
               children: upcomingEvaluations.map((evaluation) {
-                // Llama al widget y le pasa el contexto y el objeto `evaluation`
                 return _evaluationItem(context, evaluation);
               }).toList(),
             ),

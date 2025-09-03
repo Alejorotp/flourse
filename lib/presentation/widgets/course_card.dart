@@ -1,16 +1,13 @@
 // lib/widgets/course_card.dart
 
 import 'package:flutter/material.dart';
-import 'package:flourse/classes/course.dart';
-import 'package:flourse/pages/currentcourse.dart';
+import 'package:flourse/domain/models/course_info.dart';
+import 'package:flourse/presentation/pages/currentCourse.dart';
 
 class CourseCard extends StatelessWidget {
-  final Course course;
+  final UserCourseInfo courseInfo;
 
-  const CourseCard({
-    super.key,
-    required this.course,
-  });
+  const CourseCard({super.key, required this.courseInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +16,12 @@ class CourseCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CurrentCoursePage(course: course),
+            builder: (context) => CurrentCoursePage(courseInfo: courseInfo),
           ),
         );
       },
       child: Container(
-        width: 160, // tamaño de los cards
+        width: 160,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),
@@ -34,20 +31,12 @@ class CourseCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              course.title,
+              courseInfo.course.title,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(course.role),
-            Text('${course.members} Members'),
-            const SizedBox(height: 8),
-            Row(
-              children: const [
-                CircleAvatar(radius: 12),
-                SizedBox(width: 4),
-                CircleAvatar(radius: 12),
-              ],
-            ),
+            Text(courseInfo.userRole),
+            Text('${courseInfo.memberNames.length} Estudiantes'),
           ],
         ),
       ),
