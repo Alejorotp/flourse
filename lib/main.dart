@@ -1,6 +1,13 @@
+import 'package:flourse/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flourse/controllers/auth_controller.dart';
+import 'package:flourse/pages/home.dart';
+import 'package:flourse/pages/courses.dart';
+import 'package:flourse/pages/evaluations.dart';
 
 void main() {
+  Get.put(AuthController()); // Iniciar el controlador de autenticación
   runApp(const MainApp());
 }
 
@@ -9,12 +16,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      //theme: ThemeData('data'),
+      initialRoute: LoginPage.id,
+      routes: {
+        LoginPage.id: (_) => const LoginPage(),
+        HomePage.id: (_) => const HomePage(),
+        CoursesPage.id: (_) => const CoursesPage(),
+        EvaluationsPage.id: (_) => const EvaluationsPage(),
+      },
     );
   }
 }
