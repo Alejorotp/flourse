@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data.dart'; // Importa el archivo de datos compartidos
-import 'package:flourse/pages/courses.dart';
-import 'package:flourse/pages/evaluations.dart';
-import 'package:flourse/pages/currentevaluation.dart';
-import 'package:flourse/classes/evaluation.dart';
-import 'package:flourse/widgets/course_card.dart'; // El widget CourseCard
+import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
+import 'package:flourse/presentation/pages/courses.dart';
+import 'package:flourse/presentation/pages/evaluations.dart';
+import 'package:flourse/presentation/pages/currentevaluation.dart';
+import 'package:flourse/domain/models/evaluation.dart';
+import 'package:flourse/presentation/widgets/course_card.dart'; // El widget CourseCard
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';

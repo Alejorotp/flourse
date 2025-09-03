@@ -1,5 +1,5 @@
-import 'package:flourse/classes/course.dart';
-import 'package:flourse/classes/evaluation.dart';
+import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/domain/models/evaluation.dart';
 
 final List<Course> myCourses = [
   Course(title: 'Introducción a Flutter', role: 'Estudiante', members: 3, memberIds: ['id1', 'id2', 'id3'], categories: ['Mobile', 'Development']),

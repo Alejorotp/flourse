@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/classes/course.dart';
+import 'package:flourse/domain/models/course.dart';
 
 class CurrentCoursePage extends StatelessWidget {
   static const String id = '/course-detail';

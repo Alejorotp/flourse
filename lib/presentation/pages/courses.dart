@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data.dart'; 
-import 'package:flourse/widgets/course_card.dart'; 
+import 'package:flourse/data/data.dart'; 
+import 'package:flourse/presentation/widgets/course_card.dart'; 
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';
@@ -11,7 +11,7 @@ class CoursesPage extends StatelessWidget {
     return Scaffold(
       // --- AppBar de la página ---
       appBar: AppBar(
-        title: const Text('App title'),
+        title: const Text('Flourse'),
         centerTitle: true,
         actions: const [
           Padding(
@@ -105,15 +105,6 @@ class CoursesPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      // --- Botón flotante ---
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Lógica para el botón flotante
-        },
-        backgroundColor: Colors.blue,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.arrow_back),
       ),
     );
   }

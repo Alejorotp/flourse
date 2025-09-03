@@ -1,23 +1,32 @@
 import 'package:get/get.dart';
+import '../models/user.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthController extends GetxController {
-  // Estado
-  var isLogin = true.obs; // alterna entre login y registro
+  var isLogin = true.obs;
+  var currentUser = Rxn<User>();
+
+  // Variables observables para los campos del formulario
   var userName = ''.obs;
   var email = ''.obs;
   var password = ''.obs;
 
   // Simulación de base de datos en memoria
-  final _fakeUsers = <String, String>{
-    "manuel@test.com": "123456",
-    "ana@test.com": "qwerty",
-  }; // email: password
-  final _fakeNames = <String, String>{
-    "manuel@test.com": "Manuel",
-    "ana@test.com": "Ana",
-  }; // email: name
+  final _fakeUsers = <String, User>{
+    "manuel@test.com": User(
+      id: "1",
+      userName: "Manuel",
+      email: "manuel@test.com",
+      password: "123456",
+    ),
+    "ana@test.com": User(
+      id: "2",
+      userName: "Ana",
+      email: "ana@test.com",
+      password: "qwerty",
+    ),
+  };
 
-  // Cambiar entre login y registro
   void toggleForm() {
     isLogin.value = !isLogin.value;
   }
@@ -32,47 +41,43 @@ class AuthController extends GetxController {
     return null;
   }
 
-  // Registro
   String? register(String name, String mail, String pass) {
     String? validationError = validateFields(mail, pass, name: name);
     if (validationError != null) {
       return validationError;
     }
-
     if (_fakeUsers.containsKey(mail)) {
       return "El usuario ya existe";
     }
-    _fakeUsers[mail] = pass;
-    _fakeNames[mail] = name;
-    userName.value = name;
-    email.value = mail;
-    password.value = pass;
-    return null; // éxito
+    final uuid = Uuid();
+    final user = User(
+      id: uuid.v4(),
+      userName: name,
+      email: mail,
+      password: pass,
+    );
+    _fakeUsers[mail] = user;
+    currentUser.value = user;
+    return null;
   }
 
-  // Login
   String? login(String mail, String pass) {
     String? validationError = validateFields(mail, pass);
     if (validationError != null) {
       return validationError;
     }
-    
-    if (!_fakeUsers.containsKey(mail)) {
+    final user = _fakeUsers[mail];
+    if (user == null) {
       return "Usuario no encontrado";
     }
-    if (_fakeUsers[mail] != pass) {
+    if (user.password != pass) {
       return "Contraseña incorrecta";
     }
-    userName.value = _fakeNames[mail] ?? "";
-    email.value = mail;
-    password.value = pass;
-    return null; // éxito
+    currentUser.value = user;
+    return null;
   }
 
-  // Cerrar sesión
   void logout() {
-    userName.value = '';
-    email.value = '';
-    password.value = '';
+    currentUser.value = null;
   }
 }
