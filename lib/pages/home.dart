@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flourse/data.dart'; // Importa el archivo de datos compartidos
 import 'package:flourse/pages/courses.dart';
 import 'package:flourse/pages/evaluations.dart';
-import 'package:flourse/pages/currentcourse.dart';
-import 'package:flourse/classes/course.dart';
 import 'package:flourse/pages/currentevaluation.dart';
 import 'package:flourse/classes/evaluation.dart';
-
-// ... (elimina las listas myCourses y upcomingEvaluations de este archivo)
+import 'package:flourse/widgets/course_card.dart'; // El widget CourseCard
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -64,7 +61,7 @@ class HomePage extends StatelessWidget {
                   // Llama al widget y le pasa el contexto y el objeto `course`
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child: _courseCard(context, course),
+                    child: CourseCard(course: course),
                   );
                 },
               ),
@@ -93,8 +90,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            // Utiliza la lista de datos compartidos
-            // ... dentro del método `build` de `HomePage` ...
 
             // Upcoming Evaluations
             Column(
@@ -114,10 +109,10 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const [
-                _quickAccessItem("Last Course"),
-                _quickAccessItem("Last Course +1"),
-                _quickAccessItem("Last Course +2"),
-                _quickAccessItem(""),
+                _QuickAccessItem("Last Course"),
+                _QuickAccessItem("Last Course +1"),
+                _QuickAccessItem("Last Course +2"),
+                _QuickAccessItem(""),
               ],
             ),
           ],
@@ -126,52 +121,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-// ... tu código existente ...
 
-// Ahora el widget recibe el objeto Course completo
-Widget _courseCard(BuildContext context, Course course) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CurrentCoursePage(course: course),
-        ),
-      );
-    },
-    child: Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            course.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(course.role),
-          Text('${course.members} Members'),
-          const SizedBox(height: 8),
-          Row(
-            children: const [
-              CircleAvatar(radius: 12),
-              SizedBox(width: 4),
-              CircleAvatar(radius: 12),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-// ... tu código existente ...
-
-// Ahora el widget recibe el objeto Evaluation completo
 Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
   return GestureDetector(
     onTap: () {
@@ -218,9 +168,9 @@ Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
   );
 }
 
-class _quickAccessItem extends StatelessWidget {
+class _QuickAccessItem extends StatelessWidget {
   final String label;
-  const _quickAccessItem(this.label);
+  const _QuickAccessItem(this.label);
 
   @override
   Widget build(BuildContext context) {
