@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flourse/data.dart'; // Importa el archivo de datos compartidos
 import 'package:flourse/pages/courses.dart';
 import 'package:flourse/pages/evaluations.dart';
+
+// ... (elimina las listas myCourses y upcomingEvaluations de este archivo)
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -24,73 +27,83 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "My Courses",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
+            // My Courses
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: _courseCard("Course", "Role", "n Members")),
-                const SizedBox(width: 12),
-                Expanded(child: _courseCard("Course", "Role", "m Members")),
+                const Text(
+                  "My Courses",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(CoursesPage.id);
+                  },
+                  child: const Text(
+                    "See all",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 12), // Agrega un espaciador
-            GestureDetector(
-              // Envuelve en un widget para detectar clics
-              onTap: () {
-                Navigator.of(
-                  context,
-                ).pushNamed(CoursesPage.id); // Navega a la página de cursos
-              },
-              child: const Text(
-                "See all",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 180,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: myCourses.length,
+                itemBuilder: (context, index) {
+                  final course = myCourses[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: _courseCard(
+                      course.title,
+                      course.role,
+                      '${course.members} Members',
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 24),
 
             // Upcoming Evaluations
-            const Text(
-              "Upcoming evaluations",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Upcoming evaluations",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(EvaluationsPage.id);
+                  },
+                  child: const Text(
+                    "See all",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
-            _evaluationItem(
-              "Title · Course A",
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-              "Today · 23 min",
+            // Utiliza la lista de datos compartidos
+            Column(
+              children: upcomingEvaluations
+                  .map((evaluation) => _evaluationItem(
+                        '${evaluation.title} · ${evaluation.course}',
+                        evaluation.description,
+                        evaluation.timeRemaining,
+                      ))
+                  .toList(),
             ),
-            _evaluationItem(
-              "Title · Course B",
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-              "Tomorrow · 23h 23 min",
-            ),
-            _evaluationItem(
-              "Title · Course B",
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-              "2 Days Left · 47h 23 min",
-            ),
-            const SizedBox(height: 12), // Agrega un espaciador
-            GestureDetector(
-              // Envuelve en un widget para detectar clics
-              onTap: () {
-                Navigator.of(context).pushNamed(
-                  EvaluationsPage.id,
-                ); // Navega a la página de evaluaciones
-              },
-              child: const Text(
-                "See all",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+
             const SizedBox(height: 24),
 
             // Quick Access
@@ -114,7 +127,6 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
 Widget _courseCard(String title, String role, String members) {
   return Container(
     padding: const EdgeInsets.all(12),
