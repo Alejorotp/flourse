@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data/data.dart'; 
-import 'package:flourse/presentation/widgets/course_card.dart'; 
+import 'package:flourse/data/data.dart';
+import 'package:flourse/presentation/widgets/course_card.dart';
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
 import 'package:flourse/domain/use_case/user_courses.dart';
@@ -11,11 +11,7 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
     final auth = Get.find<AuthController>();
-    final userId = auth.currentUser.value?.id ?? '';
-    final filteredCourses = getUserCoursesInfo(myCourses, userId);
 
     return Scaffold(
       // --- AppBar de la página ---
@@ -95,21 +91,26 @@ class CoursesPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // --- GridView de los cursos ---
+            // --- GridView de los cursos (reactivo con Obx) ---
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.9,
-                ),
-                itemCount: filteredCourses.length,
-                itemBuilder: (context, index) {
-                  final course = filteredCourses[index];
-                  return CourseCard(courseInfo: course);
-                },
-              ),
+              child: Obx(() {
+                final userId = auth.currentUser.value?.id ?? '';
+                final filteredCourses = getUserCoursesInfo(myCourses.toList(), userId);
+
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                    childAspectRatio: 0.9,
+                  ),
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return CourseCard(courseInfo: course);
+                  },
+                );
+              }),
             ),
           ],
         ),

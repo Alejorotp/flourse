@@ -15,12 +15,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    //Filtra los cursos del user (Borrar después cuando se traiga los cursos filtrados desde la DB)
     final auth = Get.find<AuthController>();
-    final userId = auth.currentUser.value?.id ?? '';
-    final filteredCourses = getUserCoursesInfo(myCourses, userId);
-
 
     return Scaffold(
       appBar: AppBar(
@@ -61,21 +56,26 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: filteredCourses.length,
-                itemBuilder: (context, index) {
-                  final course = filteredCourses[index];
-                  // Llama al widget y le pasa el contexto y el objeto `course`
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: CourseCard(courseInfo: course),
-                  );
-                },
-              ),
-            ),
+
+            Obx(() {
+              final userId = auth.currentUser.value?.id ?? '';
+              final filteredCourses = getUserCoursesInfo(myCourses, userId);
+
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
+                    );
+                  },
+                ),
+              );
+            }),
 
             // Upcoming Evaluations
             Row(
@@ -104,7 +104,6 @@ class HomePage extends StatelessWidget {
             // Upcoming Evaluations
             Column(
               children: upcomingEvaluations.map((evaluation) {
-                // Llama al widget y le pasa el contexto y el objeto `evaluation`
                 return _evaluationItem(context, evaluation);
               }).toList(),
             ),

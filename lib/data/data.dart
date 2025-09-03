@@ -1,11 +1,12 @@
+import 'package:get/get.dart';
 import 'package:flourse/domain/models/course.dart';
 import 'package:flourse/domain/models/evaluation.dart';
 
-final List<Course> myCourses = [
+var myCourses = <Course>[
   Course(title: 'Introducción a Flutter', courseCode: 'GACO26', professorID: '3', memberIds: ['1', '2'], categories: ['Mobile', 'Development']),
   Course(title: 'Diseño UX/UI', courseCode: 'ACHEYO', professorID: '3', memberIds: ['1', '2'], categories: ['Design', 'UX']),
   Course(title: 'Desarrollo de Apps Nativas', courseCode: 'TORO03', professorID: '3', memberIds: ['1'], categories: ['Mobile', 'Development']),
-];
+].obs;
 
 final List<Evaluation> upcomingEvaluations = [
   Evaluation(
