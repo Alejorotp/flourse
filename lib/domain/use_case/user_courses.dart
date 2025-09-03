@@ -1,4 +1,6 @@
+import 'dart:math';
 import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/data/data.dart';
 import 'package:flourse/domain/models/course_info.dart';
 
 // map de ejemplo usurios regitrados (borrar más adelante)
@@ -24,4 +26,27 @@ List<UserCourseInfo> getUserCoursesInfo(List<Course> allCourses, String userId) 
       memberNames: memberNames,
     );
   }).toList();
+}
+
+class CreateCourse {
+  String _generateCourseCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final rand = Random();
+    return List.generate(6, (index) => chars[rand.nextInt(chars.length)]).join();
+  }
+
+  void createCourse({
+    required String title,
+    required String professorID,
+  }) {
+    final code = _generateCourseCode();
+    final newCourse = Course(
+      title: title,
+      courseCode: code,
+      professorID: professorID,
+      memberIds: [],
+      categories: [],
+    );
+    myCourses.add(newCourse);
+  }
 }

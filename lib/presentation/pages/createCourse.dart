@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/domain/use_case/user_courses.dart';
 
 class CreateCoursePage extends StatelessWidget {
   static const String id = '/create-course';
@@ -8,6 +11,7 @@ class CreateCoursePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _nameController = TextEditingController();
+    final userCoursesUseCase = CreateCourse();
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +46,20 @@ class CreateCoursePage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Aquí irá la funcionalidad para crear el curso
+                  final name = _nameController.text.trim();
+                  if (name.isNotEmpty) {
+                    final auth = Get.find<AuthController>();
+                    final userId = auth.currentUser.value?.id ?? '';
+                    userCoursesUseCase.createCourse(
+                      title: name,
+                      professorID: userId,
+                    );
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('El nombre no puede estar vacío')),
+                    );
+                  }
                 },
                 child: const Text("Crear"),
               ),
