@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flourse/data.dart'; // Importa el archivo de datos compartidos
 import 'package:flourse/pages/courses.dart';
 import 'package:flourse/pages/evaluations.dart';
+import 'package:flourse/pages/currentcourse.dart';
+import 'package:flourse/classes/course.dart';
+import 'package:flourse/pages/currentevaluation.dart';
+import 'package:flourse/classes/evaluation.dart';
 
 // ... (elimina las listas myCourses y upcomingEvaluations de este archivo)
 
@@ -57,18 +61,14 @@ class HomePage extends StatelessWidget {
                 itemCount: myCourses.length,
                 itemBuilder: (context, index) {
                   final course = myCourses[index];
+                  // Llama al widget y le pasa el contexto y el objeto `course`
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child: _courseCard(
-                      course.title,
-                      course.role,
-                      '${course.members} Members',
-                    ),
+                    child: _courseCard(context, course),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 24),
 
             // Upcoming Evaluations
             Row(
@@ -94,16 +94,15 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             // Utiliza la lista de datos compartidos
-            Column(
-              children: upcomingEvaluations
-                  .map((evaluation) => _evaluationItem(
-                        '${evaluation.title} · ${evaluation.course}',
-                        evaluation.description,
-                        evaluation.timeRemaining,
-                      ))
-                  .toList(),
-            ),
+            // ... dentro del método `build` de `HomePage` ...
 
+            // Upcoming Evaluations
+            Column(
+              children: upcomingEvaluations.map((evaluation) {
+                // Llama al widget y le pasa el contexto y el objeto `evaluation`
+                return _evaluationItem(context, evaluation);
+              }).toList(),
+            ),
             const SizedBox(height: 24),
 
             // Quick Access
@@ -127,62 +126,94 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-Widget _courseCard(String title, String role, String members) {
-  return Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade300),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(role),
-        Text(members),
-        const SizedBox(height: 8),
-        Row(
-          children: const [
-            CircleAvatar(radius: 12),
-            SizedBox(width: 4),
-            CircleAvatar(radius: 12),
-          ],
+// ... tu código existente ...
+
+// Ahora el widget recibe el objeto Course completo
+Widget _courseCard(BuildContext context, Course course) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CurrentCoursePage(course: course),
         ),
-      ],
+      );
+    },
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            course.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(course.role),
+          Text('${course.members} Members'),
+          const SizedBox(height: 8),
+          Row(
+            children: const [
+              CircleAvatar(radius: 12),
+              SizedBox(width: 4),
+              CircleAvatar(radius: 12),
+            ],
+          ),
+        ],
+      ),
     ),
   );
 }
 
-Widget _evaluationItem(String title, String subtitle, String time) {
-  return Card(
-    margin: const EdgeInsets.only(bottom: 12),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    child: ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(8),
+// ... tu código existente ...
+
+// Ahora el widget recibe el objeto Evaluation completo
+Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CurrentEvaluationPage(evaluation: evaluation),
         ),
-        child: const Icon(Icons.settings, color: Colors.grey),
-      ),
-      title: Text(title),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            subtitle,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12),
+      );
+    },
+    child: Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(8),
           ),
-          const SizedBox(height: 4),
-          Text(time, style: const TextStyle(fontSize: 12, color: Colors.blue)),
-        ],
+          child: const Icon(Icons.settings, color: Colors.grey),
+        ),
+        title: Text('${evaluation.title} · ${evaluation.course}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              evaluation.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              evaluation.timeRemaining,
+              style: const TextStyle(fontSize: 12, color: Colors.blue),
+            ),
+          ],
+        ),
+        trailing: const Icon(Icons.play_arrow),
       ),
-      trailing: const Icon(Icons.play_arrow),
     ),
   );
 }
