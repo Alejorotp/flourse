@@ -18,7 +18,7 @@ List<UserCourseInfo> getUserCoursesInfo(
   return allCourses
       .where(
         (course) =>
-            course.memberIDs.contains(userId) || course.professorID == userId,
+            course.memberIDs.contains(int.parse(userId)) || course.professorID == int.parse(userId),
       )
       .map((course) {
         final userRole = course.professorID == userId ? "Profesor" : "Miembro";
@@ -47,7 +47,7 @@ class CreateCourse {
     ).join();
   }
 
-  void createCourse({required String title, required String professorID}) {
+  void createCourse({required String title, required int professorID}) {
     final code = _generateCourseCode();
     final newCourse = Course(
       title: title,

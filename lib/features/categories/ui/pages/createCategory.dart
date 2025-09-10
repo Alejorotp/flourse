@@ -10,7 +10,7 @@ class CreateCategoryPage extends StatelessWidget {
   const CreateCategoryPage({
     super.key,
     required this.course,
-    this.canEdit = true,
+    required this.canEdit,
   });
 
   @override

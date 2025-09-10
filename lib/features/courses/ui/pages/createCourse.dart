@@ -50,10 +50,10 @@ class CreateCoursePage extends StatelessWidget {
                   if (name.isNotEmpty) {
                     AuthenticationController auth = Get.find();
 
-                    final userId = auth.currentUser.value?.id?.toString() ?? '';
+                    final userId = auth.currentUser.value.id?.toString() ?? '';
                     userCoursesUseCase.createCourse(
                       title: name,
-                      professorID: userId,
+                      professorID: int.parse(userId),
                     );
                     Navigator.of(context).pop();
                   } else {
