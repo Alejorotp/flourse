@@ -50,7 +50,7 @@ void main() {
   runApp(const MainApp());
 
   // Groups
-  Get.put(GroupsController());
+  Get.put(GroupsController(Get.find()));
 
   // Categories
   Get.put(CategoriesController());

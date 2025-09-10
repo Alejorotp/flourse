@@ -1,12 +1,13 @@
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:flourse/data/data.dart';
 import 'package:get/get.dart';
+import 'package:flourse/features/groups/domain/use_case/group_usecase.dart';
+
 
 class GroupsController extends GetxController{
-  static final GroupsController _instance =
-      GroupsController._internal();
-  factory GroupsController() => _instance;
-  GroupsController._internal();
+  final GroupUseCase groupation;
+  GroupsController(this.groupation);
+
 
   final List<Group> groups = myGroups;
 
