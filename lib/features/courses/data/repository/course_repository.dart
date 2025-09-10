@@ -31,4 +31,8 @@ class CourseRepository implements ICourseRepository {
     return courseSource.createCourse(title: title, professorID: professorID);
   }
  
+  @override
+  Future<bool> joinCourse({required String courseCode, required int userId}) {
+    return courseSource.joinCourse(courseCode: courseCode, userId: userId);
+  }
 }

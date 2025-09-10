@@ -58,3 +58,16 @@ class CreateCourse {
     myCourses.add(newCourse);
   }
 }
+
+void joinCourse({required String courseCode, required int userId}) {
+  final course = myCourses.firstWhere(
+    (course) => course.courseCode == courseCode,
+    orElse: () => throw Exception("Course with code $courseCode not found"),
+  );
+
+  if (course.memberIDs.contains(userId)) {
+    throw Exception("User with ID $userId is already a member of the course");
+  }
+
+  course.memberIDs.add(userId);
+}

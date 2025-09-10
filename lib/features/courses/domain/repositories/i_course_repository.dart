@@ -10,4 +10,6 @@ abstract class ICourseRepository {
   Future<List<Course>> getAllCourses();
   
   Future<void> createCourse({required String title, required int professorID});
+
+  Future<bool> joinCourse({required String courseCode, required int userId});
 }

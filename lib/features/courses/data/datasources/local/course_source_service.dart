@@ -87,4 +87,25 @@ class CourseSourceService implements ICourseSource {
     myCourses.add(newCourse);
     return Future.value();
   }
+
+  @override
+  Future<bool> joinCourse({required String courseCode, required int userId}) async {
+    logInfo("User with ID: $userId joining course with code: $courseCode");
+
+    final index = myCourses.indexWhere((course) => course.courseCode == courseCode);
+    if (index == -1) {
+      logWarning("Course not found");
+      return false;
+    }
+    final course = myCourses[index];
+
+    if (!course.memberIDs.contains(userId) && course.professorID != userId) {
+      course.memberIDs.add(userId);
+      logInfo("User with ID: $userId successfully joined the course");
+      return true;
+    } else {
+      logWarning("User with ID: $userId is already a member of the course");
+      return false;
+    }
+  }
 }

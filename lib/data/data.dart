@@ -16,7 +16,7 @@ var myCourses = <Course>[
     title: 'Diseño UX/UI',
     courseCode: 'ACHEYO',
     professorID: 3,
-    memberIDs: [1, 2],
+    memberIDs: [2],
     categoryIDs: [3],
   ),
   Course(

@@ -31,6 +31,11 @@ class CoursesController extends GetxController {
     await getAllCourses();
   }
 
-  
+  Future<bool> joinCourse({required String courseCode, required int userId}) async {
+    final result = await coursation.joinCourse(courseCode: courseCode, userId: userId);
+    logInfo("Joined course with code: $courseCode");
+    await getAllCourses();
+    return result;
+  }
 
 }

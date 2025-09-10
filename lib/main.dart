@@ -1,5 +1,6 @@
 import 'package:flourse/features/auth/data/datasources/local/authentication_source_service.dart';
 import 'package:flourse/features/auth/ui/pages/login.dart';
+import 'package:flourse/features/courses/ui/pages/joinCourse.dart';
 import 'package:flourse/features/home/ui/pages/home.dart';
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/courses/ui/pages/createCourse.dart';
@@ -61,6 +62,7 @@ class MainApp extends StatelessWidget {
         '/courses': (context) => CoursesPage(),
         '/evaluations': (context) => EvaluationsPage(),
         '/create-course': (context) => CreateCoursePage(),
+        '/join-course': (context) => JoinCoursePage(),
       }
     );
   }

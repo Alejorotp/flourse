@@ -22,6 +22,7 @@ class CourseUseCase {
   Future<void> createCourse({required String title, required int professorID}) async =>
       await _repository.createCourse(title: title, professorID: professorID);
 
-  
+  Future<bool> joinCourse({required String courseCode, required int userId}) async =>
+      await _repository.joinCourse(courseCode: courseCode, userId: userId);
 
 }
