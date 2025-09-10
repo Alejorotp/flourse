@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CreateCoursePage extends StatelessWidget {
@@ -48,7 +48,8 @@ class CreateCoursePage extends StatelessWidget {
                 onPressed: () {
                   final name = _nameController.text.trim();
                   if (name.isNotEmpty) {
-                    final auth = Get.find<AuthController>();
+                    AuthenticationController auth = Get.find();
+
                     final userId = auth.currentUser.value?.id?.toString() ?? '';
                     userCoursesUseCase.createCourse(
                       title: name,

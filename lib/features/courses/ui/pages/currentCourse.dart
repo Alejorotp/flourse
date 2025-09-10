@@ -5,7 +5,7 @@ import 'package:flourse/features/home/ui/widgets/category_card.dart';
 import 'package:flourse/features/categories/ui/pages/createCategory.dart';
 import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 
 class CurrentCoursePage extends StatefulWidget {
   static const String id = '/course-detail';
@@ -62,7 +62,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                 ),
                 Builder(
                   builder: (context) {
-                    final auth = Get.find<AuthController>();
+                    AuthenticationController auth = Get.find();
                     final userId = auth.currentUser.value?.id ?? '';
                     final isProfessor = courseInfo.course.professorID == userId;
                     if (!isProfessor) return const SizedBox.shrink();
@@ -114,7 +114,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                     child: CategoryCard(
                       category: category,
                       onTap: () async {
-                        final auth = Get.find<AuthController>();
+                        AuthenticationController auth = Get.find();
                         final userId = auth.currentUser.value?.id ?? '';
                         final isProfessor =
                             courseInfo.course.professorID == userId;
