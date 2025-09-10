@@ -21,7 +21,7 @@ class CurrentCategoryPage extends StatefulWidget {
 }
 
 class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
-  final categoriesController = CategoriesController();
+  final CategoriesController categoriesController = Get.find<CategoriesController>();
   late TextEditingController _nameController;
   late TextEditingController _groupingController;
   late TextEditingController _maxMembersController;
