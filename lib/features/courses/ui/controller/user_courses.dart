@@ -3,13 +3,12 @@ import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 
-// map de ejemplo usurios regitrados (borrar más adelante)
-final Map<String, String> userNames = {
-  "1": "Manuel",
-  "2": "Ana",
-  "3": "Gaco",
-  "4": "none",
-};
+String getUserNameById(int id) {
+  final user = fakeUsers.values.firstWhere(
+    (user) => user.id == id
+  );
+  return user.name;
+}
 
 List<UserCourseInfo> getUserCoursesInfo(
   List<Course> allCourses,
@@ -21,10 +20,10 @@ List<UserCourseInfo> getUserCoursesInfo(
             course.memberIDs.contains(int.parse(userId)) || course.professorID == int.parse(userId),
       )
       .map((course) {
-        final userRole = course.professorID == userId ? "Profesor" : "Miembro";
-        final professorName = userNames[course.professorID] ?? "Desconocido";
+        final userRole = course.professorID == int.parse(userId) ? "Profesor" : "Miembro";
+        final professorName = getUserNameById(course.professorID);
         final memberNames = course.memberIDs
-            .map((id) => userNames[id] ?? "Desconocido")
+            .map((id) => getUserNameById(id))
             .toList();
 
         return UserCourseInfo(
