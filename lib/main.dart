@@ -36,6 +36,12 @@ import 'features/groups/domain/use_case/group_usecase.dart';
 
 
 import'features/categories/ui/controller/categories_controller.dart';
+import 'features/categories/data/datasources/i_category_source.dart';
+import 'features/categories/data/datasources/category_source_service.dart';
+import 'features/categories/data/repositories/category_repository.dart';
+import 'features/categories/domain/repositories/i_category_repository.dart';
+import 'features/categories/domain/use_case/category_usecase.dart';
+
 
 
 void main() {
@@ -64,7 +70,10 @@ void main() {
 
 
   // Categories
-  Get.put(CategoriesController());
+  Get.put<ICategorySource>(CategorySourceService());
+  Get.put<ICategoryRepository>(CategoryRepository(Get.find()));
+  Get.put(CategoryUseCase(Get.find()));
+  Get.put(CategoriesController(Get.find()));
 }
 
 class MainApp extends StatelessWidget {

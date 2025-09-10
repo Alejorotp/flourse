@@ -1,7 +1,9 @@
-import 'package:flourse/features/categories/domain/models/category.dart';
+import '../../domain/models/category.dart';
 
 
-abstract class ICategoryRepository {
+
+abstract class ICategorySource {
+
   List<Category> getAllCategories();
 
   void createCategory({
@@ -21,4 +23,6 @@ abstract class ICategoryRepository {
   });
 
   Category? getCategoryById(int id);
+
+
 }
