@@ -1,5 +1,5 @@
 import '../repositories/i_course_repository.dart';
-import '../models/course.dart';
+//import '../models/course.dart';
 import '../models/course_info.dart';
 
 class CourseUseCase {
