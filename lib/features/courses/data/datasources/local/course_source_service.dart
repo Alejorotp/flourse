@@ -54,9 +54,26 @@ class CourseSourceService implements ICourseSource {
     }
 
   @override
-  Future<List<Course>> getAllCourses() async {
+  Future<List<UserCourseInfo>> getAllCourses() async {
     logInfo("Fetching all courses");
-    return Future.value(myCourses);
+    final courses = myCourses.map((course) async {
+          final professorName = getUserNameById(course.professorID);
+          final memberNamesFutures = course.memberIDs
+              .map((id) => getUserNameById(id))
+              .toList();
+          final memberNames = await Future.wait(memberNamesFutures);
+
+          return UserCourseInfo(
+            course: course,
+            userRole: '',
+            professorName: await professorName,
+            memberNames: memberNames,
+          );
+        })
+        .toList();
+        logInfo("Total courses fetched: ${courses.length}");
+        logInfo("Courses details: ${courses}");
+    return Future.wait(courses);
   }
 
   @override

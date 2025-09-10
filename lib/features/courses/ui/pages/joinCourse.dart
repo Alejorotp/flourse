@@ -2,6 +2,7 @@ import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'package:flourse/features/home/ui/widgets/course_card.dart';
 
 class JoinCoursePage extends StatelessWidget {
   static const String id = '/join-course';
@@ -72,6 +73,46 @@ class JoinCoursePage extends StatelessWidget {
                   }
                 },
                 child: const Text("Unirse"),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: Obx(
+                () => FutureBuilder(
+                  future: courseCon.getAllCourses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    } else if (snapshot.hasData) {
+                      final courses = snapshot.data!;
+                      if (courses.isEmpty) {
+                        return const Center(
+                          child: Text('No hay cursos disponibles.'),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: courses.length,
+                        itemBuilder: (context, index) {
+                          final course = courses[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: CourseCard(courseInfo: course),
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('No hay cursos disponibles.'),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

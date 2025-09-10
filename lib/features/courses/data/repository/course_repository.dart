@@ -22,7 +22,7 @@ class CourseRepository implements ICourseRepository {
   }
 
   @override
-  Future<List<Course>> getAllCourses() {
+  Future<List<UserCourseInfo>> getAllCourses() {
     return courseSource.getAllCourses();
   }
 

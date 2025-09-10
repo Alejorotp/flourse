@@ -19,10 +19,12 @@ class CoursesController extends GetxController {
     return await coursation.getCourseInfo(userId);
   }
       
-  Future<List<Course>> getAllCourses() async {
-    courses.value = await coursation.getAllCourses();
-    logInfo("Courses fetched: ${courses.length}");
-    return courses;
+  Future<List<UserCourseInfo>> getAllCourses() async {
+    coursation.getAllCourses()
+      .then((value) => logInfo("All courses fetched: ${value.length}"))
+      .catchError((error) => logError("Error fetching all courses: $error"));
+    return await coursation.getAllCourses();
+    
   }
 
   Future<void> createCourse({required String title, required int professorID}) async {

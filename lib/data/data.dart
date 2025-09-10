@@ -16,7 +16,7 @@ var myCourses = <Course>[
     title: 'Diseño UX/UI',
     courseCode: 'ACHEYO',
     professorID: 3,
-    memberIDs: [2],
+    memberIDs: [1, 2],
     categoryIDs: [3],
   ),
   Course(
@@ -33,6 +33,13 @@ var myCourses = <Course>[
     memberIDs: [2, 3, 4],
     categoryIDs: [4],
   ),
+  Course(
+    title: 'curso1',
+    courseCode: 'CURSO1',
+    professorID: 2,
+    memberIDs: [6],
+    categoryIDs: [],
+  )
 ].obs;
 
 final List<Evaluation> upcomingEvaluations = [
@@ -115,5 +122,23 @@ final fakeUsers = <String, AuthenticationUser>{
     name: "none",
     email: "none@test.com",
     password: "abcd",
+  ),
+  "a@a.com": AuthenticationUser(
+    id: 5,
+    name: "a",
+    email: "a@a.com",
+    password:"123456",
+  ),
+  "b@a.com":AuthenticationUser(
+    id: 6,
+    name: "b",
+    email: "b@a.com",
+    password:"123456",
+  ),
+  "c@a.com":AuthenticationUser(
+    id: 7,
+    name: "c",
+    email: "c@a.com",
+    password:"123456",
   ),
 };

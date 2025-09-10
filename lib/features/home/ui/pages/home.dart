@@ -84,6 +84,8 @@ class HomePage extends StatelessWidget {
               );
             }),
 
+            const SizedBox(height: 24), 
+
             // Upcoming Evaluations
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -17,7 +17,7 @@ class CourseUseCase {
   Future<List<UserCourseInfo>> getCourseInfo(int userId) async =>
       await _repository.getCourseInfo(userId);
   
-  Future<List<Course>> getAllCourses() async => await _repository.getAllCourses();
+  Future<List<UserCourseInfo>> getAllCourses() async => await _repository.getAllCourses();
 
   Future<void> createCourse({required String title, required int professorID}) async =>
       await _repository.createCourse(title: title, professorID: professorID);

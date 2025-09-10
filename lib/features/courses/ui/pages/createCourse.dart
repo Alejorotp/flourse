@@ -2,7 +2,6 @@ import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CreateCoursePage extends StatelessWidget {
   static const String id = '/create-course';
@@ -12,7 +11,6 @@ class CreateCoursePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _nameController = TextEditingController();
-    final userCoursesUseCase = CreateCourse();
     CoursesController courseCon = Get.find();
     AuthenticationController auth = Get.find();
 
