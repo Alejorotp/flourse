@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/data/data.dart';
-import 'package:flourse/presentation/widgets/course_card.dart';
+import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
 import 'package:flourse/domain/use_case/user_courses.dart';
@@ -43,10 +43,7 @@ class CoursesPage extends StatelessWidget {
               children: [
                 const Text(
                   'My Courses',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   onPressed: () {
@@ -94,8 +91,11 @@ class CoursesPage extends StatelessWidget {
             // --- GridView de los cursos (reactivo con Obx) ---
             Expanded(
               child: Obx(() {
-                final userId = auth.currentUser.value?.id ?? '';
-                final filteredCourses = getUserCoursesInfo(myCourses.toList(), userId);
+                final userId = auth.currentUser.value?.id?.toString() ?? '';
+                final filteredCourses = getUserCoursesInfo(
+                  myCourses.toList(),
+                  userId,
+                );
 
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

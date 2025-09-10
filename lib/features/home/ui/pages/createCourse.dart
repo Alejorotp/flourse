@@ -49,7 +49,7 @@ class CreateCoursePage extends StatelessWidget {
                   final name = _nameController.text.trim();
                   if (name.isNotEmpty) {
                     final auth = Get.find<AuthController>();
-                    final userId = auth.currentUser.value?.id ?? '';
+                    final userId = auth.currentUser.value?.id?.toString() ?? '';
                     userCoursesUseCase.createCourse(
                       title: name,
                       professorID: userId,
@@ -57,7 +57,9 @@ class CreateCoursePage extends StatelessWidget {
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('El nombre no puede estar vacío')),
+                      const SnackBar(
+                        content: Text('El nombre no puede estar vacío'),
+                      ),
                     );
                   }
                 },

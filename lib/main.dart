@@ -1,14 +1,29 @@
-import 'package:flourse/presentation/pages/login.dart';
+import 'package:flourse/features/auth/data/datasources/local/authentication_source_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
-import 'package:flourse/presentation/pages/home.dart';
-import 'package:flourse/presentation/pages/courses.dart';
-import 'package:flourse/presentation/pages/evaluations.dart';
-import 'package:flourse/presentation/pages/createCourse.dart';
+import 'package:http/http.dart' as http;
+import 'package:loggy/loggy.dart';
+
+import 'central.dart';
+
+import 'features/auth/data/datasources/local/i_authentication_source.dart';
+import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/domain/repositories/i_auth_repository.dart';
+import 'features/auth/domain/use_case/authentication_usecase.dart';
+import 'features/auth/ui/controller/auth_controller.dart';
 
 void main() {
-  Get.put(AuthController()); // Iniciar el controlador de autenticación
+  Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
+
+  Get.put(http.Client()); // Iniciar el cliente HTTP
+
+  // Auth
+  Get.put<IAuthenticationSource>(AuthenticationSourceService());
+  Get.put<IAuthRepository>(AuthRepository(Get.find()));
+  Get.put(AuthenticationUseCase(Get.find()));
+  Get.put(AuthenticationController(Get.find()));
+
   runApp(const MainApp());
 }
 
@@ -18,16 +33,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      title: 'Clean template',
       debugShowCheckedModeBanner: false,
-      //theme: ThemeData('data'),
-      initialRoute: LoginPage.id,
-      routes: {
-        LoginPage.id: (_) => const LoginPage(),
-        HomePage.id: (_) => const HomePage(),
-        CoursesPage.id: (_) => const CoursesPage(),
-        EvaluationsPage.id: (_) => const EvaluationsPage(),
-        CreateCoursePage.id: (_) => const CreateCoursePage(),
-      },
+      home: const Central(),
     );
   }
 }

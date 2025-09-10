@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
-import 'package:flourse/presentation/pages/courses.dart';
-import 'package:flourse/presentation/pages/evaluations.dart';
-import 'package:flourse/presentation/pages/currentevaluation.dart';
-import 'package:flourse/domain/models/evaluation.dart';
-import 'package:flourse/presentation/widgets/course_card.dart'; // El widget CourseCard
+import 'package:flourse/features/home/ui/pages/courses.dart';
+import 'package:flourse/features/home/ui/pages/evaluations.dart';
+import 'package:flourse/features/home/ui/pages/currentevaluation.dart';
+import 'package:flourse/features/home/domain/models/evaluation.dart';
+import 'package:flourse/features/home/ui/widgets/course_card.dart'; // El widget CourseCard
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
 import 'package:flourse/domain/use_case/user_courses.dart';
+
+import '../../../auth/ui/controller/auth_controller.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -15,7 +16,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Get.find<AuthController>();
+    AuthenticationController auth = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +59,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
 
             Obx(() {
-              final userId = auth.currentUser.value?.id ?? '';
+              final userId = auth.currentUser.value.id.toString();
               final filteredCourses = getUserCoursesInfo(myCourses, userId);
 
               return SizedBox(

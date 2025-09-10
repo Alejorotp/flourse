@@ -1,0 +1,103 @@
+{
+  "courses": [
+    {
+      "title": "Introducción a Flutter",
+      "courseCode": "GACO26",
+      "professorID": "3",
+      "memberIDs": ["1", "2"],
+      "categoryIDs": [1, 2]
+    },
+    {
+      "title": "Diseño UX/UI",
+      "courseCode": "ACHEYO",
+      "professorID": "3",
+      "memberIDs": ["1", "2"],
+      "categoryIDs": [3]
+    },
+    {
+      "title": "Desarrollo de Apps Nativas",
+      "courseCode": "TORO03",
+      "professorID": "3",
+      "memberIDs": ["1"],
+      "categoryIDs": []
+    }
+  ],
+  "upcomingEvaluations": [
+    {
+      "title": "Quiz de Fundamentos",
+      "course": "Introducción a Flutter",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+      "timeRemaining": "Today · 23 min"
+    },
+    {
+      "title": "Examen de Usabilidad",
+      "course": "Diseño UX/UI",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+      "timeRemaining": "Tomorrow · 23h 23 min"
+    },
+    {
+      "title": "Proyecto Final",
+      "course": "Desarrollo de Apps Nativas",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+      "timeRemaining": "2 Days Left · 47h 23 min"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Mobile Assignment 1",
+      "groupingMethod": "Random",
+      "maxMembers": 5
+    },
+    {
+      "id": 2,
+      "name": "Mobile Assignment 2",
+      "groupingMethod": "Self-assigned",
+      "maxMembers": 3
+    },
+    {
+      "id": 3,
+      "name": "Mobile Assignment 3",
+      "groupingMethod": "Random",
+      "maxMembers": 4
+    },
+    {
+      "id": 4,
+      "name": "Mobile Assignment 4",
+      "groupingMethod": "Self-assigned",
+      "maxMembers": 2
+    },
+    {
+      "id": 5,
+      "name": "Mobile Assignment 5",
+      "groupingMethod": "Random",
+      "maxMembers": 6
+    }
+  ],
+  "users": {
+    "manuel@test.com": {
+      "id": "1",
+      "userName": "Manuel",
+      "email": "manuel@test.com",
+      "password": "123456"
+    },
+    "ana@test.com": {
+      "id": "2",
+      "userName": "Ana",
+      "email": "ana@test.com",
+      "password": "qwerty"
+    },
+    "gaco@test.com": {
+      "id": "3",
+      "userName": "Gaco",
+      "email": "gaco@test.com",
+      "password": "abcd"
+    },
+    "none@test.com": {
+      "id": "4",
+      "userName": "none",
+      "email": "none@test.com",
+      "password": "abcd"
+    }
+  }
+}

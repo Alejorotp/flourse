@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/features/home/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
 
 class CoursesController extends GetxController {

@@ -1,7 +1,7 @@
 import 'dart:math';
-import 'package:flourse/domain/models/course.dart';
+import 'package:flourse/features/home/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
-import 'package:flourse/domain/models/course_info.dart';
+import 'package:flourse/features/home/domain/models/course_info.dart';
 
 // map de ejemplo usurios regitrados (borrar más adelante)
 final Map<String, String> userNames = {

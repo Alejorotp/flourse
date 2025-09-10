@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
+import '../controller/auth_controller.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   static const String id = '/login';
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  var email = '';
+
+  var password = '';
+
+  var userName = '';
 
   @override
   Widget build(BuildContext context) {
-    final auth = Get.find<AuthController>();
+    AuthenticationController auth = Get.find();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -56,12 +67,12 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               if (!auth.isLogin.value) ...[
-                _textFieldUsername(auth),
+                _textFieldUsername(),
                 SizedBox(height: 8),
               ],
-              _textFieldEmail(auth),
+              _textFieldEmail(),
               SizedBox(height: 8),
-              _textFieldPassword(auth),
+              _textFieldPassword(),
               SizedBox(height: 25),
               _buttonLogReg(auth),
             ],
@@ -71,25 +82,25 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _textFieldUsername(final auth) {
+  Widget _textFieldUsername() {
     return _TextFieldGeneral(
       labelText: "Username",
-      onChanged: (v) => auth.userName.value = v,
+      onChanged: (value) => userName = value,
     );
   }
 
-  Widget _textFieldEmail(final auth) {
+  Widget _textFieldEmail() {
     return _TextFieldGeneral(
       labelText: "Email",
-      onChanged: (value) => auth.email.value = value,
+      onChanged: (value) => email = value,
       keyboardType: TextInputType.emailAddress,
     );
   }
 
-  Widget _textFieldPassword(final auth) {
+  Widget _textFieldPassword() {
     return _TextFieldGeneral(
       labelText: "Password",
-      onChanged: (value) => auth.password.value = value,
+      onChanged: (value) => password = value,
       obscureText: true,
     );
   }
@@ -97,24 +108,33 @@ class LoginPage extends StatelessWidget {
   Widget _buttonLogReg(final auth) {
     return Obx(
       () => ElevatedButton(
-        onPressed: () {
-          String? error;
-          if (auth.isLogin.value) {
-            error = auth.login(auth.email.value, auth.password.value);
+        onPressed: () async {
+          if (auth.isLogin.value!) {
+            try {
+              await auth.login(email, password);
+            } catch (err) {
+              Get.snackbar(
+                "Login",
+                err.toString(),
+                icon: const Icon(Icons.person, color: Colors.red),
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
           } else {
-            error = auth.register(
-              auth.userName.value,
-              auth.email.value,
-              auth.password.value,
-            );
-          }
-
-          if (error == null) {
-            // Éxito → ir a home
-            Get.offNamed('/home');
-          } else {
-            // Mostrar error
-            Get.snackbar("Error", error, snackPosition: SnackPosition.BOTTOM);
+            try {
+              await auth.register(
+                email,
+                userName,
+                password,
+              );
+            } catch (err) {
+              Get.snackbar(
+                "Login",
+                err.toString(),
+                icon: const Icon(Icons.person, color: Colors.red),
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
           }
         },
         child: Text(auth.isLogin.value ? "Login" : "Register"),
