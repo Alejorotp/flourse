@@ -1,8 +1,8 @@
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/data/data.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CoursesPage extends StatelessWidget {
@@ -11,7 +11,7 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Get.find<AuthController>();
+    AuthenticationController auth = Get.find();
 
     return Scaffold(
       // --- AppBar de la página ---
@@ -91,7 +91,7 @@ class CoursesPage extends StatelessWidget {
             // --- GridView de los cursos (reactivo con Obx) ---
             Expanded(
               child: Obx(() {
-                final userId = auth.currentUser.value?.id?.toString() ?? '';
+                final userId = auth.currentUser.value.id?.toString() ?? '';
                 final filteredCourses = getUserCoursesInfo(
                   myCourses.toList(),
                   userId,
