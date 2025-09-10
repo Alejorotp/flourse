@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/features/home/domain/models/category.dart';
-import 'package:flourse/domain/use_case/categories_controller.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 
 class CurrentCategoryPage extends StatefulWidget {
   static const String id = '/category-detail';

@@ -1,5 +1,5 @@
-import 'package:flourse/features/home/domain/models/category.dart';
-import 'package:flourse/features/home/domain/models/course.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
+import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
 
 class CategoriesController {

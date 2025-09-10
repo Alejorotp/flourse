@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/domain/use_case/categories_controller.dart';
-import 'package:flourse/features/home/domain/models/course.dart';
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
+import 'package:flourse/features/courses/domain/models/course.dart';
 
 class CreateCategoryPage extends StatelessWidget {
   static const String id = '/create-category';

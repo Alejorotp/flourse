@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
-import 'package:flourse/domain/use_case/user_courses.dart';
+import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CreateCoursePage extends StatelessWidget {
   static const String id = '/create-course';

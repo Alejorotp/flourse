@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
-import 'package:flourse/features/home/ui/pages/courses.dart';
-import 'package:flourse/features/home/ui/pages/evaluations.dart';
-import 'package:flourse/features/home/ui/pages/currentevaluation.dart';
-import 'package:flourse/features/home/domain/models/evaluation.dart';
+import 'package:flourse/features/courses/ui/pages/courses.dart';
+import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
+import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
+import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart'; // El widget CourseCard
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/user_courses.dart';
+import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
 

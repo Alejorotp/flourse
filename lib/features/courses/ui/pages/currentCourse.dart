@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/features/home/domain/models/course_info.dart';
-import 'package:flourse/domain/use_case/categories_controller.dart';
+import 'package:flourse/features/courses/domain/models/course_info.dart';
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 import 'package:flourse/features/home/ui/widgets/category_card.dart';
-import 'package:flourse/features/home/ui/pages/createCategory.dart';
-import 'package:flourse/features/home/ui/pages/currentCategory.dart';
+import 'package:flourse/features/categories/ui/pages/createCategory.dart';
+import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
 

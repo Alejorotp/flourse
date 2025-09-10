@@ -3,7 +3,7 @@ import 'package:flourse/data/data.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:get/get.dart';
 import 'package:flourse/domain/use_case/auth_controller.dart';
-import 'package:flourse/domain/use_case/user_courses.dart';
+import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';

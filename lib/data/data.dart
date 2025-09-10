@@ -1,7 +1,7 @@
-import 'package:flourse/features/home/domain/models/category.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:get/get.dart';
-import 'package:flourse/features/home/domain/models/course.dart';
-import 'package:flourse/features/home/domain/models/evaluation.dart';
+import 'package:flourse/features/courses/domain/models/course.dart';
+import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/auth/domain/models/authentication_user.dart';
 
 var myCourses = <Course>[
