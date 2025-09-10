@@ -50,15 +50,22 @@ class AuthenticationController extends GetxController {
     return rta;
   }
 
-  Future<bool> signUp(email, password) async {
-    logInfo('AuthenticationController: Sign Up $email $password');
-    await authentication.signUp(email, password);
-    return true;
+  Future<bool> signUp(email, password, userName) async {
+    logInfo('AuthenticationController: Sign Up $email $password $userName');
+    String? validationError = validateFields(email, password, name: userName);
+    if (validationError != null) {
+      logWarning('AuthenticationController: Sign Up failed - $validationError');
+      return false;
+    }
+    await authentication.signUp(email, password, userName);
+    
+    return validationError == null;
   }
 
   Future<void> logOut() async {
     logInfo('AuthenticationController: Log Out');
     await authentication.logOut();
     logged.value = false;
+    //currentUser.value = AuthenticationUser(email: '', name: '', password: '');
   }
 }

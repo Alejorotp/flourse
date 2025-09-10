@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   var userName = '';
 
+
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
@@ -122,10 +123,10 @@ class _LoginPageState extends State<LoginPage> {
             }
           } else {
             try {
-              await auth.register(
+              await auth.signUp(
                 email,
-                userName,
                 password,
+                userName,
               );
             } catch (err) {
               Get.snackbar(

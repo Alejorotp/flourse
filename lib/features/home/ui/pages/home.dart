@@ -20,6 +20,12 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () async {
+            await auth.logOut();
+          },
+        ),
         title: const Text("Flourse"),
         centerTitle: true,
         actions: const [
