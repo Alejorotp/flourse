@@ -1,7 +1,8 @@
-import 'package:flourse/domain/models/category.dart';
+import 'package:flourse/features/home/domain/models/category.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/models/course.dart';
-import 'package:flourse/domain/models/evaluation.dart';
+import 'package:flourse/features/home/domain/models/course.dart';
+import 'package:flourse/features/home/domain/models/evaluation.dart';
+import 'package:flourse/features/auth/domain/models/authentication_user.dart';
 
 var myCourses = <Course>[
   Course(
@@ -80,3 +81,32 @@ final List<Category> myCategories = [
     maxMembers: 6,
   ),
 ];
+
+// Simulación de base de datos en memoria
+final fakeUsers = <String, AuthenticationUser>{
+  // No sé que hace o porqué está ahí el primer string antes de los 2 puntos :)
+  "manuel@test.com": AuthenticationUser(
+    id: 1,
+    name: "Manuel",
+    email: "manuel@test.com",
+    password: "123456",
+  ),
+  "ana@test.com": AuthenticationUser(
+    id: 2,
+    name: "Ana",
+    email: "ana@test.com",
+    password: "qwerty",
+  ),
+  "gaco@test.com": AuthenticationUser(
+    id: 3,
+    name: "Gaco",
+    email: "gaco@test.com",
+    password: "abcd",
+  ),
+  "none@test.com": AuthenticationUser(
+    id: 4,
+    name: "none",
+    email: "none@test.com",
+    password: "abcd",
+  ),
+};

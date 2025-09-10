@@ -1,8 +1,8 @@
 // lib/widgets/course_card.dart
 
 import 'package:flutter/material.dart';
-import 'package:flourse/domain/models/course_info.dart';
-import 'package:flourse/presentation/pages/currentCourse.dart';
+import 'package:flourse/features/home/domain/models/course_info.dart';
+import 'package:flourse/features/home/ui/pages/currentCourse.dart';
 
 class CourseCard extends StatelessWidget {
   final UserCourseInfo courseInfo;

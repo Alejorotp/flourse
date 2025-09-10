@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/domain/models/category.dart';
+import 'package:flourse/features/home/domain/models/category.dart';
 import 'package:flourse/domain/use_case/categories_controller.dart';
 
 class CurrentCategoryPage extends StatefulWidget {
