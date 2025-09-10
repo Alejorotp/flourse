@@ -1,5 +1,6 @@
 import 'package:flourse/features/auth/domain/models/authentication_user.dart';
 import 'package:get/get.dart';
+import 'package:flourse/data/data.dart';
 
 import 'package:loggy/loggy.dart';
 
@@ -17,6 +18,15 @@ class AuthenticationController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     logInfo('AuthenticationController initialized');
+     if(rememberMe && lastUser.email.isNotEmpty){
+      var rta = await authentication.login(lastUser.email, lastUser.password);
+      logged.value = rta != null;
+      if (rta != null) {
+        currentUser.value = rta;
+      }
+    } else {
+      logged.value = await authentication.validateToken();
+    }
   }
 
   bool get isLogged => logged.value;
@@ -46,6 +56,9 @@ class AuthenticationController extends GetxController {
     logged.value = rta != null;
     if (rta != null) {
       currentUser.value = rta;
+      if(rememberMe){
+        lastUser = rta;
+      }
     }
     return rta;
   }
@@ -66,6 +79,7 @@ class AuthenticationController extends GetxController {
     logInfo('AuthenticationController: Log Out');
     await authentication.logOut();
     logged.value = false;
+    rememberMe = false;
     //currentUser.value = AuthenticationUser(email: '', name: '', password: '');
   }
 }

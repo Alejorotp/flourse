@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/auth_controller.dart';
+import 'package:loggy/loggy.dart';
+import 'package:flourse/data/data.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = '/login';
@@ -12,11 +14,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   var email = '';
-
   var password = '';
-
   var userName = '';
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,31 +105,65 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Nuevo método para manejar la lógica de login con o sin "mantener sesión"
+  void _onLoginAction(AuthenticationController auth, bool stayLoggedIn) async {
+    try {
+      await auth.login(email, password);
+      if (stayLoggedIn) {
+        // --- AQUI VA LA ACCION QUE QUIERES CONFIGURAR ---
+        // Ejemplo: Guardar un token o una preferencia en el dispositivo
+        Loggy("El usuario eligió mantener la sesión iniciada.");
+        rememberMe = true;
+        // Puedes llamar a un método del controlador aquí: auth.saveLoginPreference();
+      }
+    } catch (err) {
+      Get.snackbar(
+        "Login Error",
+        err.toString(),
+        icon: const Icon(Icons.person, color: Colors.red),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
   Widget _buttonLogReg(final auth) {
     return Obx(
       () => ElevatedButton(
         onPressed: () async {
           if (auth.isLogin.value!) {
-            try {
-              await auth.login(email, password);
-            } catch (err) {
-              Get.snackbar(
-                "Login",
-                err.toString(),
-                icon: const Icon(Icons.person, color: Colors.red),
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            }
+            // Mostrar la ventana emergente solo para el Login
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Mantener sesión iniciada"),
+                  content: const Text("¿Deseas mantener la sesión iniciada?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _onLoginAction(auth, true); // Lógica de login + tu acción
+                      },
+                      child: const Text("Sí"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _onLoginAction(auth, false); // Solo la lógica de login
+                      },
+                      child: const Text("No"),
+                    ),
+                  ],
+                );
+              },
+            );
           } else {
+            // Lógica de registro sin ventana emergente
             try {
-              await auth.signUp(
-                email,
-                password,
-                userName,
-              );
+              await auth.signUp(email, password, userName);
             } catch (err) {
               Get.snackbar(
-                "Login",
+                "Register Error",
                 err.toString(),
                 icon: const Icon(Icons.person, color: Colors.red),
                 snackPosition: SnackPosition.BOTTOM,
@@ -145,13 +178,11 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class _TextFieldGeneral extends StatelessWidget {
-  /*const _TextFieldGeneral({
-    super.key,
-  });*/
   final String labelText;
   final Function(String) onChanged;
   final TextInputType keyboardType;
   final bool obscureText;
+
   const _TextFieldGeneral({
     required this.labelText,
     required this.onChanged,

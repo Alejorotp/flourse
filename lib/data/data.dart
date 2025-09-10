@@ -100,7 +100,7 @@ final List<Category> myCategories = [
     maxMembers: 6,
     groupIDs: []
   ),
-];
+].obs;
 
 final List<Group> myGroups = [
   Group(
@@ -166,3 +166,6 @@ final fakeUsers = <String, AuthenticationUser>{
     password:"123456",
   ),
 };
+
+bool rememberMe = false;
+AuthenticationUser lastUser = AuthenticationUser(email: '', name: '', password: '');

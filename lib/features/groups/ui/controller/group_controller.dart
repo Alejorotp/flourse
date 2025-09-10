@@ -1,7 +1,10 @@
+import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:flourse/data/data.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/groups/domain/use_case/group_usecase.dart';
+import 'package:loggy/loggy.dart';
+
 
 
 class GroupsController extends GetxController{
@@ -13,13 +16,20 @@ class GroupsController extends GetxController{
 
   void createGroup({
     required int id,
-    required int maxMembers
+    required int maxMembers,
+    required Category categoryId
   }) {
-    final newGroup = Group(
-      id: groups.length + 1,
-      maxMembers: maxMembers
-    );
-    myGroups.add(newGroup);
+    try {
+  final newGroup = Group(
+    id: groups.length + 1,
+    maxMembers: maxMembers
+  );
+  myGroups.add(newGroup);
+  categoryId.groupIDs.add(newGroup.id);
+  print("Group created: $newGroup");
+} on Exception catch (e) {
+  print("Error creating group: $e");
+}
   }
 
   void deleteGroup(int id) {

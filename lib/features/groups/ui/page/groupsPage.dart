@@ -7,6 +7,7 @@ import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 //import 'package:flourse/features/groups/ui/pages/groupDetailPage.dart';
 import 'package:flourse/features/groups/ui/page/groupDetailPage.dart';
+//import 'package:loggy/loggy.dart';
 
 class GroupsPage extends StatefulWidget {
   static const String id = '/groups-page';
@@ -56,6 +57,24 @@ class _GroupsPageState extends State<GroupsPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
+                if (widget.canEdit) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        print('Crear nuevo grupo en la categoría ${widget.category.name}');
+                        groupsController.createGroup(
+                          id: groups.length + 1,
+                          maxMembers: widget.category.maxMembers,
+                          categoryId: widget.category,
+                        );
+                        setState(() {}); // Para refrescar la vista
+                      },
+                      child: const Text('Crear Grupo'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 if (groups.isEmpty)
                   const Center(
                     child: Text(
