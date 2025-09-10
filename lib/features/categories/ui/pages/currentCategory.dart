@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
+import 'package:flourse/features/categories/ui/pages/groupsPage.dart'; // Importa la página de grupos
 
 class CurrentCategoryPage extends StatefulWidget {
   static const String id = '/category-detail';
@@ -86,28 +87,21 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
-            ] else ...[
-              Text(
-                widget.category.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navega a GroupsPage
+                    Get.to(() => GroupsPage(
+                          category: widget.category,
+                          canEdit: widget.canEdit,
+                        ));
+                  },
+                  child: const Text('Ver Grupos'),
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Método de agrupación: ${widget.category.groupingMethod}',
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Máximo de miembros: ${widget.category.maxMembers}',
-                style: const TextStyle(fontSize: 16),
-              ),
-            ],
-            const SizedBox(height: 24),
-            // Only show update/delete buttons when the user can edit (is professor of the course)
-            if (widget.canEdit) ...[
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -136,6 +130,37 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                 ),
               ),
             ] else ...[
+              Text(
+                widget.category.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Método de agrupación: ${widget.category.groupingMethod}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Máximo de miembros: ${widget.category.maxMembers}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navega a GroupsPage
+                    Get.to(() => GroupsPage(
+                          category: widget.category,
+                          canEdit: widget.canEdit,
+                        ));
+                  },
+                  child: const Text('Ver Grupos'),
+                ),
+              ),
               const SizedBox.shrink(),
             ],
           ],
