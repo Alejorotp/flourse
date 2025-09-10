@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 import 'package:flourse/features/courses/domain/models/course.dart';
 
+
 class CreateCategoryPage extends StatelessWidget {
   static const String id = '/create-category';
   final Course course;
@@ -18,7 +19,7 @@ class CreateCategoryPage extends StatelessWidget {
     final TextEditingController _nameController = TextEditingController();
     final TextEditingController _groupingController = TextEditingController();
     final TextEditingController _maxMembersController = TextEditingController();
-    final categoriesController = CategoriesController();
+    CategoriesController categoriesController = CategoriesController();
 
     return Scaffold(
       appBar: AppBar(

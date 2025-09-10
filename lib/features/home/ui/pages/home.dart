@@ -6,9 +6,9 @@ import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart'; // El widget CourseCard
 import 'package:get/get.dart';
-import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
+import '../../../courses/ui/controller/courses_controller.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
@@ -17,6 +17,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
+    CoursesController courseCon = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -64,27 +65,49 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            Obx(() {
-              final userId = auth.currentUser.value.id.toString();
-              final filteredCourses = getUserCoursesInfo(myCourses, userId);
-
-              return SizedBox(
-                height: 180,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: filteredCourses.length,
-                  itemBuilder: (context, index) {
-                    final course = filteredCourses[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: CourseCard(courseInfo: course),
+            Obx(
+              () => FutureBuilder(
+                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? 0),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    ); // Muestra un spinner mientras carga
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    ); // Muestra un mensaje si hay un error
+                  } else if (snapshot.hasData) {
+                    final filteredCourses = snapshot.data!;
+                    if (filteredCourses.isEmpty) {
+                      return const Center(
+                        child: Text('No hay cursos disponibles.'),
+                      );
+                    }
+                    return SizedBox(
+                      height: 180,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filteredCourses.length,
+                        itemBuilder: (context, index) {
+                          final course = filteredCourses[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: CourseCard(courseInfo: course),
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
-              );
-            }),
+                  } else {
+                    return const Center(
+                      child: Text('No hay cursos disponibles.'),
+                    ); // Si no hay datos
+                  }
+                },
+              ),
+            ),
 
-            const SizedBox(height: 24), 
+            const SizedBox(height: 24),
 
             // Upcoming Evaluations
             Row(
