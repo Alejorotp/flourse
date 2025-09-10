@@ -1,12 +1,14 @@
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
+import 'package:get/get.dart';
 
-class CategoriesController {
+class CategoriesController extends GetxController{
   static final CategoriesController _instance =
       CategoriesController._internal();
   factory CategoriesController() => _instance;
   CategoriesController._internal();
+
 
   final List<Category> categories = myCategories;
 

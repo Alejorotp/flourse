@@ -7,7 +7,6 @@ class CurrentCategoryPage extends StatefulWidget {
   static const String id = '/category-detail';
   final Category category;
   final bool canEdit;
-
   const CurrentCategoryPage({
     super.key,
     required this.category,
@@ -19,7 +18,6 @@ class CurrentCategoryPage extends StatefulWidget {
 }
 
 class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
-  final categoriesController = CategoriesController();
   late TextEditingController _nameController;
   late TextEditingController _groupingController;
   late TextEditingController _maxMembersController;
@@ -34,6 +32,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
     _maxMembersController = TextEditingController(
       text: widget.category.maxMembers.toString(),
     );
+
   }
 
   @override
@@ -44,6 +43,9 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
     super.dispose();
   }
 
+  
+  CategoriesController categoriesController = CategoriesController();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

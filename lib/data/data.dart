@@ -37,7 +37,7 @@ var myCourses = <Course>[
   Course(
     title: 'curso1',
     courseCode: 'CURSO1',
-    professorID: 2,
+    professorID: 5,
     memberIDs: [6],
     categoryIDs: [],
   )

@@ -27,6 +27,9 @@ import 'features/courses/domain/repositories/i_course_repository.dart';
 import 'features/courses/domain/use_case/course_usecase.dart';
 import 'features/courses/ui/controller/courses_controller.dart';
 
+import'features/groups/ui/controller/group_controller.dart';
+import'features/categories/ui/controller/categories_controller.dart';
+
 
 void main() {
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
@@ -45,6 +48,12 @@ void main() {
   Get.put(CourseUseCase(Get.find()));
   Get.put(CoursesController(Get.find()));
   runApp(const MainApp());
+
+  // Groups
+  Get.put(GroupsController());
+
+  // Categories
+  Get.put(CategoriesController());
 }
 
 class MainApp extends StatelessWidget {
