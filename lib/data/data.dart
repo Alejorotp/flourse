@@ -11,7 +11,6 @@ var myCourses = <Course>[
     professorID: 3,
     memberIDs: [1, 2],
     categoryIDs: [1, 2],
-    registerCode: 'FLUTTER123',
   ),
   Course(
     title: 'Diseño UX/UI',
@@ -19,7 +18,6 @@ var myCourses = <Course>[
     professorID: 3,
     memberIDs: [1, 2],
     categoryIDs: [3],
-    registerCode: 'UXUI456',
   ),
   Course(
     title: 'Desarrollo de Apps Nativas',
@@ -27,7 +25,6 @@ var myCourses = <Course>[
     professorID: 3,
     memberIDs: [1],
     categoryIDs: [],
-    registerCode: 'NATIVE789',
   ),
   Course(
     title: 'Compromiso con el medio ambiente',
@@ -35,7 +32,6 @@ var myCourses = <Course>[
     professorID: 1,
     memberIDs: [2, 3, 4],
     categoryIDs: [4],
-    registerCode: 'COMP03',
   ),
 ].obs;
 

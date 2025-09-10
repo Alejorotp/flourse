@@ -1,9 +1,8 @@
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flourse/data/data.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:get/get.dart';
-import 'package:flourse/features/courses/ui/controller/user_courses.dart';
 
 class CoursesPage extends StatelessWidget {
   static const String id = '/courses';
@@ -12,6 +11,7 @@ class CoursesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
+    CoursesController courseCon = Get.find();
 
     return Scaffold(
       // --- AppBar de la página ---
@@ -88,29 +88,44 @@ class CoursesPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // --- GridView de los cursos (reactivo con Obx) ---
             Expanded(
-              child: Obx(() {
-                final userId = auth.currentUser.value.id?.toString() ?? '';
-                final filteredCourses = getUserCoursesInfo(
-                  myCourses.toList(),
-                  userId,
-                );
-
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16.0,
-                    mainAxisSpacing: 16.0,
-                    childAspectRatio: 0.9,
-                  ),
-                  itemCount: filteredCourses.length,
-                  itemBuilder: (context, index) {
-                    final course = filteredCourses[index];
-                    return CourseCard(courseInfo: course);
-                  },
-                );
-              }),
+              child: Obx(
+                () => FutureBuilder(
+                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? 0),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    ); // Muestra un spinner mientras carga
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    ); // Muestra un mensaje si hay un error
+                  } else if (snapshot.hasData) {
+                    final filteredCourses = snapshot.data!;
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16.0,
+                            mainAxisSpacing: 16.0,
+                            childAspectRatio: 0.9,
+                          ),
+                      itemCount: filteredCourses.length,
+                      itemBuilder: (context, index) {
+                        final course = filteredCourses[index];
+                        return CourseCard(courseInfo: course);
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('No hay cursos disponibles.'),
+                    ); // Si no hay datos
+                  }
+                },
+              ),
+              )
+              
             ),
           ],
         ),

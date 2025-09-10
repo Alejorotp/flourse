@@ -14,34 +14,44 @@ class CourseSourceService implements ICourseSource {
     : httpClient = client ?? http.Client();
 
   @override
-  Future<UserCourseInfo> getCourseInfo(String courseCode, String userId) async {
-    logInfo(
-      "Fetching course info for courseCode: $courseCode and userId: $userId",
-    );
-    final course = myCourses.firstWhere(
-      (course) => course.courseCode == courseCode,
-      orElse: () => Course(
-        title: 'Unknown',
-        professorID: -1,
-        courseCode: 'N/A',
-        memberIDs: [],
-        categoryIDs: [],
-      ),
-    );
-    final userRole = course.professorID.toString() == userId
-        ? "Profesor"
-        : (course.memberIDs.contains(int.parse(userId))
-              ? "Miembro"
-              : "No inscrito");
-    return Future.value(
-      UserCourseInfo(
-        course: course,
-        userRole: userRole,
-        professorName: "Profesor X",
-        memberNames: [],
-      ),
-    );
+  Future<String> getUserNameById(int userId) async {
+    logInfo("Fetching user name for userId: $userId");
+    final user = fakeUsers[userId];
+    if (user != null) {
+      return Future.value(user.name);
+    } else {
+      return Future.value("Usuario Desconocido");
+    }
   }
+
+  @override
+  Future<List<UserCourseInfo>> getCourseInfo(int userId) async {
+    logInfo("Fetching course info for all courses related to userId: $userId");
+    final courses = myCourses
+        .where(
+          (course) =>
+              course.memberIDs.contains(userId) || course.professorID == userId,
+        )
+        .map((course) async {
+          final userRole = course.professorID == userId
+              ? "Profesor"
+              : "Miembro";
+          final professorName = getUserNameById(course.professorID);
+          final memberNamesFutures = course.memberIDs
+              .map((id) => getUserNameById(id))
+              .toList();
+          final memberNames = await Future.wait(memberNamesFutures);
+
+          return UserCourseInfo(
+            course: course,
+            userRole: userRole,
+            professorName: await professorName,
+            memberNames: memberNames,
+          );
+        })
+        .toList();
+    return Future.wait(courses);
+    }
 
   @override
   Future<List<Course>> getAllCourses() async {
@@ -73,7 +83,6 @@ class CourseSourceService implements ICourseSource {
       memberIDs: [],
       categoryIDs: [],
     );
-
 
     myCourses.add(newCourse);
     return Future.value();

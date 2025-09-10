@@ -12,8 +12,13 @@ class CourseRepository implements ICourseRepository {
   CourseRepository(this.courseSource);
 
   @override
-  Future<UserCourseInfo> getCourseInfo(String courseCode, String userId) {
-    return courseSource.getCourseInfo(courseCode, userId);
+  Future<String> getUserNameById(int userId) {
+    return courseSource.getUserNameById(userId);
+  }
+
+  @override
+  Future<List<UserCourseInfo>> getCourseInfo(int userId) {
+    return courseSource.getCourseInfo(userId);
   }
 
   @override

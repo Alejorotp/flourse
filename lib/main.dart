@@ -18,6 +18,15 @@ import 'features/auth/domain/repositories/i_auth_repository.dart';
 import 'features/auth/domain/use_case/authentication_usecase.dart';
 import 'features/auth/ui/controller/auth_controller.dart';
 
+
+import 'features/courses/data/datasources/local/i_course_source.dart';
+import 'features/courses/data/datasources/local/course_source_service.dart';
+import 'features/courses/data/repository/course_repository.dart';
+import 'features/courses/domain/repositories/i_course_repository.dart';
+import 'features/courses/domain/use_case/course_usecase.dart';
+import 'features/courses/ui/controller/courses_controller.dart';
+
+
 void main() {
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
 
@@ -29,6 +38,11 @@ void main() {
   Get.put(AuthenticationUseCase(Get.find()));
   Get.put(AuthenticationController(Get.find()));
 
+  // Courses
+  Get.put<ICourseSource>(CourseSourceService());
+  Get.put<ICourseRepository>(CourseRepository(Get.find()));
+  Get.put(CourseUseCase(Get.find()));
+  Get.put(CoursesController(Get.find()));
   runApp(const MainApp());
 }
 
