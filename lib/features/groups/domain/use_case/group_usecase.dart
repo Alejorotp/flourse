@@ -27,6 +27,14 @@ class GroupUseCase {
     );
   }
 
+  bool joinGroup(int groupId, int userId) {
+    return _repository.joinGroup(groupId, userId);
+  }
+
+  bool removeMemberFromGroup(int groupId, int userId) {
+    return _repository.removeMemberFromGroup(groupId, userId);
+  }
+
   void deleteGroup(int id) {
     _repository.deleteGroup(id);
   }

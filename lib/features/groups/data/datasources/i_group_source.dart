@@ -12,6 +12,10 @@ abstract class IGroupSource {
     required int maxMembers
   });
 
+  bool joinGroup(int groupId, int userId);
+
+  bool removeMemberFromGroup(int groupId, int userId);
+
   void deleteGroup(int id);
 
 }

@@ -1,15 +1,24 @@
-import '../models/authentication_user.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
 
-abstract class IAuthRepository {
-  Future<AuthenticationUser?> login(AuthenticationUser user);
 
-  Future<bool> signUp(AuthenticationUser user);
+abstract class ICategoryRepository {
+  List<Category> getAllCategories();
 
-  Future<bool> logOut();
+  void createCategory({
+    required String name,
+    required String groupingMethod,
+    required int maxMembers,
+    required int courseId,
+  });
 
-  Future<bool> validate(String email, String validationCode);
+  void deleteCategory(int id);
 
-  Future<bool> validateToken();
+  void updateCategory({
+    required int id,
+    String? newName,
+    String? newGroupingMethod,
+    int? newMaxMembers,
+  });
 
-  Future<void> forgotPassword(String email);
+  Category? getCategoryById(int id);
 }

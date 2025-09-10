@@ -52,12 +52,12 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                if (updatedGroup.memberIds.isEmpty)
+                if (updatedGroup.memberIDs.isEmpty)
                   const Text('El grupo no tiene miembros.')
                 else
-                  ...updatedGroup.memberIds.map((memberId) {
+                  ...updatedGroup.memberIDs.map((memberId) {
                     return ListTile(
-                      title: Text(memberId), // Reemplaza con el nombre del miembro
+                      title: Text(memberId.toString()), // Reemplazar con el nombre del miembro
                       trailing: widget.canEdit
                           ? IconButton(
                               icon: const Icon(Icons.remove_circle,

@@ -44,7 +44,7 @@ class _GroupsPageState extends State<GroupsPage> {
 
           final currentUserId = auth.currentUser.value.id;
           final userInGroup = groups.any(
-              (group) => group.memberIds.contains(currentUserId));
+              (group) => group.memberIDs.contains(currentUserId));
 
           return Padding(
             padding: const EdgeInsets.all(16),
@@ -69,10 +69,10 @@ class _GroupsPageState extends State<GroupsPage> {
                       itemCount: groups.length,
                       itemBuilder: (context, index) {
                         final group = groups[index];
-                        final isFull = group.memberIds.length >=
+                        final isFull = group.memberIDs.length >=
                             widget.category.maxMembers;
                         final isUserInThisGroup =
-                            group.memberIds.contains(currentUserId);
+                            group.memberIDs.contains(currentUserId);
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -86,7 +86,7 @@ class _GroupsPageState extends State<GroupsPage> {
                             },
                             title: Text('Grupo ${index + 1}'),
                             subtitle: Text(
-                                '${group.memberIds.length} / ${widget.category.maxMembers} miembros'),
+                                '${group.memberIDs.length} / ${widget.category.maxMembers} miembros'),
                             trailing: !widget.canEdit && !userInGroup && !isFull
                                 ? ElevatedButton(
                                     onPressed: () {

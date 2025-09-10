@@ -1,140 +1,170 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/features/courses/domain/models/course_info.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
-import 'package:flourse/features/home/ui/widgets/category_card.dart';
-import 'package:flourse/features/categories/ui/pages/createCategory.dart';
-import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
+//import 'package:flourse/features/categories/ui/pages/groupsPage.dart'; // Importa la página de grupos
+import 'package:flourse/features/groups/ui/page/groupsPage.dart';
 import 'package:get/get.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:loggy/loggy.dart';
-//import 'package:flourse/features/categories/ui/pages/groupsPage.dart'; // Importa la nueva página de grupos
-import 'package:flourse/features/groups/ui/page/groupsPage.dart'; // Importa la nueva página de grupos
 
-class CurrentCoursePage extends StatefulWidget {
-  static const String id = '/course-detail';
-  final UserCourseInfo courseInfo;
+class CurrentCategoryPage extends StatefulWidget {
+  static const String id = '/category-detail';
+  final Category category;
+  final bool canEdit;
 
-  const CurrentCoursePage({super.key, required this.courseInfo});
+  const CurrentCategoryPage({
+    super.key,
+    required this.category,
+    this.canEdit = false,
+  });
 
   @override
-  State<CurrentCoursePage> createState() => _CurrentCoursePageState();
+  State<CurrentCategoryPage> createState() => _CurrentCategoryPageState();
 }
 
-class _CurrentCoursePageState extends State<CurrentCoursePage> {
-  final CategoriesController categoriesController = CategoriesController();
+class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
+  final categoriesController = CategoriesController();
+  late TextEditingController _nameController;
+  late TextEditingController _groupingController;
+  late TextEditingController _maxMembersController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.category.name);
+    _groupingController = TextEditingController(
+      text: widget.category.groupingMethod,
+    );
+    _maxMembersController = TextEditingController(
+      text: widget.category.maxMembers.toString(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _groupingController.dispose();
+    _maxMembersController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final courseInfo = widget.courseInfo;
-
     return Scaffold(
-      appBar: AppBar(title: Text(courseInfo.course.title), centerTitle: true),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: Text(widget.category.name), centerTitle: true),
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Código del curso: ${courseInfo.course.courseCode}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Profesor: ${courseInfo.professorName}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Total de miembros: ${courseInfo.memberNames.length}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Lista de estudiantes:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...courseInfo.memberNames.map((name) => Text('- $name')),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Categorías del curso",
+            const SizedBox(height: 24),
+            // Show editable fields for professor, plain text for students
+            if (widget.canEdit) ...[
+              const Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: Text(
+                  "Editar categoría",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                Builder(
-                  builder: (context) {
-                    AuthenticationController auth = Get.find();
-                    final userId = auth.currentUser.value.id ?? '';
-                    final isProfessor = courseInfo.course.professorID == userId;
-                    logInfo("Is professor: $isProfessor");
-                    logInfo("User ID: $userId, ${userId.runtimeType}");
-                    logInfo("Professor ID: ${courseInfo.course.professorID}, ${courseInfo.course.professorID.runtimeType}");
-                    if (!isProfessor) return const SizedBox.shrink();
-                    return InkWell(
-                      onTap: () async {
-                        Get.to(() => CreateCategoryPage(course: courseInfo.course, canEdit: isProfessor,));
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: Text(
-                          "Add",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            if (courseInfo.course.categoryIDs.isEmpty)
-              const Text('No hay categorías asignadas.')
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemCount: courseInfo.course.categoryIDs.length,
-                itemBuilder: (context, index) {
-                  final id = courseInfo.course.categoryIDs[index];
-                  final category = categoriesController.getCategoryById(id);
-                  if (category == null) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: CategoryCard(
-                      category: category,
-                      onTap: () async {
-                        AuthenticationController auth = Get.find();
-                        final userId = auth.currentUser.value.id ?? '';
-                        final isProfessor =
-                            courseInfo.course.professorID == userId;
-                        final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CurrentCategoryPage(
-                              category: category,
-                              canEdit: isProfessor,
-                            ),
-                          ),
-                        );
-                        if (result == 'deleted') {
-                          widget.courseInfo.course.categoryIDs.remove(
-                            category.id,
-                          );
-                        }
-                        setState(() {});
-                      },
-                    ),
-                  );
-                },
               ),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: "Nombre de la categoría",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _groupingController,
+                decoration: const InputDecoration(
+                  labelText: "Método de agrupación",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _maxMembersController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "Máximo de miembros",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navega a GroupsPage
+                    Get.to(() => GroupsPage(
+                          category: widget.category,
+                          canEdit: widget.canEdit,
+                        ));
+                  },
+                  child: const Text('Ver Grupos'),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    categoriesController.updateCategory(
+                      id: widget.category.id,
+                      newName: _nameController.text,
+                      newGroupingMethod: _groupingController.text,
+                      newMaxMembers: int.tryParse(_maxMembersController.text),
+                    );
+                    Navigator.of(context).pop('updated');
+                  },
+                  child: const Text("Actualizar"),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: () {
+                    categoriesController.deleteCategory(widget.category.id);
+                    Navigator.of(context).pop('deleted');
+                  },
+                  child: const Text("Eliminar"),
+                ),
+              ),
+            ] else ...[
+              Text(
+                widget.category.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Método de agrupación: ${widget.category.groupingMethod}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Máximo de miembros: ${widget.category.maxMembers}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navega a GroupsPage
+                    Get.to(() => GroupsPage(
+                          category: widget.category,
+                          canEdit: widget.canEdit,
+                        ));
+                  },
+                  child: const Text('Ver Grupos'),
+                ),
+              ),
+              const SizedBox.shrink(),
+            ],
           ],
         ),
       ),

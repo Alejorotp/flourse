@@ -43,6 +43,28 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
+  bool joinGroup(int groupId, int userId) {
+    final group = getGroupById(groupId);
+    if (group == null) return false;
+    if (group.memberIDs.contains(userId)) return false;
+    if (group.memberIDs.length >= group.maxMembers) return false;
+    group.memberIDs.add(userId);
+    logInfo("User $userId joined group $groupId");
+    return true;
+  }
+
+  // Eliminar miembro de un grupo
+  @override
+  bool removeMemberFromGroup(int groupId, int userId) {
+    final group = getGroupById(groupId);
+    if (group == null) return false;
+    if (!group.memberIDs.contains(userId)) return false;
+    group.memberIDs.remove(userId);
+    logInfo("User $userId removed from group $groupId");
+    return true;
+  }
+
+  @override
   void deleteGroup(int id) {
     logInfo("Deleting group with id: $id");
     myGroups.removeWhere((group) => group.id == id);

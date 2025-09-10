@@ -31,6 +31,16 @@ class GroupRepository implements IGroupRepository {
   }
 
   @override
+  bool joinGroup(int groupId, int userId) {
+    return groupSource.joinGroup(groupId, userId);
+  }
+
+  @override
+  bool removeMemberFromGroup(int groupId, int userId) {
+    return groupSource.removeMemberFromGroup(groupId, userId);
+  }
+
+  @override
   void deleteGroup(int id) {
     groupSource.deleteGroup(id);
   }

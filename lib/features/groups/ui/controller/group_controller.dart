@@ -30,9 +30,18 @@ class GroupsController extends GetxController{
     }
   }
 
-
   List<Group> getAllGroups() {
     return myGroups;
+  }
+
+    // Unirse a un grupo
+  bool joinGroup(int groupId, int userId) {
+    return groupation.joinGroup(groupId, userId);
+  }
+
+  // Eliminar miembro de un grupo
+  bool removeMemberFromGroup(int groupId, int userId) {
+    return groupation.removeMemberFromGroup(groupId, userId);
   }
 
   Group? getGroupById(int id) {
