@@ -21,7 +21,7 @@ class CurrentCoursePage extends StatefulWidget {
 }
 
 class _CurrentCoursePageState extends State<CurrentCoursePage> {
-  final CategoriesController categoriesController = CategoriesController();
+  CategoriesController categoriesController = Get.find();
 
   @override
   Widget build(BuildContext context) {
