@@ -1,10 +1,12 @@
 // lib/features/categories/ui/pages/groupsPage.dart
+import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
-import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
+//import 'package:flourse/features/groups/ui/controller/groups_controller.dart'; // Importación correcta
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/categories/ui/pages/groupDetailPage.dart';
+//import 'package:flourse/features/groups/ui/pages/groupDetailPage.dart';
+import 'package:flourse/features/groups/ui/page/groupDetailPage.dart';
 
 class GroupsPage extends StatefulWidget {
   static const String id = '/groups-page';
@@ -22,7 +24,8 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
-  final CategoriesController categoriesController = Get.find();
+  // Ahora usamos el GroupsController
+  final GroupsController groupsController = Get.find();
   final AuthenticationController auth = Get.find();
 
   @override
@@ -31,36 +34,36 @@ class _GroupsPageState extends State<GroupsPage> {
       appBar: AppBar(
         title: Text('Grupos de ${widget.category.name}'),
       ),
-      body: FutureBuilder(
-        future: categoriesController.getGroupsByCategory(widget.category.id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            final groups = snapshot.data!;
-            final currentUserId = auth.currentUser.value.id;
-            final userInGroup = groups.any(
-                (group) => group.memberIds.contains(currentUserId));
+      // Usamos Obx para escuchar los cambios en la lista de grupos
+      body: Obx(
+        () {
+          // Filtrado en tiempo real de los grupos de la categoría
+          final groups = groupsController.groups
+              .where((group) => widget.category.groupIDs.contains(group.id))
+              .toList();
 
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Lista de Grupos',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  if (groups.isEmpty)
-                    const Center(
-                      child: Text(
-                        'No hay grupos creados para esta categoría.',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
+          final currentUserId = auth.currentUser.value.id;
+          final userInGroup = groups.any(
+              (group) => group.memberIds.contains(currentUserId));
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Lista de Grupos',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                if (groups.isEmpty)
+                  const Center(
+                    child: Text(
+                      'No hay grupos creados para esta categoría.',
+                      style: TextStyle(fontStyle: FontStyle.italic),
                     ),
+                  )
+                else
                   Expanded(
                     child: ListView.builder(
                       itemCount: groups.length,
@@ -87,12 +90,10 @@ class _GroupsPageState extends State<GroupsPage> {
                             trailing: !widget.canEdit && !userInGroup && !isFull
                                 ? ElevatedButton(
                                     onPressed: () {
-                                      categoriesController.joinGroup(
+                                      groupsController.joinGroup(
                                         group.id,
                                         currentUserId!,
                                       );
-                                      // Refresh UI
-                                      setState(() {});
                                     },
                                     child: const Text('Unirse'),
                                   )
@@ -104,12 +105,9 @@ class _GroupsPageState extends State<GroupsPage> {
                       },
                     ),
                   ),
-                ],
-              ),
-            );
-          } else {
-            return const Center(child: Text('No se encontraron grupos.'));
-          }
+              ],
+            ),
+          );
         },
       ),
     );
