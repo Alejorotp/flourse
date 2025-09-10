@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/auth/domain/models/authentication_user.dart';
+import 'package:flourse/features/groups/domain/models/groups.dart';
 
 var myCourses = <Course>[
   Course(
@@ -69,30 +70,53 @@ final List<Category> myCategories = [
     name: 'Mobile Assignment 1',
     groupingMethod: 'Random',
     maxMembers: 5,
+    groupIDs: [1, 2],
   ),
   Category(
     id: 2,
     name: 'Mobile Assignment 2',
     groupingMethod: 'Self-assigned',
     maxMembers: 3,
+    groupIDs: [3],
   ),
   Category(
     id: 3,
     name: 'Mobile Assignment 3',
     groupingMethod: 'Random',
     maxMembers: 4,
+    groupIDs: []
   ),
   Category(
     id: 4,
     name: 'Mobile Assignment 4',
     groupingMethod: 'Self-assigned',
     maxMembers: 2,
+    groupIDs: []
   ),
   Category(
     id: 5,
     name: 'Mobile Assignment 5',
     groupingMethod: 'Random',
     maxMembers: 6,
+    groupIDs: []
+  ),
+];
+
+final List<Group> myGroups = [
+  Group(
+    id: 1,
+    maxMembers: 3,
+    memberIDs: [1, 2],
+  ),
+  Group(
+    id: 2,
+    maxMembers: 4,
+    memberIDs: [2, 3],
+  ),
+  Group(
+    id: 3,
+    maxMembers: 2,
+    memberIDs: [1],
   ),
 ];
 
