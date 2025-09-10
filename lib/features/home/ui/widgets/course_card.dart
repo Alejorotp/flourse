@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/courses/ui/pages/currentCourse.dart';
-import 'package:loggy/loggy.dart';
 
 class CourseCard extends StatelessWidget {
   final UserCourseInfo courseInfo;
@@ -12,7 +11,6 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Loggy(courseInfo.userRole);
     final isProfessor = courseInfo.userRole.toLowerCase() != 'miembro';
     final borderColor = isProfessor ? Colors.red.shade200 : Colors.grey.shade300;
     final backgroundColor = isProfessor ? Colors.red.shade50 : Colors.grey.shade200;
