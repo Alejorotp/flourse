@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/courses/ui/pages/currentCourse.dart';
+import 'package:loggy/loggy.dart';
 
 class CourseCard extends StatelessWidget {
   final UserCourseInfo courseInfo;
@@ -11,6 +12,11 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Loggy(courseInfo.userRole);
+    final isProfessor = courseInfo.userRole.toLowerCase() != 'miembro';
+    final borderColor = isProfessor ? Colors.red.shade200 : Colors.grey.shade300;
+    final backgroundColor = isProfessor ? Colors.red.shade50 : Colors.grey.shade200;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -24,7 +30,8 @@ class CourseCard extends StatelessWidget {
         width: 160,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          color: backgroundColor,
+          border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
