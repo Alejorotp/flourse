@@ -28,6 +28,13 @@ import 'features/courses/domain/use_case/course_usecase.dart';
 import 'features/courses/ui/controller/courses_controller.dart';
 
 import'features/groups/ui/controller/group_controller.dart';
+import 'features/groups/data/datasources/i_group_source.dart';
+import 'features/groups/data/datasources/group_source_service.dart';
+import 'features/groups/data/repository/group_repository.dart';
+import 'features/groups/domain/repositories/i_group_repository.dart';
+import 'features/groups/domain/use_case/group_usecase.dart';
+
+
 import'features/categories/ui/controller/categories_controller.dart';
 
 
@@ -50,7 +57,11 @@ void main() {
   runApp(const MainApp());
 
   // Groups
+  Get.put<IGroupSource>(GroupSourceService());
+  Get.put<IGroupRepository>(GroupRepository(Get.find()));
+  Get.put(GroupUseCase(Get.find()));
   Get.put(GroupsController(Get.find()));
+
 
   // Categories
   Get.put(CategoriesController());
