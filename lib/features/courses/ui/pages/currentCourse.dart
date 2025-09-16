@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/features/home/domain/models/course_info.dart';
-import 'package:flourse/domain/use_case/categories_controller.dart';
+import 'package:flourse/features/courses/domain/models/course_info.dart';
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 import 'package:flourse/features/home/ui/widgets/category_card.dart';
-import 'package:flourse/features/home/ui/pages/createCategory.dart';
-import 'package:flourse/features/home/ui/pages/currentCategory.dart';
+import 'package:flourse/features/categories/ui/pages/createCategory.dart';
+import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'package:loggy/loggy.dart';
 
 class CurrentCoursePage extends StatefulWidget {
   static const String id = '/course-detail';
@@ -18,7 +19,7 @@ class CurrentCoursePage extends StatefulWidget {
 }
 
 class _CurrentCoursePageState extends State<CurrentCoursePage> {
-  final CategoriesController categoriesController = CategoriesController();
+  final CategoriesController categoriesController = Get.find<CategoriesController>();
 
   @override
   Widget build(BuildContext context) {
@@ -62,21 +63,16 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                 ),
                 Builder(
                   builder: (context) {
-                    final auth = Get.find<AuthController>();
-                    final userId = auth.currentUser.value?.id ?? '';
+                    AuthenticationController auth = Get.find();
+                    final userId = auth.currentUser.value.id ?? '';
                     final isProfessor = courseInfo.course.professorID == userId;
+                    logInfo("Is professor: $isProfessor");
+                    logInfo("User ID: $userId, ${userId.runtimeType}");
+                    logInfo("Professor ID: ${courseInfo.course.professorID}, ${courseInfo.course.professorID.runtimeType}");
                     if (!isProfessor) return const SizedBox.shrink();
                     return InkWell(
                       onTap: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateCategoryPage(
-                              course: courseInfo.course,
-                              canEdit: isProfessor,
-                            ),
-                          ),
-                        );
-                        setState(() {});
+                        Get.to(() => CreateCategoryPage(course: courseInfo.course, canEdit: isProfessor,));
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -114,8 +110,8 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                     child: CategoryCard(
                       category: category,
                       onTap: () async {
-                        final auth = Get.find<AuthController>();
-                        final userId = auth.currentUser.value?.id ?? '';
+                        AuthenticationController auth = Get.find();
+                        final userId = auth.currentUser.value.id ?? '';
                         final isProfessor =
                             courseInfo.course.professorID == userId;
                         final result = await Navigator.of(context).push(

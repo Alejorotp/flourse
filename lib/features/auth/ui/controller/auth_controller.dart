@@ -1,5 +1,6 @@
 import 'package:flourse/features/auth/domain/models/authentication_user.dart';
 import 'package:get/get.dart';
+import 'package:flourse/data/data.dart';
 
 import 'package:loggy/loggy.dart';
 
@@ -17,6 +18,15 @@ class AuthenticationController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     logInfo('AuthenticationController initialized');
+     if(rememberMe && lastUser.email.isNotEmpty){
+      var rta = await authentication.login(lastUser.email, lastUser.password);
+      logged.value = rta != null;
+      if (rta != null) {
+        currentUser.value = rta;
+      }
+    } else {
+      logged.value = await authentication.validateToken();
+    }
   }
 
   bool get isLogged => logged.value;
@@ -46,19 +56,30 @@ class AuthenticationController extends GetxController {
     logged.value = rta != null;
     if (rta != null) {
       currentUser.value = rta;
+      if(rememberMe){
+        lastUser = rta;
+      }
     }
     return rta;
   }
 
-  Future<bool> signUp(email, password) async {
-    logInfo('AuthenticationController: Sign Up $email $password');
-    await authentication.signUp(email, password);
-    return true;
+  Future<bool> signUp(email, password, userName) async {
+    logInfo('AuthenticationController: Sign Up $email $password $userName');
+    String? validationError = validateFields(email, password, name: userName);
+    if (validationError != null) {
+      logWarning('AuthenticationController: Sign Up failed - $validationError');
+      return false;
+    }
+    await authentication.signUp(email, password, userName);
+    
+    return validationError == null;
   }
 
   Future<void> logOut() async {
     logInfo('AuthenticationController: Log Out');
     await authentication.logOut();
     logged.value = false;
+    rememberMe = false;
+    //currentUser.value = AuthenticationUser(email: '', name: '', password: '');
   }
 }

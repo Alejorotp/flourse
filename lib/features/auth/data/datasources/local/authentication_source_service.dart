@@ -26,6 +26,13 @@ class AuthenticationSourceService implements IAuthenticationSource {
   @override
   Future<bool> signUp(AuthenticationUser user) async {
     logInfo("Attempting sign up for email: ${user.email}");
+    if (fakeUsers.containsKey(user.email)) {
+      return Future.value(false);
+    }
+    fakeUsers[user.email] = user;
+    for (var key in fakeUsers.keys) {
+      logInfo("User in system: $key");
+    }
     return Future.value(true);
   }
 

@@ -9,9 +9,9 @@ class AuthenticationUseCase {
   Future<AuthenticationUser?> login(String email, String password) async => await _repository
       .login(AuthenticationUser(email: email, name: email, password: password));
 
-  Future<bool> signUp(String email, String password) async =>
+  Future<bool> signUp(String email, String password, String userName) async =>
       await _repository.signUp(
-        AuthenticationUser(email: email, name: email, password: password),
+        AuthenticationUser(email: email, name: userName, password: password),
       );
 
   Future<bool> validate(String email, String validationCode) async =>

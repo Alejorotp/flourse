@@ -1,7 +1,7 @@
 // lib/widgets/course_card.dart
 
 import 'package:flutter/material.dart';
-import 'package:flourse/features/home/domain/models/category.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;

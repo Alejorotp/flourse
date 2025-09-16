@@ -1,7 +1,7 @@
+import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flourse/domain/use_case/auth_controller.dart';
-import 'package:flourse/domain/use_case/user_courses.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 
 class CreateCoursePage extends StatelessWidget {
   static const String id = '/create-course';
@@ -11,7 +11,8 @@ class CreateCoursePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _nameController = TextEditingController();
-    final userCoursesUseCase = CreateCourse();
+    CoursesController courseCon = Get.find();
+    AuthenticationController auth = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -48,11 +49,10 @@ class CreateCoursePage extends StatelessWidget {
                 onPressed: () {
                   final name = _nameController.text.trim();
                   if (name.isNotEmpty) {
-                    final auth = Get.find<AuthController>();
-                    final userId = auth.currentUser.value?.id?.toString() ?? '';
-                    userCoursesUseCase.createCourse(
+                    final userId = auth.currentUser.value.id?.toString() ?? '';
+                    courseCon.createCourse(
                       title: name,
-                      professorID: userId,
+                      professorID: int.parse(userId),
                     );
                     Navigator.of(context).pop();
                   } else {

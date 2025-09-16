@@ -1,12 +1,13 @@
-import 'package:flourse/features/home/domain/models/category.dart';
-import 'package:flourse/features/home/domain/models/course.dart';
+import 'package:flourse/features/categories/domain/models/category.dart';
+import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:flourse/data/data.dart';
+import 'package:get/get.dart';
+import 'package:flourse/features/categories/domain/use_case/category_usecase.dart';
 
-class CategoriesController {
-  static final CategoriesController _instance =
-      CategoriesController._internal();
-  factory CategoriesController() => _instance;
-  CategoriesController._internal();
+
+class CategoriesController extends GetxController{
+  final CategoryUseCase categoryation;
+  CategoriesController(this.categoryation);
 
   final List<Category> categories = myCategories;
 

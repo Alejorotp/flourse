@@ -1,4 +1,4 @@
-import 'package:flourse/features/home/domain/models/course.dart';
+import 'package:flourse/features/courses/domain/models/course.dart';
 
 class UserCourseInfo {
   final Course course;
