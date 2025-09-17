@@ -1,22 +1,19 @@
 import '../models/groups.dart';
 
-
 abstract class IGroupRepository {
+  Future<List<Group>> getAllGroups();
 
-  List<Group> getAllGroups();
+  Future<Group?> getGroupById(String id);
 
-  Group? getGroupById(String id);
-
-  void createGroup({
-    required String id,
-    required int maxMembers
+  Future<Group> createGroup({
+    required int maxMembers,
+    required String categoryId,
+    required int groupNumber
   });
 
-  bool joinGroup(String groupId, String userId);
+  Future<bool> joinGroup(String groupId, String userId);
 
-  bool removeMemberFromGroup(String groupId, String userId);
+  Future<bool> removeMemberFromGroup(String groupId, String userId);
 
-  void deleteGroup(String id);
-
-
+  Future<void> deleteGroup(String id);
 }

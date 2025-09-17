@@ -3,20 +3,20 @@ import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
-//import 'package:flourse/features/groups/ui/controller/groups_controller.dart'; // Importación correcta
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-//import 'package:flourse/features/groups/ui/pages/groupDetailPage.dart';
 import 'package:flourse/features/groups/ui/page/groupDetailPage.dart';
 
 class GroupsPage extends StatefulWidget {
   static const String id = '/groups-page';
   final Category category;
   final bool canEdit;
+  final int groupNumber;
 
   const GroupsPage({
     super.key,
     required this.category,
     required this.canEdit,
+    required this.groupNumber,
   });
 
   @override
@@ -24,9 +24,15 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
-  // Ahora usamos el GroupsController
   final GroupsController groupsController = Get.find();
   final AuthenticationController auth = Get.find();
+  
+  // Llama a getAllGroups para cargar los datos al inicio
+  @override
+  void initState() {
+    super.initState();
+    groupsController.getAllGroups();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +40,8 @@ class _GroupsPageState extends State<GroupsPage> {
       appBar: AppBar(
         title: Text('Grupos de ${widget.category.name}'),
       ),
-      // Usamos Obx para escuchar los cambios en la lista de grupos
       body: Obx(
         () {
-          // Filtrado en tiempo real de los grupos de la categoría
           final groups = groupsController.groups
               .where((group) => widget.category.groupIDs.contains(group.id))
               .toList();
@@ -56,6 +60,23 @@ class _GroupsPageState extends State<GroupsPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
+                if (widget.canEdit) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async { // <-- Se añade async
+                        print('Crear nuevo grupo en la categoría ${widget.category.name}');
+                        await groupsController.createGroup( // <-- Se añade await
+                          maxMembers: widget.category.maxMembers,
+                          categoryId: widget.category.id ?? '', // <-- Se pasa el ID como String
+                          groupNumber: widget.groupNumber, // esta chocora no sé de dónde toma la info, pero no debería servir porque debería ser random...
+                        );
+                      },
+                      child: const Text('Crear Grupo'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 if (groups.isEmpty)
                   const Center(
                     child: Text(
@@ -89,8 +110,8 @@ class _GroupsPageState extends State<GroupsPage> {
                                 '${group.memberIDs.length} / ${widget.category.maxMembers} miembros'),
                             trailing: !widget.canEdit && !userInGroup && !isFull
                                 ? ElevatedButton(
-                                    onPressed: () {
-                                      groupsController.joinGroup(
+                                    onPressed: () async { // <-- Se añade async
+                                      await groupsController.joinGroup( // <-- Se añade await
                                         group.id,
                                         currentUserId!,
                                       );
