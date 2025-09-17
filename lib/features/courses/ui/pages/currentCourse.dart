@@ -1,3 +1,7 @@
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
+import 'package:flourse/features/categories/ui/pages/createCategory.dart';
+import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
+import 'package:flourse/features/categories/ui/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/courses/ui/widgets/member_card.dart';
@@ -19,6 +23,13 @@ class CurrentCoursePage extends StatefulWidget {
 
 class _CurrentCoursePageState extends State<CurrentCoursePage> {
   int _selectedNavIndex = 0; // <- índice seleccionado (visual)
+  late CategoriesController categoriesController;
+
+  @override
+  void initState() {
+    super.initState();
+    categoriesController = Get.find<CategoriesController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,27 +43,77 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ProfessorBox(professorName: courseInfo.professorName),
-                  if (isProfessor) ...[
-                    CourseCodeBox(courseCode: courseInfo.course.courseCode),
-                  ],
-                  Text(
-                    "Total students: ${courseInfo.memberNames.length}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            child: IndexedStack(
+              index: _selectedNavIndex,
+              children: [
+                // 0: Info del curso
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProfessorBox(professorName: courseInfo.professorName),
+                      if (isProfessor) ...[
+                        CourseCodeBox(courseCode: courseInfo.course.courseCode),
+                      ],
+                      Text(
+                        "Total students: ${courseInfo.memberNames.length}",
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      ...courseInfo.memberNames.map((name) => MemberCard(name: name)),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  ...courseInfo.memberNames.map((name) => MemberCard(name: name)),
-                ],
-              ),
+                ),
+                // 1: Evaluaciones (placeholder)
+                const Center(child: Text('Evaluaciones (próximamente)')),
+                // 2: Categorías (Grupos)
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isProfessor)
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CreateCategoryPage(
+                                    course: courseInfo.course,
+                                    canEdit: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text('+ crear categoría'),
+                          ),
+                        ),
+                      ...courseInfo.course.categoryIDs.map((catId) {
+                        final cat = categoriesController.getCategoryById(catId);
+                        if (cat == null) return const SizedBox.shrink();
+                        return CategoryCard(
+                          category: cat,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CurrentCategoryPage(
+                                  category: cat,
+                                  canEdit: isProfessor,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-
-          // Bottom navigation bar (solo visual, pero ahora clickeable y resalta el seleccionado)
+          // Bottom navigation bar (clickeable y resalta el seleccionado)
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
