@@ -9,11 +9,13 @@ class CurrentCategoryPage extends StatefulWidget {
   static const String id = '/category-detail';
   final Category category;
   final bool canEdit;
+  final int? groupNumber;
 
   const CurrentCategoryPage({
     super.key,
     required this.category,
     this.canEdit = false,
+    this.groupNumber,
   });
 
   @override
@@ -98,6 +100,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                     Get.to(() => GroupsPage(
                           category: widget.category,
                           canEdit: widget.canEdit,
+                          groupNumber: widget.groupNumber ?? 0,
                         ));
                   },
                   child: const Text('Ver Grupos'),
@@ -158,6 +161,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                     Get.to(() => GroupsPage(
                           category: widget.category,
                           canEdit: widget.canEdit,
+                          groupNumber: widget.groupNumber ?? 0,
                         ));
                   },
                   child: const Text('Ver Grupos'),
