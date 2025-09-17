@@ -68,7 +68,7 @@ class _GroupsPageState extends State<GroupsPage> {
                         print('Crear nuevo grupo en la categoría ${widget.category.name}');
                         await groupsController.createGroup( // <-- Se añade await
                           maxMembers: widget.category.maxMembers,
-                          categoryId: widget.category.id, // <-- Se pasa el ID como String
+                          categoryId: widget.category.id ?? '', // <-- Se pasa el ID como String
                           groupNumber: widget.groupNumber, // esta chocora no sé de dónde toma la info, pero no debería servir porque debería ser random...
                         );
                       },
@@ -113,7 +113,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                     onPressed: () async { // <-- Se añade async
                                       await groupsController.joinGroup( // <-- Se añade await
                                         group.id,
-                                        currentUserId ?? "",
+                                        currentUserId!,
                                       );
                                     },
                                     child: const Text('Unirse'),

@@ -12,7 +12,7 @@ class CategorySourceService implements ICategorySource {
     : httpClient = client ?? http.Client();
 
   @override
-  List<Category> getAllCategories() {
+  Future<List<Category>> getAllCategories() async {
     logInfo("Fetching all categories");
     return myCategories;
   }
@@ -30,6 +30,7 @@ class CategorySourceService implements ICategorySource {
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
+      courseId: courseId,
     );
     myCategories.add(newCategory);
   }
@@ -51,6 +52,7 @@ class CategorySourceService implements ICategorySource {
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
+    String? newCourseId,
   }) {
     logInfo("Updating category with id: $id");
     final index = myCategories.indexWhere((category) => category.id == id);
@@ -60,13 +62,14 @@ class CategorySourceService implements ICategorySource {
         id: category.id,
         name: newName ?? category.name,
         groupingMethod: newGroupingMethod ?? category.groupingMethod,
-        maxMembers: newMaxMembers ?? category.maxMembers
+        maxMembers: newMaxMembers ?? category.maxMembers,
+        courseId: newCourseId ?? category.courseId,
       );
     }
   }
 
   @override
-  Category? getCategoryById(String id) {
+  Future<Category?> getCategoryById(String id) async {
     logInfo("Fetching category by id: $id");
     try {
       return myCategories.firstWhere((category) => category.id == id);

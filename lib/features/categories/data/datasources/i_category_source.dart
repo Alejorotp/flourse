@@ -4,7 +4,7 @@ import '../../domain/models/category.dart';
 
 abstract class ICategorySource {
 
-  List<Category> getAllCategories();
+  Future<List<Category>> getAllCategories();
 
   void createCategory({
     required String name,
@@ -22,7 +22,7 @@ abstract class ICategorySource {
     int? newMaxMembers,
   });
 
-  Category? getCategoryById(String id);
+  Future<Category?> getCategoryById(String id);
 
 
 }

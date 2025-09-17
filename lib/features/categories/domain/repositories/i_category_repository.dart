@@ -2,7 +2,7 @@ import 'package:flourse/features/categories/domain/models/category.dart';
 
 
 abstract class ICategoryRepository {
-  List<Category> getAllCategories();
+  Future<List<Category>> getAllCategories();
 
   void createCategory({
     required String name,
@@ -20,5 +20,5 @@ abstract class ICategoryRepository {
     int? newMaxMembers,
   });
 
-  Category? getCategoryById(String id);
+  Future<Category?> getCategoryById(String id);
 }

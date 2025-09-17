@@ -9,7 +9,7 @@ class CategoryRepository implements ICategoryRepository {
   CategoryRepository(this.categorySource);
 
   @override
-  List<Category> getAllCategories() {
+  Future<List<Category>> getAllCategories() {
     return categorySource.getAllCategories();
   }
 
@@ -20,7 +20,7 @@ class CategoryRepository implements ICategoryRepository {
     required int maxMembers,
     required String courseId,
   }) {
-    return categorySource.createCategory(
+      categorySource.createCategory(
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
@@ -49,7 +49,7 @@ class CategoryRepository implements ICategoryRepository {
   }
 
   @override
-  Category? getCategoryById(String id) {
+  Future<Category?> getCategoryById(String id) {
     return categorySource.getCategoryById(id);
   }
 
