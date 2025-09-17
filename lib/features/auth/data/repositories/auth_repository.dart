@@ -8,7 +8,7 @@ class AuthRepository implements IAuthRepository {
   AuthRepository(this.authenticationSource);
 
   @override
-  Future<AuthenticationUser?> login(AuthenticationUser user) async =>
+  Future<Set<dynamic>> login(AuthenticationUser user) async =>
       await authenticationSource.login(user);
 
   @override
@@ -23,8 +23,8 @@ class AuthRepository implements IAuthRepository {
       await authenticationSource.validate(email, validationCode);
 
   @override
-  Future<bool> validateToken() async =>
-      await authenticationSource.verifyToken();
+  Future<bool> validateToken(String accessToken) async =>
+      await authenticationSource.verifyToken(accessToken);
 
   @override
   Future<void> forgotPassword(String email) async =>

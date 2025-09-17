@@ -6,7 +6,7 @@ class AuthenticationUseCase {
 
   AuthenticationUseCase(this._repository);
 
-  Future<AuthenticationUser?> login(String email, String? password) async => await _repository
+  Future<Set<dynamic>> login(String email, String? password) async => await _repository
       .login(AuthenticationUser(email: email, name: email, password: password));
 
   Future<bool> signUp(String email, String? password, String userName) async =>
@@ -19,7 +19,7 @@ class AuthenticationUseCase {
 
   Future<bool> logOut() async => await _repository.logOut();
 
-  Future<bool> validateToken() async => await _repository.validateToken();
+  Future<bool> validateToken(String accessToken) async => await _repository.validateToken(accessToken);
 
   Future<void> forgotPassword(String email) async =>
       _repository.forgotPassword(email);

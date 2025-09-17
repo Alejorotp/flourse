@@ -11,16 +11,16 @@ class AuthenticationSourceService implements IAuthenticationSource {
     : httpClient = client ?? http.Client();
 
   @override
-  Future<AuthenticationUser?> login(AuthenticationUser user) async {
+  Future<Set<dynamic>> login(AuthenticationUser user) async {
     logInfo("Attempting login for email: ${user.email}");
     final userProvider = fakeUsers[user.email];
     if (userProvider == null) {
-      return Future.value(null);
+      return Future.value({});
     }
     if (userProvider.password != user.password) {
-      return Future.value(null);
+      return Future.value({});
     }
-    return Future.value(userProvider);
+    return Future.value({userProvider});
   }
 
   @override
@@ -70,7 +70,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
   }
 
   @override
-  Future<bool> verifyToken() async {
+  Future<bool> verifyToken(String accessToken) async {
     logInfo("Attempting token verification");
     return Future.value(true);
   }

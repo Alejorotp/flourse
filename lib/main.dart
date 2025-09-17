@@ -43,9 +43,11 @@ import 'features/categories/domain/repositories/i_category_repository.dart';
 import 'features/categories/domain/use_case/category_usecase.dart';
 
 
-
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
+
+  runApp(const MainApp());
 
   Get.put(http.Client()); // Iniciar el cliente HTTP
 
@@ -60,7 +62,6 @@ void main() {
   Get.put<ICourseRepository>(CourseRepository(Get.find()));
   Get.put(CourseUseCase(Get.find()));
   Get.put(CoursesController(Get.find()));
-  runApp(const MainApp());
 
   // Groups
   Get.put<IGroupSource>(GroupSourceService());
@@ -74,6 +75,8 @@ void main() {
   Get.put<ICategoryRepository>(CategoryRepository(Get.find()));
   Get.put(CategoryUseCase(Get.find()));
   Get.put(CategoriesController(Get.find()));
+
+  
 }
 
 class MainApp extends StatelessWidget {

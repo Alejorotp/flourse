@@ -11,7 +11,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
     : httpClient = client ?? http.Client();
 
   @override
-  Future<AuthenticationUser?> login(AuthenticationUser user) async {
+  Future<Set<dynamic>> login(AuthenticationUser user) async {
     logInfo("Attempting login for email: ${user.email}");
     try {
       final response = await httpClient.post(
@@ -24,7 +24,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
       logInfo("Login response status: ${response.statusCode}");
       logInfo("Login response body: ${response.body}");
       final Map<String, dynamic> responseData = json.decode(response.body);
-      final authUser = AuthenticationUser(email: responseData['user']['email'], name: responseData['user']['name'], id: responseData['user']['id']);
+      final authUser = {AuthenticationUser(email: responseData['user']['email'], name: responseData['user']['name'], id: responseData['user']['id'], password: user.password), responseData['accessToken'], responseData['refreshToken']};
 
       try {
         final responseQuery = await httpClient.get(
@@ -62,7 +62,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
       return authUser;
     } catch (e) {
       logError("Error during login: $e");
-      return null;
+      return {};
     }
   }
 
@@ -121,8 +121,14 @@ class AuthenticationSourceService implements IAuthenticationSource {
   }
 
   @override
-  Future<bool> verifyToken() async {
+  Future<bool> verifyToken(String accessToken) async {
     logInfo("Attempting token verification");
-    return Future.value(true);
+    final response = await httpClient.get(
+      Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/verify-token"),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    return response.statusCode == 201;
   }
 }
