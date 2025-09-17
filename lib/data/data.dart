@@ -71,6 +71,7 @@ final myCategories = <Category>[
     groupingMethod: 'Random',
     maxMembers: 5,
     groupIDs: ["1", "2"],
+    courseId: "GACO26", // <-- Add this line
   ),
   Category(
     id: "2",
@@ -78,27 +79,31 @@ final myCategories = <Category>[
     groupingMethod: 'Self-assigned',
     maxMembers: 3,
     groupIDs: ["3"],
+    courseId: "GACO26", // <-- Add this line
   ),
   Category(
     id: "3",
     name: 'Mobile Assignment 3',
     groupingMethod: 'Random',
     maxMembers: 4,
-    groupIDs: []
+    groupIDs: [],
+    courseId: "ACHEYO", // <-- Add this line
   ),
   Category(
     id: "4",
     name: 'Mobile Assignment 4',
     groupingMethod: 'Self-assigned',
     maxMembers: 2,
-    groupIDs: []
+    groupIDs: [],
+    courseId: "COMP03", // <-- Add this line
   ),
   Category(
     id: "5",
     name: 'Mobile Assignment 5',
     groupingMethod: 'Random',
     maxMembers: 6,
-    groupIDs: []
+    groupIDs: [],
+    courseId: "CURSO1", // <-- Add this line
   ),
 ].obs;
 

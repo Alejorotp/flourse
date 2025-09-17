@@ -1,20 +1,41 @@
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../../../data/data.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/data/datasources/i_category_source.dart';
+import 'package:get/get.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'dart:convert';
+
 
 
 class CategorySourceService implements ICategorySource {
   final http.Client httpClient;
 
+  AuthenticationController auth = Get.find();
+
   CategorySourceService({http.Client? client})
     : httpClient = client ?? http.Client();
 
   @override
-  List<Category> getAllCategories() {
+  Future<List<Category>> getAllCategories() async {
     logInfo("Fetching all categories");
-    return myCategories;
+     final responseQuery = await httpClient.get(
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category"),
+          headers: {
+            'Authorization': 'Bearer ${auth.accessToken}',
+          },
+        );
+
+    logInfo("Categories fetch response status: ${responseQuery.statusCode}");
+    logInfo("Categories fetch response body: ${responseQuery.body}");
+    final List<dynamic> responseData = responseQuery.body.isNotEmpty ? json.decode(responseQuery.body) : [];
+    return responseData.map((data) => Category(
+      id: data['id'].toString(),
+      name: data['name'],
+      groupingMethod: data['groupingMethod'],
+      maxMembers: data['maxMembers'],
+      courseId: data['courseId'],
+    )).toList();
   }
 
   @override
@@ -23,57 +44,114 @@ class CategorySourceService implements ICategorySource {
     required String groupingMethod,
     required int maxMembers,
     required String courseId,
-  }) {
+  }) async {
     logInfo("Creating category: $name");
     final newCategory = Category(
-      id: (myCategories.isNotEmpty ? (int.tryParse(myCategories.last.id.toString()) ?? 0) + 1 : 1).toString(),
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
+      courseId: courseId,
     );
-    myCategories.add(newCategory);
+
+    final responseCreateCategory = await httpClient.post(
+      Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/insert"),
+      headers: {
+        'Authorization': 'Bearer ${auth.accessToken}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'tableName': 'Category',
+        'records': [
+          {
+            'name': newCategory.name,
+            'groupingMethod': newCategory.groupingMethod,
+            'maxMembers': newCategory.maxMembers,
+          },
+        ],
+      }),
+    );
+
+    logInfo("Category creation response status: ${responseCreateCategory.statusCode}");
+    logInfo("Category creation response body: ${responseCreateCategory.body}");
+    
   }
 
+
   @override
-  void deleteCategory(String id) {
+  void deleteCategory(String id) async{
     logInfo("Deleting category with id: $id");
-    myCategories.removeWhere((category) => category.id == id);
+     final responseQuery = await httpClient.delete(
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category/delete}"),
+          
+          headers: {
+            'Authorization': 'Bearer ${auth.accessToken}',
+          },
+          body: jsonEncode({
+            'data':{
+            'tableName': 'Category',
+              'idColumn': '_id',
+              'id': id
+            }
+          }),
+        
+        );
+    logInfo("Category deletion response status: ${responseQuery.statusCode}");
+    logInfo("Category deletion response body: ${responseQuery.body}");
 
-    for (var course in myCourses) {
-      course.categoryIDs.remove(id);
-    }
+      final relatedCoursesResponse = await httpClient.delete(
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseCategory/delete"),
+          headers: {
+            'Authorization':'Bearer ${auth.accessToken}',
+          },
+          body: jsonEncode({
+            'data':{
+            'tableName': 'CourseCategory',
+              'columnName': 'categoryID',
+              'value': id
+            }
+          }),
+        );
+    logInfo("Related CourseCategory deletion response status: ${relatedCoursesResponse.statusCode}");
+    logInfo("Related CourseCategory deletion response body: ${relatedCoursesResponse.body}");
   }
 
 
   @override
-  void updateCategory({
+  void updateCategory ({
     required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
-  }) {
+  }) async {
     logInfo("Updating category with id: $id");
-    final index = myCategories.indexWhere((category) => category.id == id);
-    if (index != -1) {
-      final category = myCategories[index];
-      myCategories[index] = Category(
-        id: category.id,
-        name: newName ?? category.name,
-        groupingMethod: newGroupingMethod ?? category.groupingMethod,
-        maxMembers: newMaxMembers ?? category.maxMembers
-      );
-    }
+    
   }
 
   @override
-  Category? getCategoryById(String id) {
+  Future<Category?> getCategoryById(String id) async {
     logInfo("Fetching category by id: $id");
-    try {
-      return myCategories.firstWhere((category) => category.id == id);
-    } catch (e) {
+    final response = await httpClient.put(
+      Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category&_id=$id"),
+      headers: {
+        'Authorization' : 'Bearer ${auth.accessToken}',
+      },
+    );
+    logInfo("Fetch category by id response status: ${response.statusCode}");
+    logInfo("Fetch category by id response body: ${response.body}");
+
+      
+    final Map<String, dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : {};
+    if (responseData.isEmpty) {
       return null;
     }
-  }
 
+    return Category(
+      id: responseData['id'].toString(),
+      name: responseData['name'],
+      groupingMethod: responseData['groupingMethod'],
+      maxMembers: responseData['maxMembers'],
+      courseId: responseData['courseId'],
+    );
+    }
 
 }

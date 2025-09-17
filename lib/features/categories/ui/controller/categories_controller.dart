@@ -17,14 +17,7 @@ class CategoriesController extends GetxController{
     required int maxMembers,
     required Course course,
   }) {
-    final newCategory = Category(
-      id: (categories.length + 1).toString(),
-      name: name,
-      groupingMethod: groupingMethod,
-      maxMembers: maxMembers,
-    );
-    categories.add(newCategory);
-    course.categoryIDs.add(newCategory.id);
+    categoryation.createCategory(name: name, groupingMethod: groupingMethod, maxMembers: maxMembers, courseId: course.courseCode);
   }
 
   void deleteCategory(String id) {
@@ -49,6 +42,7 @@ class CategoriesController extends GetxController{
         name: newName ?? category.name,
         groupingMethod: newGroupingMethod ?? category.groupingMethod,
         maxMembers: newMaxMembers ?? category.maxMembers,
+        courseId: category.courseId,
       );
     }
   }
@@ -65,6 +59,7 @@ class CategoriesController extends GetxController{
         name: 'Desconocida',
         groupingMethod: 'N/A',
         maxMembers: 0,
+        courseId: 'N/A',
       ),
     );
     return category.name;

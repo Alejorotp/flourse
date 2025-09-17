@@ -109,7 +109,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     categoriesController.updateCategory(
-                      id: widget.category.id,
+                      id: widget.category.id!,
                       newName: _nameController.text,
                       newGroupingMethod: _groupingController.text,
                       newMaxMembers: int.tryParse(_maxMembersController.text),
@@ -125,7 +125,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
-                    categoriesController.deleteCategory(widget.category.id);
+                    categoriesController.deleteCategory(widget.category.id!);
                     Navigator.of(context).pop('deleted');
                   },
                   child: const Text("Eliminar"),

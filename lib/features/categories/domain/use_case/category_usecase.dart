@@ -6,7 +6,7 @@ class CategoryUseCase {
 
   CategoryUseCase(this._repository);
 
-  List<Category> getAllCategories() {
+  Future<List<Category>> getAllCategories() {
     return _repository.getAllCategories();
   }
 
@@ -42,7 +42,7 @@ class CategoryUseCase {
     );
   }
 
-  Category? getCategoryById(String id) {
+  Future<Category?> getCategoryById(String id) {
     return _repository.getCategoryById(id);
   }
 

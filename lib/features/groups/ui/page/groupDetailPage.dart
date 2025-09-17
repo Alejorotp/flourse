@@ -57,7 +57,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                 else
                   ...updatedGroup.memberIDs.map((memberId) {
                     return ListTile(
-                      title: Text(memberId.toString()), // Reemplazar con el nombre del miembro
+                      title: Text(memberId), // Reemplaza con el nombre del miembro
                       trailing: widget.canEdit
                           ? IconButton(
                               icon: const Icon(Icons.remove_circle,
