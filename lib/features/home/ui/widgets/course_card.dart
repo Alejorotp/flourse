@@ -11,9 +11,9 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isProfessor = courseInfo.userRole.toLowerCase() != 'miembro';
-    final borderColor = isProfessor ? Colors.red.shade200 : Colors.grey.shade300;
-    final backgroundColor = isProfessor ? Colors.red.shade50 : Colors.grey.shade200;
+    final isProfessor = courseInfo.userRole.toLowerCase() != 'estudiante';
+    final borderColor = isProfessor ? Colors.deepPurpleAccent : Colors.lightBlueAccent;
+    final backgroundColor = isProfessor ? const Color.fromARGB(25, 104, 58, 183) : const Color.fromARGB(25, 33, 149, 243);
 
     return GestureDetector(
       onTap: () {

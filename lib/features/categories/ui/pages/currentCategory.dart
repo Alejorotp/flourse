@@ -126,7 +126,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                   onPressed: () {
                     categoriesController.deleteCategory(widget.category.id!);
                     Navigator.of(context).pop('deleted');

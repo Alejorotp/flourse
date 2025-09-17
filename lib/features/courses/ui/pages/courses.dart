@@ -2,6 +2,7 @@ import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
+import 'package:flourse/features/courses/ui/widgets/RoleToggleButtons.dart';
 import 'package:get/get.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -13,161 +14,86 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> {
-  bool showFloatingButtons = false;
+  bool _isProfessor = true;
 
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
+    // Cargar cursos del usuario (solo una vez por build)
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     return Scaffold(
-      // --- AppBar de la página ---
       appBar: AppBar(
-        title: const Text('Flourse'),
+        title: const Text("Flourse"),
         centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.notifications_none),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.person_outline),
-          ),
-        ],
       ),
-      // --- Cuerpo de la página ---
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          if (showFloatingButtons) {
-            setState(() {
-              showFloatingButtons = false;
-            });
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // --- Encabezado "My Courses" ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'My Courses',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  showFloatingButtons
-                      ? Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.create, color: Colors.blue, size: 32),
-                              tooltip: 'Create Course',
-                              onPressed: () {
-                                setState(() => showFloatingButtons = false);
-                                Navigator.of(context).pushNamed('/create-course');
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.group_add, color: Colors.green, size: 32),
-                              tooltip: 'Join Course',
-                              onPressed: () {
-                                setState(() => showFloatingButtons = false);
-                                Navigator.of(context).pushNamed('/join-course');
-                              },
-                            ),
-                          ],
-                        )
-                      : IconButton(
-                          onPressed: () {
-                            setState(() {
-                              showFloatingButtons = true;
-                            });
-                          },
-                          icon: const Icon(Icons.add_circle_outline),
-                        ),
-                ],
-              ),
-              const Divider(color: Colors.grey),
-              const SizedBox(height: 12),
-
-              // --- Botones de "Sort" y "Filter" ---
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Lógica para ordenar
-                    },
-                    icon: const Icon(Icons.sort),
-                    label: const Text('Sort'),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      // Lógica para filtrar
-                    },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              Expanded(
-                child: Obx(
-                  () => FutureBuilder(
-                  future: courseCon.getCourseInfo(auth.currentUser.value.id ?? ""),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      ); // Muestra un spinner mientras carga
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      ); // Muestra un mensaje si hay un error
-                    } else if (snapshot.hasData) {
-                      final filteredCourses = snapshot.data!;
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 16.0,
-                              childAspectRatio: 0.9,
-                            ),
-                        itemCount: filteredCourses.length,
-                        itemBuilder: (context, index) {
-                          final course = filteredCourses[index];
-                          return CourseCard(courseInfo: course);
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('No hay cursos disponibles.'),
-                      ); // Si no hay datos
-                    }
-                  },
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'My Courses',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                )
-                
-              ),
-            ],
-          ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline, color: Colors.deepPurpleAccent, size: 32),
+                      tooltip: 'Create Course',
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/create-course');
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.group_add, color: Colors.blue, size: 32),
+                      tooltip: 'Join Course',
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/join-course');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(color: Colors.grey),
+            const SizedBox(height: 12),
+            // --- Botones de "Sort" y "Filter" ---
+            RoleToggleButtons(
+              isProfessor: _isProfessor,
+              onChanged: (val) => setState(() => _isProfessor = val),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Obx(() {
+                final allCourses = courseCon.userCourses;
+                final filteredCourses = allCourses.where((c) => _isProfessor ? c.userRole == 'Profesor' : c.userRole != 'Profesor').toList();
+                if (filteredCourses.isEmpty) {
+                  return const Center(
+                    child: Text('No hay cursos disponibles.'),
+                  );
+                }
+                return GridView.builder(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                    childAspectRatio: 0.9,
+                  ),
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return CourseCard(courseInfo: course);
+                  },
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

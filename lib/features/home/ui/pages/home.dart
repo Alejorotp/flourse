@@ -18,6 +18,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
+    // Cargar cursos del usuario (solo una vez por build)
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     return Scaffold(
       appBar: AppBar(
@@ -64,48 +66,28 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-
-            Obx(
-              () => FutureBuilder(
-                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? ""),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    ); // Muestra un spinner mientras carga
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    ); // Muestra un mensaje si hay un error
-                  } else if (snapshot.hasData) {
-                    final filteredCourses = snapshot.data!;
-                    if (filteredCourses.isEmpty) {
-                      return const Center(
-                        child: Text('No hay cursos disponibles.'),
-                      );
-                    }
-                    return SizedBox(
-                      height: 180,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filteredCourses.length,
-                        itemBuilder: (context, index) {
-                          final course = filteredCourses[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: CourseCard(courseInfo: course),
-                          );
-                        },
-                      ),
+            Obx(() {
+              final filteredCourses = courseCon.userCourses;
+              if (filteredCourses.isEmpty) {
+                return const Center(
+                  child: Text('There are no courses available.'),
+                );
+              }
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
                     );
-                  } else {
-                    return const Center(
-                      child: Text('No hay cursos disponibles.'),
-                    ); // Si no hay datos
-                  }
-                },
-              ),
-            ),
+                  },
+                ),
+              );
+            }),
 
             const SizedBox(height: 24),
 
@@ -114,7 +96,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Upcoming evaluations",
+                  "Pending co-evaluations",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 GestureDetector(
@@ -140,22 +122,6 @@ class HomePage extends StatelessWidget {
               }).toList(),
             ),
             const SizedBox(height: 24),
-
-            // Quick Access
-            const Text(
-              "Quick Access",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                _QuickAccessItem("Last Course"),
-                _QuickAccessItem("Last Course +1"),
-                _QuickAccessItem("Last Course +2"),
-                _QuickAccessItem(""),
-              ],
-            ),
           ],
         ),
       ),
@@ -207,28 +173,4 @@ Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
       ),
     ),
   );
-}
-
-class _QuickAccessItem extends StatelessWidget {
-  final String label;
-  const _QuickAccessItem(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(Icons.folder, color: Colors.grey),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 10)),
-      ],
-    );
-  }
 }

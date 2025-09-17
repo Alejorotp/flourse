@@ -3,7 +3,7 @@ import 'package:flourse/features/categories/ui/controller/categories_controller.
 import 'package:flourse/features/courses/domain/models/course.dart';
 import 'package:get/get.dart';
 
-class CreateCategoryPage extends StatelessWidget {
+class CreateCategoryPage extends StatefulWidget {
   static const String id = '/create-category';
   final Course course;
   final bool canEdit;
@@ -15,10 +15,21 @@ class CreateCategoryPage extends StatelessWidget {
   });
 
   @override
+  State<CreateCategoryPage> createState() => _CreateCategoryPageState();
+}
+
+class _CreateCategoryPageState extends State<CreateCategoryPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _maxMembersController = TextEditingController();
+
+  String? _selectedGrouping;
+  final List<String> _groupingOptions = [
+    "Auto asignado",
+    "Libre elección",
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController _nameController = TextEditingController();
-    final TextEditingController _groupingController = TextEditingController();
-    final TextEditingController _maxMembersController = TextEditingController();
     CategoriesController categoriesController = Get.find();
 
     return Scaffold(
@@ -50,8 +61,19 @@ class CreateCategoryPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _groupingController,
+            DropdownButtonFormField<String>(
+              initialValue: _selectedGrouping,
+              items: _groupingOptions
+                  .map((option) => DropdownMenuItem(
+                        value: option,
+                        child: Text(option),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedGrouping = value;
+                });
+              },
               decoration: const InputDecoration(
                 labelText: "Método de agrupación",
                 border: OutlineInputBorder(),
@@ -67,15 +89,16 @@ class CreateCategoryPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            if (canEdit)
+            if (widget.canEdit)
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     final name = _nameController.text.trim();
-                    final grouping = _groupingController.text.trim();
+                    final grouping = _selectedGrouping ?? "";
                     final maxMembers =
                         int.tryParse(_maxMembersController.text.trim()) ?? 0;
+
                     if (name.isNotEmpty &&
                         grouping.isNotEmpty &&
                         maxMembers > 0) {
@@ -83,9 +106,9 @@ class CreateCategoryPage extends StatelessWidget {
                         name: name,
                         groupingMethod: grouping,
                         maxMembers: maxMembers,
-                        course: course,
+                        course: widget.course,
                       );
-                      Navigator.of(context).pop(); // Return true after creating
+                      Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

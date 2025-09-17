@@ -2,7 +2,6 @@ import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/home/ui/widgets/course_card.dart';
 
 class JoinCoursePage extends StatelessWidget {
   static const String id = '/join-course';
@@ -43,6 +42,11 @@ class JoinCoursePage extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 8),
+            const Text(
+              "The course code is provided by the professor.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -56,6 +60,9 @@ class JoinCoursePage extends StatelessWidget {
                       userId: userId,
                     );
                     if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Te has unido al curso exitosamente.')),
+                      );
                       Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,45 +83,6 @@ class JoinCoursePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Expanded(
-              child: Obx(
-                () => FutureBuilder(
-                  future: courseCon.getAllCourses(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else if (snapshot.hasData) {
-                      final courses = snapshot.data!;
-                      if (courses.isEmpty) {
-                        return const Center(
-                          child: Text('No hay cursos disponibles.'),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: courses.length,
-                        itemBuilder: (context, index) {
-                          final course = courses[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: CourseCard(courseInfo: course),
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('No hay cursos disponibles.'),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
           ],
         ),
       ),

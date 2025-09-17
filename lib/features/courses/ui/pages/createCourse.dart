@@ -46,15 +46,28 @@ class CreateCoursePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final name = _nameController.text.trim();
                   if (name.isNotEmpty) {
                     final userId = auth.currentUser.value.id?.toString() ?? '';
-                    courseCon.createCourse(
+                    final created = await courseCon.createCourse(
                       title: name,
                       professorID: userId,
                     );
-                    Navigator.of(context).pop();
+                    if (created) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Curso creado exitosamente'),
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('No puedes ser profesor de más de 3 cursos'),
+                        ),
+                      );
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

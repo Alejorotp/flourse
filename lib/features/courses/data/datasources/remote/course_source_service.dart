@@ -35,7 +35,7 @@ class CourseSourceService implements ICourseSource {
         .map((course) async {
           final userRole = course.professorID == userId
               ? "Profesor"
-              : "Miembro";
+              : "Estudiante";
           final professorName = getUserNameById(course.professorID);
           final memberNamesFutures = course.memberIDs
               .map((id) => getUserNameById(id))
