@@ -5,17 +5,17 @@ abstract class IGroupSource {
 
   List<Group> getAllGroups();
 
-  Group? getGroupById(int id);
+  Group? getGroupById(String id);
 
   void createGroup({
-    required int id,
+    required String id,
     required int maxMembers
   });
 
-  bool joinGroup(int groupId, int userId);
+  bool joinGroup(String groupId, String userId);
 
-  bool removeMemberFromGroup(int groupId, int userId);
+  bool removeMemberFromGroup(String groupId, String userId);
 
-  void deleteGroup(int id);
+  void deleteGroup(String id);
 
 }

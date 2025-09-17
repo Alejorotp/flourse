@@ -1,9 +1,9 @@
 class Category {
-  final int id;
+  final String id;
   final String name;
   final String groupingMethod; // "Random" or "Self-assigned"
   final int maxMembers;
-  List<int> groupIDs = [];
+  List<String> groupIDs = [];
 
   Category({
     required this.id,

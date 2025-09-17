@@ -12,7 +12,7 @@ class CoursesController extends GetxController {
 
   var courses = <Course>[].obs;
 
-  Future<List<UserCourseInfo>> getCourseInfo(int userId) async {
+  Future<List<UserCourseInfo>> getCourseInfo(String userId) async {
     coursation.getCourseInfo(userId)
       .then((value) => logInfo("Courses fetched: ${value.length}"))
       .catchError((error) => logError("Error fetching courses: $error"));
@@ -27,13 +27,13 @@ class CoursesController extends GetxController {
     
   }
 
-  Future<void> createCourse({required String title, required int professorID}) async {
+  Future<void> createCourse({required String title, required String professorID}) async {
     await coursation.createCourse(title: title, professorID: professorID);
     logInfo("Course created: $title");
     await getAllCourses();
   }
 
-  Future<bool> joinCourse({required String courseCode, required int userId}) async {
+  Future<bool> joinCourse({required String courseCode, required String userId}) async {
     final result = await coursation.joinCourse(courseCode: courseCode, userId: userId);
     logInfo("Joined course with code: $courseCode");
     await getAllCourses();

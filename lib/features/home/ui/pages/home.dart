@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
 
             Obx(
               () => FutureBuilder(
-                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? 0),
+                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? ""),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(

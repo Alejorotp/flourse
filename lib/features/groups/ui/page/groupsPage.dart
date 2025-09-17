@@ -111,7 +111,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                     onPressed: () {
                                       groupsController.joinGroup(
                                         group.id,
-                                        currentUserId!,
+                                        currentUserId ?? "",
                                       );
                                     },
                                     child: const Text('Unirse'),

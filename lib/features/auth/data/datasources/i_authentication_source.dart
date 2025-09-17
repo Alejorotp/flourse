@@ -1,4 +1,4 @@
-import '../../../domain/models/authentication_user.dart';
+import '../../domain/models/authentication_user.dart';
 
 abstract class IAuthenticationSource {
   Future<AuthenticationUser?> login(AuthenticationUser user);

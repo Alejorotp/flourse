@@ -1,7 +1,7 @@
 class Group {
-  final int id;
+  final String id;
   final int maxMembers;
-  List<int> memberIDs = [];
+  List<String> memberIDs = [];
 
   Group({
     required this.id,

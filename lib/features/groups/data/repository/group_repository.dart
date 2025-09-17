@@ -15,13 +15,13 @@ class GroupRepository implements IGroupRepository {
   }
 
   @override
-  Group? getGroupById(int id) {
+  Group? getGroupById(String id) {
     return groupSource.getGroupById(id);
   }
 
   @override
   void createGroup({
-    required int id,
+    required String id,
     required int maxMembers
   }) {
     groupSource.createGroup(
@@ -31,17 +31,17 @@ class GroupRepository implements IGroupRepository {
   }
 
   @override
-  bool joinGroup(int groupId, int userId) {
+  bool joinGroup(String groupId, String userId) {
     return groupSource.joinGroup(groupId, userId);
   }
 
   @override
-  bool removeMemberFromGroup(int groupId, int userId) {
+  bool removeMemberFromGroup(String groupId, String userId) {
     return groupSource.removeMemberFromGroup(groupId, userId);
   }
 
   @override
-  void deleteGroup(int id) {
+  void deleteGroup(String id) {
     groupSource.deleteGroup(id);
   }
 

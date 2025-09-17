@@ -13,12 +13,12 @@ class GroupUseCase {
     return _repository.getAllGroups();
   }
 
-  Group? getGroupById(int id) {
+  Group? getGroupById(String id) {
     return _repository.getGroupById(id);
   }
 
   void createGroup({
-    required int id,
+    required String id,
     required int maxMembers
   }) {
     _repository.createGroup(
@@ -27,15 +27,15 @@ class GroupUseCase {
     );
   }
 
-  bool joinGroup(int groupId, int userId) {
+  bool joinGroup(String groupId, String userId) {
     return _repository.joinGroup(groupId, userId);
   }
 
-  bool removeMemberFromGroup(int groupId, int userId) {
+  bool removeMemberFromGroup(String groupId, String userId) {
     return _repository.removeMemberFromGroup(groupId, userId);
   }
 
-  void deleteGroup(int id) {
+  void deleteGroup(String id) {
     _repository.deleteGroup(id);
   }
   

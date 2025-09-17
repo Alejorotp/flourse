@@ -1,4 +1,4 @@
-import 'package:flourse/features/auth/data/datasources/local/authentication_source_service.dart';
+import 'package:flourse/features/auth/data/datasources/remote/authentication_source_service.dart';
 import 'package:flourse/features/auth/ui/pages/login.dart';
 import 'package:flourse/features/courses/ui/pages/joinCourse.dart';
 import 'package:flourse/features/home/ui/pages/home.dart';
@@ -13,15 +13,15 @@ import 'package:loggy/loggy.dart';
 
 import 'central.dart';
 
-import 'features/auth/data/datasources/local/i_authentication_source.dart';
+import 'features/auth/data/datasources/i_authentication_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/domain/repositories/i_auth_repository.dart';
 import 'features/auth/domain/use_case/authentication_usecase.dart';
 import 'features/auth/ui/controller/auth_controller.dart';
 
 
-import 'features/courses/data/datasources/local/i_course_source.dart';
-import 'features/courses/data/datasources/local/course_source_service.dart';
+import 'features/courses/data/datasources/i_course_source.dart';
+import 'features/courses/data/datasources/remote/course_source_service.dart';
 import 'features/courses/data/repository/course_repository.dart';
 import 'features/courses/domain/repositories/i_course_repository.dart';
 import 'features/courses/domain/use_case/course_usecase.dart';
@@ -29,7 +29,7 @@ import 'features/courses/ui/controller/courses_controller.dart';
 
 import'features/groups/ui/controller/group_controller.dart';
 import 'features/groups/data/datasources/i_group_source.dart';
-import 'features/groups/data/datasources/group_source_service.dart';
+import 'features/groups/data/datasources/remote/group_source_service.dart';
 import 'features/groups/data/repository/group_repository.dart';
 import 'features/groups/domain/repositories/i_group_repository.dart';
 import 'features/groups/domain/use_case/group_usecase.dart';
@@ -37,7 +37,7 @@ import 'features/groups/domain/use_case/group_usecase.dart';
 
 import'features/categories/ui/controller/categories_controller.dart';
 import 'features/categories/data/datasources/i_category_source.dart';
-import 'features/categories/data/datasources/category_source_service.dart';
+import 'features/categories/data/datasources/remote/category_source_service.dart';
 import 'features/categories/data/repositories/category_repository.dart';
 import 'features/categories/domain/repositories/i_category_repository.dart';
 import 'features/categories/domain/use_case/category_usecase.dart';

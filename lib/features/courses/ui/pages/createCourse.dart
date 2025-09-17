@@ -52,7 +52,7 @@ class CreateCoursePage extends StatelessWidget {
                     final userId = auth.currentUser.value.id?.toString() ?? '';
                     courseCon.createCourse(
                       title: name,
-                      professorID: int.parse(userId),
+                      professorID: userId,
                     );
                     Navigator.of(context).pop();
                   } else {

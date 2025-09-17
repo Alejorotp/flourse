@@ -50,7 +50,7 @@ class JoinCoursePage extends StatelessWidget {
                 onPressed: () async {
                   final code = _codeController.text.trim();
                   if (code.isNotEmpty) {
-                    final userId = auth.currentUser.value.id ?? 0;
+                    final userId = auth.currentUser.value.id ?? "0";
                     final success = await courseCon.joinCourse(
                       courseCode: code,
                       userId: userId,

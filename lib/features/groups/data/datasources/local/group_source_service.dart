@@ -3,7 +3,7 @@ import 'package:flourse/features/groups/domain/models/groups.dart';
 
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../../data/data.dart';
+import '../../../../../../../data/data.dart';
 
 
 class GroupSourceService implements IGroupSource {
@@ -20,7 +20,7 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Group? getGroupById(int id) {
+  Group? getGroupById(String id) {
     logInfo("Fetching group by id: $id");
     try {
       return myGroups.firstWhere((group) => group.id == id);
@@ -31,7 +31,7 @@ class GroupSourceService implements IGroupSource {
 
   @override
   void createGroup({
-    required int id,
+    required String id,
     required int maxMembers
   }) {
     logInfo("Creating group with id: $id and maxMembers: $maxMembers");
@@ -43,7 +43,7 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  bool joinGroup(int groupId, int userId) {
+  bool joinGroup(String groupId, String userId) {
     final group = getGroupById(groupId);
     if (group == null) return false;
     if (group.memberIDs.contains(userId)) return false;
@@ -55,7 +55,7 @@ class GroupSourceService implements IGroupSource {
 
   // Eliminar miembro de un grupo
   @override
-  bool removeMemberFromGroup(int groupId, int userId) {
+  bool removeMemberFromGroup(String groupId, String userId) {
     final group = getGroupById(groupId);
     if (group == null) return false;
     if (!group.memberIDs.contains(userId)) return false;
@@ -65,7 +65,7 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  void deleteGroup(int id) {
+  void deleteGroup(String id) {
     logInfo("Deleting group with id: $id");
     myGroups.removeWhere((group) => group.id == id);
 

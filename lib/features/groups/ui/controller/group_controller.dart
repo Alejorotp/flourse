@@ -21,14 +21,14 @@ class GroupsController extends GetxController{
   }) {
     try {
   final newGroup = Group(
-    id: groups.length + 1,
+    id: (groups.length + 1).toString(),
     maxMembers: maxMembers
   );
   myGroups.add(newGroup);
   categoryId.groupIDs.add(newGroup.id);
-  print("Group created: $newGroup");
+  logInfo("Group created successfully: $newGroup");
 } on Exception catch (e) {
-  print("Error creating group: $e");
+  logError("Error creating group: $e");
 }
   }
 
@@ -45,16 +45,16 @@ class GroupsController extends GetxController{
   }
 
     // Unirse a un grupo
-  bool joinGroup(int groupId, int userId) {
+  bool joinGroup(String groupId, String userId) {
     return groupation.joinGroup(groupId, userId);
   }
 
   // Eliminar miembro de un grupo
-  bool removeMemberFromGroup(int groupId, int userId) {
+  bool removeMemberFromGroup(String groupId, String userId) {
     return groupation.removeMemberFromGroup(groupId, userId);
   }
 
-  Group? getGroupById(int id) {
+  Group? getGroupById(String id) {
     try {
       return myGroups.firstWhere((group) => group.id == id);
     } catch (e) {

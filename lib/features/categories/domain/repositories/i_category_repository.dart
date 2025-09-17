@@ -8,17 +8,17 @@ abstract class ICategoryRepository {
     required String name,
     required String groupingMethod,
     required int maxMembers,
-    required int courseId,
+    required String courseId,
   });
 
-  void deleteCategory(int id);
+  void deleteCategory(String id);
 
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
   });
 
-  Category? getCategoryById(int id);
+  Category? getCategoryById(String id);
 }

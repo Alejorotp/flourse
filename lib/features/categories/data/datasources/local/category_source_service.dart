@@ -1,6 +1,6 @@
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../../data/data.dart';
+import '../../../../../../../data/data.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/data/datasources/i_category_source.dart';
 
@@ -22,19 +22,20 @@ class CategorySourceService implements ICategorySource {
     required String name,
     required String groupingMethod,
     required int maxMembers,
-    required int courseId,
+    required String courseId,
   }) {
     logInfo("Creating category: $name");
     final newCategory = Category(
-      id: myCategories.isNotEmpty ? myCategories.last.id + 1 : 1,
+      id: (myCategories.isNotEmpty ? (int.tryParse(myCategories.last.id.toString()) ?? 0) + 1 : 1).toString(),
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
     );
     myCategories.add(newCategory);
   }
+
   @override
-  void deleteCategory(int id) {
+  void deleteCategory(String id) {
     logInfo("Deleting category with id: $id");
     myCategories.removeWhere((category) => category.id == id);
 
@@ -46,7 +47,7 @@ class CategorySourceService implements ICategorySource {
 
   @override
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
@@ -63,8 +64,9 @@ class CategorySourceService implements ICategorySource {
       );
     }
   }
+
   @override
-  Category? getCategoryById(int id) {
+  Category? getCategoryById(String id) {
     logInfo("Fetching category by id: $id");
     try {
       return myCategories.firstWhere((category) => category.id == id);

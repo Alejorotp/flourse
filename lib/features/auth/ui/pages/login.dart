@@ -66,13 +66,14 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: 20),
+              _textFieldEmail(),
+              SizedBox(height: 8),
+              _textFieldPassword(),
+              SizedBox(height: 8),
               if (!auth.isLogin.value) ...[
                 _textFieldUsername(),
                 SizedBox(height: 8),
               ],
-              _textFieldEmail(),
-              SizedBox(height: 8),
-              _textFieldPassword(),
               SizedBox(height: 25),
               _buttonLogReg(auth),
             ],
@@ -161,6 +162,7 @@ class _LoginPageState extends State<LoginPage> {
             // Lógica de registro sin ventana emergente
             try {
               await auth.signUp(email, password, userName);
+              auth.isLogin.value = true; // Cambiar a modo login después del registro
             } catch (err) {
               Get.snackbar(
                 "Register Error",

@@ -1,6 +1,6 @@
 import '../../domain/models/authentication_user.dart';
 import '../../domain/repositories/i_auth_repository.dart';
-import '../datasources/local/i_authentication_source.dart';
+import '../datasources/i_authentication_source.dart';
 
 class AuthRepository implements IAuthRepository {
   late IAuthenticationSource authenticationSource;

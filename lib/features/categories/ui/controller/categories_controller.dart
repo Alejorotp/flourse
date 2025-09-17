@@ -18,7 +18,7 @@ class CategoriesController extends GetxController{
     required Course course,
   }) {
     final newCategory = Category(
-      id: categories.length + 1,
+      id: (categories.length + 1).toString(),
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
@@ -27,7 +27,7 @@ class CategoriesController extends GetxController{
     course.categoryIDs.add(newCategory.id);
   }
 
-  void deleteCategory(int id) {
+  void deleteCategory(String id) {
     categories.removeWhere((category) => category.id == id);
 
     for (var course in myCourses) {
@@ -36,7 +36,7 @@ class CategoriesController extends GetxController{
   }
 
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
@@ -57,11 +57,11 @@ class CategoriesController extends GetxController{
     return categories;
   }
 
-  String getCategoryNameById(int id) {
+  String getCategoryNameById(String id) {
     final category = categories.firstWhere(
       (category) => category.id == id,
       orElse: () => Category(
-        id: 0,
+        id: '0',
         name: 'Desconocida',
         groupingMethod: 'N/A',
         maxMembers: 0,
@@ -70,9 +70,9 @@ class CategoriesController extends GetxController{
     return category.name;
   }
 
-  Category? getCategoryById(int id) {
+  Category? getCategoryById(String id) {
     try {
-      return categories.firstWhere((category) => category.id == id);
+      return categories.firstWhere((category) => category.id.toString() == id);
     } catch (e) {
       return null;
     }
