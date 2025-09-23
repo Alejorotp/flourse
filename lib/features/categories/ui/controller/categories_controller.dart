@@ -1,15 +1,21 @@
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/courses/domain/models/course.dart';
-import 'package:flourse/data/data.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/categories/domain/use_case/category_usecase.dart';
+import 'package:loggy/loggy.dart';
 
 
 class CategoriesController extends GetxController{
   final CategoryUseCase categoryation;
   CategoriesController(this.categoryation);
 
-  final List<Category> categories = myCategories;
+  final RxList<Category> categories = <Category>[].obs;
+
+  Future<void> fetchCategories() async {
+    final fetchedCategories = await categoryation.getAllCategories();
+    categories.assignAll(fetchedCategories);
+    logInfo("Fetched categories in Controller: ${fetchedCategories.length}");
+  }
 
   void createCategory({
     required String name,
@@ -22,10 +28,7 @@ class CategoriesController extends GetxController{
 
   void deleteCategory(String id) {
     categories.removeWhere((category) => category.id == id);
-
-    for (var course in myCourses) {
-      course.categoryIDs.remove(id);
-    }
+    categoryation.deleteCategory(id);
   }
 
   void updateCategory({

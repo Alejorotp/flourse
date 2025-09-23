@@ -30,14 +30,14 @@ class CourseSourceService implements ICourseSource {
     final courses = myCourses
         .where(
           (course) =>
-              course.memberIDs.contains(userId) || course.professorID == userId,
+              (course.memberIDs?.contains(userId) ?? false) || course.professorID == userId,
         )
         .map((course) async {
           final userRole = course.professorID == userId
               ? "Profesor"
               : "Miembro";
           final professorName = getUserNameById(course.professorID);
-          final memberNamesFutures = course.memberIDs
+          final memberNamesFutures = (course.memberIDs ?? [])
               .map((id) => getUserNameById(id))
               .toList();
           final memberNames = await Future.wait(memberNamesFutures);
@@ -58,7 +58,7 @@ class CourseSourceService implements ICourseSource {
     logInfo("Fetching all courses");
     final courses = myCourses.map((course) async {
           final professorName = getUserNameById(course.professorID);
-          final memberNamesFutures = course.memberIDs
+          final memberNamesFutures = course.memberIDs!
               .map((id) => getUserNameById(id))
               .toList();
           final memberNames = await Future.wait(memberNamesFutures);
@@ -116,8 +116,8 @@ class CourseSourceService implements ICourseSource {
     }
     final course = myCourses[index];
 
-    if (!course.memberIDs.contains(userId) && course.professorID != userId) {
-      course.memberIDs.add(userId);
+    if (!(course.memberIDs?.contains(userId) ?? false) && course.professorID != userId) {
+      course.memberIDs?.add(userId);
       logInfo("User with ID: $userId successfully joined the course");
       return true;
     } else {

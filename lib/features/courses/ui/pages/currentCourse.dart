@@ -10,9 +10,10 @@ import 'package:flourse/features/courses/ui/widgets/course_code_box.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/widgets/Navitem.dart';
+import 'package:loggy/loggy.dart';
 
 class CurrentCoursePage extends StatefulWidget {
-  static const String id = '/course-detail';
+  static const String courseID = '/course-detail';
   final UserCourseInfo courseInfo;
 
   const CurrentCoursePage({super.key, required this.courseInfo});
@@ -37,6 +38,17 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     AuthenticationController auth = Get.find();
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
+    categoriesController.fetchCategories();
+    logInfo("Categories loaded: ${categoriesController.categories.length}");
+    categoriesController.categories.forEach((cat) {
+      logInfo("Category: ${cat.name}, CourseID: ${cat.courseId}");
+    });
+    final courseCategories = categoriesController.categories.where((cat) => cat.courseId == courseInfo.course.courseCode).toList();
+    logInfo("Categories for course ${courseInfo.course.courseCode}: ${courseCategories.length}");
+    // Get the category IDs for this course
+    final courseCategoryIDs = courseCategories.map((cat) => cat.id!).toList();
+    logInfo("Categories for course ${courseInfo.course.courseCode}: $courseCategories");
+    logInfo("Categories inside courseInfo: $courseCategoryIDs");
 
     return Scaffold(
       appBar: AppBar(title: Text(courseInfo.course.title), centerTitle: true),
@@ -90,8 +102,9 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             child: const Text('+ crear categoría'),
                           ),
                         ),
-                      ...courseInfo.course.categoryIDs.map((catId) {
+                      ...courseCategoryIDs.map((catId) {
                         final cat = categoriesController.getCategoryById(catId);
+                        logError("Category fetched for ID $catId: $cat");
                         if (cat == null) return const SizedBox.shrink();
                         return CategoryCard(
                           category: cat,

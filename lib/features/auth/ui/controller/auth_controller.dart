@@ -11,12 +11,12 @@ class AuthenticationController extends GetxController {
   final AuthenticationUseCase authentication;
   final logged = false.obs;
   var isLogin = true.obs;
-  Rx<AuthenticationUser> currentUser = AuthenticationUser(email: '', name: '', password: '').obs;
+  Rx<AuthenticationUser> currentUser = AuthenticationUser(id: '', email: '', name: '', password: '').obs;
   var accessToken = ''.obs;
   var refreshToken = ''.obs;
   bool rememberMe = true;
 
-  AuthenticationUser lastUser = AuthenticationUser(email: '', name: '', password: '');
+  AuthenticationUser lastUser = AuthenticationUser(id: '', email: '', name: '', password: '');
   SharedPreferences? prefs;
 
   AuthenticationController(this.authentication);

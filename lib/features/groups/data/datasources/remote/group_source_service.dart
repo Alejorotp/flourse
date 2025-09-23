@@ -27,7 +27,7 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
+          'Authorization': 'Bearer $_authToken',
         },
       );
       if (response.statusCode == 200) {

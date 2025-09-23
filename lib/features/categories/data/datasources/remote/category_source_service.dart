@@ -30,11 +30,11 @@ class CategorySourceService implements ICategorySource {
     logInfo("Categories fetch response body: ${responseQuery.body}");
     final List<dynamic> responseData = responseQuery.body.isNotEmpty ? json.decode(responseQuery.body) : [];
     return responseData.map((data) => Category(
-      id: data['id'].toString(),
+      id: data['_id'].toString(),
       name: data['name'],
       groupingMethod: data['groupingMethod'],
       maxMembers: data['maxMembers'],
-      courseId: data['courseId'],
+      courseId: data['courseID'],
     )).toList();
   }
 
@@ -66,6 +66,7 @@ class CategorySourceService implements ICategorySource {
             'name': newCategory.name,
             'groupingMethod': newCategory.groupingMethod,
             'maxMembers': newCategory.maxMembers,
+            'courseID': newCategory.courseId,
           },
         ],
       }),
@@ -90,7 +91,7 @@ class CategorySourceService implements ICategorySource {
             'data':{
             'tableName': 'Category',
               'idColumn': '_id',
-              'id': id
+              'idValue': id
             }
           }),
         
@@ -106,8 +107,8 @@ class CategorySourceService implements ICategorySource {
           body: jsonEncode({
             'data':{
             'tableName': 'CourseCategory',
-              'columnName': 'categoryID',
-              'value': id
+              'idColumn': 'categoryID',
+              'idValue': id
             }
           }),
         );
@@ -130,8 +131,8 @@ class CategorySourceService implements ICategorySource {
   @override
   Future<Category?> getCategoryById(String id) async {
     logInfo("Fetching category by id: $id");
-    final response = await httpClient.put(
-      Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category&_id=$id"),
+    final response = await httpClient.get(
+      Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category&courseID=$id"),
       headers: {
         'Authorization' : 'Bearer ${auth.accessToken}',
       },
@@ -150,7 +151,7 @@ class CategorySourceService implements ICategorySource {
       name: responseData['name'],
       groupingMethod: responseData['groupingMethod'],
       maxMembers: responseData['maxMembers'],
-      courseId: responseData['courseId'],
+      courseId: responseData['courseID'],
     );
     }
 

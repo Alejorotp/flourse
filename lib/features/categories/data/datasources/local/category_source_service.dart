@@ -41,7 +41,7 @@ class CategorySourceService implements ICategorySource {
     myCategories.removeWhere((category) => category.id == id);
 
     for (var course in myCourses) {
-      course.categoryIDs.remove(id);
+      course.categoryIDs!.remove(id);
     }
   }
 
