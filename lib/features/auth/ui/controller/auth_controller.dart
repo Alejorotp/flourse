@@ -87,9 +87,6 @@ class AuthenticationController extends GetxController {
       accessToken.value = rta.elementAt(1) ?? '';
       refreshToken.value = rta.elementAt(2) ?? '';
 
-      // 🔹 Set rememberMe here or from the UI
-      rememberMe = true;
-
       if (rememberMe) {
         logInfo('AuthenticationController: Remember me is enabled');
         lastUser = rta.first;
@@ -137,5 +134,10 @@ class AuthenticationController extends GetxController {
     await authentication.logOut();
     logged.value = false;
     rememberMe = false;
+    await prefs!.setBool('rememberMe', false);
+    await prefs!.remove('lastUserEmail');
+    await prefs!.remove('lastUserPassword');
+    await prefs!.remove('accessToken');
+    await prefs!.remove('refreshToken');
   }
 }

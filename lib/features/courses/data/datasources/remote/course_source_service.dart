@@ -52,67 +52,87 @@ class CourseSourceService implements ICourseSource {
   Future<List<UserCourseInfo>> getCourseInfo(String? userId) async {
     logInfo("Fetching course info for all courses related to userId: $userId");
 
+    // 1. Obtener los IDs de los cursos a los que pertenece el usuario
     final responseCourseMember = await httpClient.get(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&userID=$userId"),
-        headers: {
-          'Authorization': 'Bearer $_authToken',
-        },
-      );
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&userID=$userId"),
+      headers: {'Authorization': 'Bearer $_authToken'},
+    );
 
-    if (responseCourseMember.statusCode == 200) {
-      final List<dynamic> jsonList = json.decode(responseCourseMember.body);
-      final memberCourseIds = jsonList.map((json) => json['courseID'] as String).toList();
-      logInfo("User is member of courses: $memberCourseIds");
+    if (responseCourseMember.statusCode != 200) {
+      logError("Failed to fetch user's courses: ${responseCourseMember.statusCode}");
+      return [];
+    }
 
-    if (memberCourseIds.isEmpty) {
+    final List<dynamic> userMemberships = json.decode(responseCourseMember.body);
+    if (userMemberships.isEmpty) {
       logInfo("User is not a member of any course.");
       return [];
     }
+    final memberCourseIds = userMemberships.map((json) => json['courseID'] as String).toSet().toList(); // Usar toSet() para evitar duplicados
 
-    // I need to standarize it mapping it, to not get only one course, so map it to use multiple api calls, each giving you a response
-    final responseCourses = await Future.wait(memberCourseIds.map((courseId) {
+    // 2. Obtener los detalles de todos esos cursos en paralelo
+    final coursesResponses = await Future.wait(memberCourseIds.map((courseId) {
       return httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&_id=$courseId"),
-        headers: {
-          'Authorization': 'Bearer $_authToken',
-        },
+        headers: {'Authorization': 'Bearer $_authToken'},
       );
     }));
-      logInfo("Fetched course details for user: ${responseCourses.length} responses");
-      if (responseCourses.isEmpty) {
-        logInfo("No course details found for the user's courses.");
-        return [];
+
+    final List<dynamic> allCoursesJson = coursesResponses
+        .where((response) => response.statusCode == 200)
+        .map((response) => json.decode(response.body))
+        .expand((jsonList) => jsonList) // Aplana la lista de listas
+        .toList();
+
+    if (allCoursesJson.isEmpty) {
+      logInfo("No course details found for the user's courses.");
+      return [];
+    }
+
+    // 3. (OPTIMIZACIÓN) Obtener TODOS los miembros de TODOS los cursos relevantes en paralelo
+    final allMembersResponses = await Future.wait(memberCourseIds.map((courseId) {
+      return httpClient.get(
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&courseID=$courseId"),
+        headers: {'Authorization': 'Bearer $_authToken'},
+      );
+    }));
+
+    // 4. (OPTIMIZACIÓN) Procesar y agrupar los miembros por ID de curso en un mapa
+    final Map<String, List<String>> membersByCourseId = {};
+    for (var response in allMembersResponses) {
+      if (response.statusCode == 200) {
+        final List<dynamic> members = json.decode(response.body);
+        for (var member in members) {
+          final courseId = member['courseID'] as String;
+          final memberUserId = member['userID'] as String;
+          // Si el curso no está en el mapa, lo crea, y luego añade el miembro
+          membersByCourseId.putIfAbsent(courseId, () => []).add(memberUserId);
+        }
       }
-    if (responseCourses.isNotEmpty) {
-      // Flatten all course responses into a single list of course JSONs
-      final List<dynamic> allCoursesJson = responseCourses
-          .map((response) => json.decode(response.body))
-          .expand((jsonList) => jsonList)
-          .toList();
-
-      final coursesFutures = allCoursesJson.map<Future<UserCourseInfo>>((json) async {
-        final course = Course.fromJson(json);
-        final userRole = course.professorID == userId ? "Profesor" : "Estudiante";
-        final professorName = await getUserNameById(course.professorID);
-        final memberNamesFutures = (course.memberIDs ?? []).map((id) => getUserNameById(id)).toList();
-        final memberNames = await Future.wait(memberNamesFutures);
-
-        return UserCourseInfo(
-          course: course,
-          userRole: userRole,
-          professorName: professorName,
-          memberNames: memberNames,
-        );
-      }).toList();
-      return Future.wait(coursesFutures);
-    } else {
-      logError("Failed to fetch courses: No responses received");
-      return [];
     }
-    } else {
-      logError("Failed to fetch course members: ${responseCourseMember.statusCode}, body: ${responseCourseMember.body}");
-      return [];
-    }
+
+    // 5. Construir el resultado final usando los datos ya cargados
+    final coursesFutures = allCoursesJson.map<Future<UserCourseInfo>>((courseJson) async {
+      final course = Course.fromJson(courseJson);
+      final userRole = course.professorID == userId ? "Profesor" : "Estudiante";
+      final professorName = await getUserNameById(course.professorID);
+
+      // Búsqueda instantánea en el mapa, ¡sin llamadas a la API aquí!
+      final memberIDs = membersByCourseId[course.id] ?? [];
+      logInfo("Course ID: ${course.id}, Member IDs: $memberIDs");
+
+      final memberNames = await Future.wait(memberIDs.map((id) => getUserNameById(id)));
+      logInfo("Member names for course ${course.title}: $memberNames");
+
+      return UserCourseInfo(
+        course: course,
+        userRole: userRole,
+        professorName: professorName,
+        memberNames: memberNames,
+      );
+    }).toList();
+
+    return Future.wait(coursesFutures);
   }
 
   @override

@@ -1,4 +1,5 @@
 class Course {
+  final String id;
   final String title;
   final String professorID;
   final String courseCode;
@@ -7,6 +8,7 @@ class Course {
   final String? registerCode; // Código de registro opcional
 
   Course({
+    this.id = '',
     required this.title,
     required this.professorID,
     required this.courseCode,

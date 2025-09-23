@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/auth_controller.dart';
 import 'package:loggy/loggy.dart';
-import 'package:flourse/data/data.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = '/login';
@@ -109,14 +108,16 @@ class _LoginPageState extends State<LoginPage> {
   // Nuevo método para manejar la lógica de login con o sin "mantener sesión"
   void _onLoginAction(AuthenticationController auth, bool stayLoggedIn) async {
     try {
-      await auth.login(email, password);
       if (stayLoggedIn) {
         // --- AQUI VA LA ACCION QUE QUIERES CONFIGURAR ---
         // Ejemplo: Guardar un token o una preferencia en el dispositivo
-        Loggy("El usuario eligió mantener la sesión iniciada.");
-        rememberMe = true;
+        logInfo("El usuario eligió mantener la sesión iniciada.");
+        auth.rememberMe = true;
         // Puedes llamar a un método del controlador aquí: auth.saveLoginPreference();
+      } else {
+        auth.rememberMe = false;
       }
+      await auth.login(email, password);
     } catch (err) {
       Get.snackbar(
         "Login Error",
