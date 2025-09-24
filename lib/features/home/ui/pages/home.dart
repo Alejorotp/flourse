@@ -39,8 +39,7 @@ class HomePage extends StatelessWidget {
             builder: (context) {
               double width = MediaQuery.of(context).size.width;
 
-              // 🔹 Si el ancho es mayor a 400px → mostrar icono + texto
-              if (width > 400) {
+              if (width >= 700) {
                 return TextButton.icon(
                   onPressed: () async {
                     await auth.logOut();
@@ -76,27 +75,27 @@ class HomePage extends StatelessWidget {
           children: [
             // Bienvenida con card
             Card(
-              elevation: 0,
+              elevation: 1,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
-                  children: const [
-                    CircleAvatar(
+                  children: [
+                    const CircleAvatar(
                       radius: 24,
-                      backgroundColor: Color.fromARGB(50, 239, 229, 248),
+                      backgroundColor: Color.fromARGB(120, 223, 223, 223),
                       child: Text(
                         "👤",
                         style: TextStyle(fontSize: 24),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "👋 Bienvenido, User",
-                        style: TextStyle(
+                        "👋 Bienvenido, ${auth.currentUser.value.name.isNotEmpty ? auth.currentUser.value.name : "User"}",
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
