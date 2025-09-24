@@ -36,7 +36,8 @@ class GroupsController extends GetxController {
 
   Future<List<Group>> getAllGroups() async {
     final fetchedGroups = await groupation.getAllGroups();
-    groups.value = fetchedGroups;
+    groups.assignAll(fetchedGroups);
+    logInfo("Fetched groups in Controller: ${fetchedGroups.length}");
     return fetchedGroups;
   }
 
