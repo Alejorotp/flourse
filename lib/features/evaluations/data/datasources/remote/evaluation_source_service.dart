@@ -258,7 +258,7 @@ class EvaluationSourceService implements IEvaluationSource {
       },
       body: json.encode({
         'tableName': 'EvaluationScore',
-        'records': {
+        'records': [{
           'userID': userId,
           'evaluationID': evaluationId,
           'groupID': groupID,
@@ -267,7 +267,7 @@ class EvaluationSourceService implements IEvaluationSource {
           'contributions': scores.contributions,
           'commitment': scores.commitment,
           'attitude': scores.attitude,
-        },
+        }],
       }),
     );
 

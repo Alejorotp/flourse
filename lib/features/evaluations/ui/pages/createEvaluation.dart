@@ -24,6 +24,12 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     final categoriesController = Get.find<CategoriesController>();
     final evaluationController = Get.find<EvaluationController>();
