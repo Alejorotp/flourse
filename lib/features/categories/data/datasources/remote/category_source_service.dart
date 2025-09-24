@@ -5,6 +5,7 @@ import 'package:flourse/features/categories/data/datasources/i_category_source.d
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'dart:convert';
+import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 
 
 
@@ -74,6 +75,45 @@ class CategorySourceService implements ICategorySource {
 
     logInfo("Category creation response status: ${responseCreateCategory.statusCode}");
     logInfo("Category creation response body: ${responseCreateCategory.body}");
+
+    if (groupingMethod == 'Aleatorio'){
+      GroupsController groupsController = Get.find();
+      final courseMembersResponse = await httpClient.get(
+        Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseMember&courseID=$courseId"),
+        headers: {
+          'Authorization': 'Bearer ${auth.accessToken}',
+        },
+      );
+      logInfo("Course members fetch response status: ${courseMembersResponse.statusCode}");
+      logInfo("Course members fetch response body: ${courseMembersResponse.body}");
+      final List<dynamic> membersData = courseMembersResponse.body.isNotEmpty ? json.decode(courseMembersResponse.body) : [];
+      final memberIds = membersData.map((data) => data['userID'].toString()).toList();
+      final groupCount = (memberIds.length / maxMembers).ceil();
+      for (int i = 0; i < groupCount; i++) {
+        final groupMemberIds = memberIds.skip(i * maxMembers).take(maxMembers).toList();
+        if (groupMemberIds.isEmpty) break;
+
+        groupsController.createGroup(
+          categoryId: newCategory.id!,
+          groupNumber: i + 1,
+          maxMembers: newCategory.maxMembers,
+        );
+        logInfo("Creating group ${i + 1} with members: $groupMemberIds");
+
+        groupMemberIds.forEach((memberId) {
+          groupsController.joinGroup(
+            groupsController.groups.last.id,
+            memberId,
+          );
+          logInfo("Added member $memberId to group ${groupsController.groups.last.id}");
+        });
+
+        
+
+
+      }
+      logInfo("Created $groupCount groups for category ${newCategory.name} with grouping method 'Aleatorio'");
+    }
     
   }
 

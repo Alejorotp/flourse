@@ -14,7 +14,7 @@ class GroupRepository implements IGroupRepository {
   }
 
   @override
-  Future<Group?> getGroupById(String id) {
+  Future<List<Group?>> getGroupById(String id) {
     return groupSource.getGroupById(id);
   }
 

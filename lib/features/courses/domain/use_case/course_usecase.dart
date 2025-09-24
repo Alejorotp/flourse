@@ -7,12 +7,9 @@ class CourseUseCase {
 
   CourseUseCase(this._repository);
 
-  Future<String> getUserNameById(String userId) async {
-    // Simula una llamada a una fuente de datos para obtener el nombre del usuario
-    await Future.delayed(Duration(milliseconds: 100)); // Simula un retardo
-    // Aquí deberías implementar la lógica real para obtener el nombre del usuario
-    return "Usuario $userId"; // Retorna un nombre simulado
-  }
+  Future<String> getUserNameById(String userId) async =>
+    await _repository.getUserNameById(userId);
+  
 
   Future<List<UserCourseInfo>> getCourseInfo(String userId) async =>
       await _repository.getCourseInfo(userId);
