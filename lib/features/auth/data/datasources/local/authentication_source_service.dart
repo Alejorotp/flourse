@@ -49,9 +49,9 @@ class AuthenticationSourceService implements IAuthenticationSource {
   }
 
   @override
-  Future<bool> refreshToken() async {
+  Future<String?> refreshToken(String refreshToken) async {
     logInfo("Attempting token refresh");
-    return Future.value(true);
+    return Future.value(null);
   }
 
   @override

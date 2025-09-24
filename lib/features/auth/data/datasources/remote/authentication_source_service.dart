@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../domain/models/authentication_user.dart';
 import '../i_authentication_source.dart';
+import 'dart:io';
 
 class AuthenticationSourceService implements IAuthenticationSource {
   final http.Client httpClient;
@@ -100,9 +101,38 @@ class AuthenticationSourceService implements IAuthenticationSource {
   }
 
   @override
-  Future<bool> refreshToken() async {
+  Future<String?> refreshToken(String rToken) async {
     logInfo("Attempting token refresh");
-    return Future.value(true);
+    try {
+    final response = await httpClient.post(
+      Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/refresh-token"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'refreshToken': rToken,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      final newAccessToken = jsonResponse['accessToken'];
+      if (newAccessToken != null) {
+        return newAccessToken as String;
+      }
+    }
+  } on SocketException catch (e) {
+    // Manejar errores de conexión a internet.
+    logError('Error de conexión: $e');
+  } on HttpException catch (e) {
+    // Manejar otros errores HTTP.
+    logError('Error HTTP: $e');
+  } catch (e) {
+    // Manejar cualquier otro error inesperado.
+    logError('Error inesperado: $e');
+  }
+
+  return null;
   }
 
   @override

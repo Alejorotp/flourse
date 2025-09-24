@@ -41,7 +41,7 @@ class CourseCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(courseInfo.userRole),
-            Text('${courseInfo.memberNames.length} Estudiantes'),
+            Text('${courseInfo.memberNames.length-1} Estudiantes'),
           ],
         ),
       ),

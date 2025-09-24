@@ -9,7 +9,7 @@ abstract class IAuthenticationSource {
 
   Future<bool> validate(String email, String validationCode);
 
-  Future<bool> refreshToken();
+  Future<String?> refreshToken(String refreshToken);
 
   Future<bool> forgotPassword(String email);
 
