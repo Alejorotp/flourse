@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
-import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
-import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:flourse/features/home/ui/widgets/course_action_card.dart';
 import 'package:get/get.dart';
@@ -217,52 +215,4 @@ class HomePage extends StatelessWidget {
   }
 }
 
-Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
-  return Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    elevation: 2,
-    child: InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CurrentEvaluationPage(evaluation: evaluation),
-          ),
-        );
-      },
-      child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(Icons.assignment, color: Colors.blue),
-        ),
-        title: Text(
-          '${evaluation.title} · ${evaluation.course}',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              evaluation.description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              evaluation.timeRemaining,
-              style: const TextStyle(fontSize: 12, color: Colors.blue),
-            ),
-          ],
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-      ),
-    ),
-  );
-}
+
