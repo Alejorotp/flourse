@@ -21,7 +21,7 @@ class CourseActionCard extends StatelessWidget {
             Expanded(
               child: _ActionButton(
                 icon: Icons.add_circle_outline,
-                label: "Create a course",
+                label: "Crear un curso",
                 color: Colors.deepPurpleAccent,
                 onTap: () {
                   Get.toNamed("/create-course");
@@ -32,7 +32,7 @@ class CourseActionCard extends StatelessWidget {
             Expanded(
               child: _ActionButton(
                 icon: Icons.person_add_alt_1_outlined,
-                label: "Join a course",
+                label: "Unirse a un curso",
                 color: Colors.lightBlueAccent,
                 onTap: () {
                   Get.toNamed("/join-course");
