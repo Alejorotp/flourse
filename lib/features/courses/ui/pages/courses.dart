@@ -25,7 +25,13 @@ class _CoursesPageState extends State<CoursesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flourse"),
+        title: const Text(
+          "Flourse",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Padding(
@@ -37,21 +43,21 @@ class _CoursesPageState extends State<CoursesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'My Courses',
+                  'Mis cursos',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline, color: Colors.deepPurpleAccent, size: 32),
-                      tooltip: 'Create Course',
+                      tooltip: 'Crear un curso',
                       onPressed: () {
                         Navigator.of(context).pushNamed('/create-course');
                       },
                     ),
                     IconButton(
                       icon: const Icon(Icons.group_add, color: Colors.blue, size: 32),
-                      tooltip: 'Join Course',
+                      tooltip: 'Unirse a un curso',
                       onPressed: () {
                         Navigator.of(context).pushNamed('/join-course');
                       },
@@ -62,7 +68,6 @@ class _CoursesPageState extends State<CoursesPage> {
             ),
             const Divider(color: Colors.grey),
             const SizedBox(height: 12),
-            // --- Botones de "Sort" y "Filter" ---
             RoleToggleButtons(
               isProfessor: _isProfessor,
               onChanged: (val) => setState(() => _isProfessor = val),

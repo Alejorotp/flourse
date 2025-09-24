@@ -16,7 +16,7 @@ class CourseCodeBox extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Course code",
+                "Código del curso",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -26,7 +26,7 @@ class CourseCodeBox extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               const Text(
-                "share this code with your students",
+                "Comparte este código con tus estudiantes",
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],

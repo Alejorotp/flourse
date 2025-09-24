@@ -12,12 +12,12 @@ class ProfessorBox extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            const CircleAvatar(child: Icon(Icons.person)),
+            const CircleAvatar(child: Icon(Icons.menu_book_rounded)),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Professor", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Profesor", style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(professorName),
               ],
             ),
