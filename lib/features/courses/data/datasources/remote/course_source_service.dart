@@ -84,6 +84,8 @@ class CourseSourceService implements ICourseSource {
         .expand((jsonList) => jsonList) // Aplana la lista de listas
         .toList();
 
+    logInfo("Fetched course details for user courses: $allCoursesJson");
+
     if (allCoursesJson.isEmpty) {
       logInfo("No course details found for the user's courses.");
       return [];
@@ -105,11 +107,13 @@ class CourseSourceService implements ICourseSource {
         for (var member in members) {
           final courseId = member['courseID'] as String;
           final memberUserId = member['userID'] as String;
+          logInfo("Member found - Course ID: $courseId, User ID: $memberUserId");
           // Si el curso no está en el mapa, lo crea, y luego añade el miembro
           membersByCourseId.putIfAbsent(courseId, () => []).add(memberUserId);
         }
       }
     }
+    logInfo("Updated members for course: $membersByCourseId");
 
     // 5. Construir el resultado final usando los datos ya cargados
     final coursesFutures = allCoursesJson.map<Future<UserCourseInfo>>((courseJson) async {
@@ -118,6 +122,8 @@ class CourseSourceService implements ICourseSource {
       final professorName = await getUserNameById(course.professorID);
 
       // Búsqueda instantánea en el mapa, ¡sin llamadas a la API aquí!
+      logInfo("Looking up members for course ID: ${course.id}");
+      logInfo("Looking up members for course ID: ${course.professorID}");
       final memberIDs = membersByCourseId[course.id] ?? [];
       logInfo("Course ID: ${course.id}, Member IDs: $memberIDs");
 

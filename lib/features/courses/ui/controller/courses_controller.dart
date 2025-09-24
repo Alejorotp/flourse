@@ -16,6 +16,7 @@ class CoursesController extends GetxController {
 
   // Call this when user logs in or id changes
   Future<void> loadUserCourses(String userId) async {
+    
     _currentUserId = userId;
     try {
       final result = await coursation.getCourseInfo(userId);
