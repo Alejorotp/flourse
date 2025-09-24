@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class CourseCodeBox extends StatelessWidget {
   final String courseCode;
@@ -15,9 +17,21 @@ class CourseCodeBox extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Código del curso",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Código del curso",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.content_copy, size: 22),
+                    tooltip: "Copiar código",
+                    onPressed: () async {
+                      await _copyToClipboard(context, courseCode);
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               SelectableText(
@@ -35,4 +49,14 @@ class CourseCodeBox extends StatelessWidget {
       ),
     );
   }
+
+Future<void> _copyToClipboard(BuildContext context, String text) async {
+  await Clipboard.setData(ClipboardData(text: text));
+  Get.snackbar(
+    "Éxito",
+    "Código copiado al portapapeles",
+    icon: const Icon(Icons.copy, color: Colors.green),
+    snackPosition: SnackPosition.BOTTOM,
+    );
+}
 }
