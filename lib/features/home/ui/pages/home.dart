@@ -183,7 +183,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Co-evaluaciones pendientes",
+                  "Evaluaciones pendientes",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Material(

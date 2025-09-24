@@ -22,7 +22,7 @@ class CourseCodeBox extends StatelessWidget {
                 children: [
                   const Text(
                     "Código del curso",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   IconButton(
                     icon: const Icon(Icons.content_copy, size: 22),
