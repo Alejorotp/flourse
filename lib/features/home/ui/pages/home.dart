@@ -22,7 +22,6 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: const Color.fromARGB(50, 239, 229, 248),
         automaticallyImplyLeading: false,
         title: const Text(
