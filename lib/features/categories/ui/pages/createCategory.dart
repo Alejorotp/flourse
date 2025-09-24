@@ -24,7 +24,7 @@ class _CreateCategoryPageState extends State<CreateCategoryPage> {
 
   String? _selectedGrouping;
   final List<String> _groupingOptions = [
-    "Auto asignado",
+    "Aleatorio",
     "Libre elección",
   ];
 

@@ -2,9 +2,11 @@ class Group {
   final String id;
   final int maxMembers;
   List<String> memberIDs;
+  final String categoryID;
 
   Group({
     required this.id,
+    required this.categoryID,
     required this.maxMembers,
     required this.memberIDs,
   });
@@ -18,6 +20,7 @@ class Group {
       memberIDs: (json['memberIDs'] as List<dynamic>)
           .map((id) => id as String)
           .toList(),
+      categoryID: json['categoryID'] as String,
     );
   }
 
@@ -27,6 +30,7 @@ class Group {
       '_id': id,
       'maxMembers': maxMembers,
       'memberIDs': memberIDs,
+      'categoryID': categoryID,
     };
   }
 }

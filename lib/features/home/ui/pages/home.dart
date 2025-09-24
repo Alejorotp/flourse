@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
 import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
@@ -115,13 +114,6 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Upcoming Evaluations
-            Column(
-              children: upcomingEvaluations.map((evaluation) {
-                return _evaluationItem(context, evaluation);
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
           ],
         ),
       ),
