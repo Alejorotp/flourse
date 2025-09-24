@@ -93,25 +93,16 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<Group?> getGroupById(String id) async {
+  Future<List<Group?>> getGroupById(String id) async {
     logInfo("Fetching group by ID from API: $id");
     try {
-      final response = await httpClient.get(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&_id=$id"),
-        headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
-        },
-      );
-      if (response.statusCode == 201) {
-        final List<dynamic> jsonList = json.decode(response.body);
-        if (jsonList.isNotEmpty) {
-          return Group.fromJson(jsonList.first);
-        }
-      }
+      var groups = await getAllGroups();
+      groups = groups.where((group) => group.id == id).toList();
+      return groups;
     } catch (e) {
       logError("Error fetching group by ID: $e");
     }
-    return null;
+    return [];
   }
 
   @override
@@ -157,23 +148,26 @@ class GroupSourceService implements IGroupSource {
   Future<bool> joinGroup(String groupId, String userId) async {
     logInfo("User with ID: $userId joining group with ID: $groupId on API");
     try {
-      final response = await httpClient.put(
-        Uri.parse("$_apiBaseUrl/$_databaseName/update"),
+      final response = await httpClient.post(
+        Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
         headers: {
           'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'tableName': 'groups',
-          'idColumn': '_id',
-          'idValue': groupId,
-          'updates': {
-            'memberIDs': [...(await getGroupById(groupId))!.memberIDs, userId]
-          },
+          'tableName': 'GroupMember',
+          'records': [
+            {
+              'groupID': groupId,
+              'userID': userId,
+            },
+          ],
         }),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return true;
+      } else {
+        logWarning("Failed to join group: ${response.statusCode}");
       }
     } catch (e) {
       logError("Error joining group: $e");
@@ -185,7 +179,8 @@ class GroupSourceService implements IGroupSource {
   Future<bool> removeMemberFromGroup(String groupId, String userId) async {
     logInfo("User with ID: $userId being removed from group with ID: $groupId on API");
     try {
-      final group = await getGroupById(groupId);
+      var vgroup = await getGroupById(groupId);
+      final group = vgroup.isNotEmpty ? vgroup.first : null;
       if (group == null || !group.memberIDs.contains(userId)) {
         return false;
       }

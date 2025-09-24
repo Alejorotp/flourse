@@ -42,12 +42,12 @@ class _GroupsPageState extends State<GroupsPage> {
       ),
       body: Obx(
         () {
-          final groups = groupsController.groups
+          var groups = groupsController.groups
               .where((group) => group.categoryID == widget.category.id)
               .toList();
 
           final currentUserId = auth.currentUser.value.id;
-          final userInGroup = groups.any(
+          var userInGroup = groups.any(
               (group) => group.memberIDs.contains(currentUserId));
 
           return Padding(

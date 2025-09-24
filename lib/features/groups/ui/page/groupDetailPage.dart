@@ -32,7 +32,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
       appBar: AppBar(
         title: const Text('Detalle del Grupo'),
       ),
-      body: FutureBuilder<Group?>( // <-- Se utiliza FutureBuilder
+      body: FutureBuilder<List<Group?>?>( // <-- Se utiliza FutureBuilder
         future: groupsController.getGroupById(widget.group.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -42,7 +42,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
             return const Center(child: Text('El grupo no existe.'));
           }
 
-          final updatedGroup = snapshot.data!;
+          final updatedGroup = snapshot.data!.first;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -54,7 +54,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                if (updatedGroup.memberIDs.isEmpty)
+                if (updatedGroup!.memberIDs.isEmpty)
                   const Text('El grupo no tiene miembros.')
                 else
                   ...updatedGroup.memberIDs.map((memberId) {
