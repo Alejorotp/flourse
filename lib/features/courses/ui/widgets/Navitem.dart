@@ -5,6 +5,7 @@ class NavItem extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback? onTap;
+  final Color? iconColor;
 
   const NavItem({
     Key? key,
@@ -12,12 +13,13 @@ class NavItem extends StatelessWidget {
     required this.label,
     this.isActive = false,
     this.onTap,
+    this.iconColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = Theme.of(context).primaryColor;
-    final color = isActive ? activeColor : Colors.grey;
+  final activeColor = Theme.of(context).primaryColor;
+  final color = iconColor ?? (isActive ? activeColor : Colors.grey);
 
     return InkWell(
       onTap: onTap,
@@ -32,7 +34,7 @@ class NavItem extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: isActive ? activeColor.withOpacity(0.12) : Colors.transparent,
+                color: isActive ? color.withOpacity(0.12) : Colors.transparent,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color),

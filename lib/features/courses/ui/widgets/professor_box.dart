@@ -17,8 +17,8 @@ class ProfessorBox extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Profesor", style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(professorName),
+                const Text("Profesor", style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromRGBO(79, 47, 167, 1))),
+                Text(professorName, style: TextStyle(fontSize: 17)),
               ],
             ),
           ],

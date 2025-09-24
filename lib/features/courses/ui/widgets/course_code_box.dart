@@ -9,6 +9,7 @@ class CourseCodeBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: const Color(0xFFF3E5F5),
       margin: const EdgeInsets.only(bottom: 8),
       child: SizedBox(
         width: double.infinity,
@@ -22,10 +23,10 @@ class CourseCodeBox extends StatelessWidget {
                 children: [
                   const Text(
                     "Código del curso",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color.fromRGBO(79, 47, 167, 1)),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.content_copy, size: 22),
+                    icon: const Icon(Icons.content_copy, size: 22, color: Color.fromRGBO(79, 47, 167, 1)),
                     tooltip: "Copiar código",
                     onPressed: () async {
                       await _copyToClipboard(context, courseCode);
@@ -36,12 +37,12 @@ class CourseCodeBox extends StatelessWidget {
               const SizedBox(height: 8),
               SelectableText(
                 courseCode,
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18, color: Color.fromRGBO(124, 77, 255, 1), fontWeight: FontWeight.w300),
               ),
               const SizedBox(height: 4),
               const Text(
                 "Comparte este código con tus estudiantes",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: Color.fromARGB(255, 148, 148, 148)),
               ),
             ],
           ),

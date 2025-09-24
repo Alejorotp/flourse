@@ -1,7 +1,8 @@
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 import 'package:flourse/features/categories/ui/pages/createCategory.dart';
 import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
-import 'package:flourse/features/categories/ui/widgets/category_card.dart';
+import 'package:flourse/features/categories/ui/widgets/create_category_card.dart';
+import 'package:flourse/features/categories/ui/widgets/category_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/courses/ui/widgets/member_card.dart';
@@ -25,6 +26,8 @@ class CurrentCoursePage extends StatefulWidget {
 class _CurrentCoursePageState extends State<CurrentCoursePage> {
   int _selectedNavIndex = 0; // <- índice seleccionado (visual)
   late CategoriesController categoriesController;
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
+  static const blue = Color.fromRGBO(31, 195, 224, 1); // celeste
 
   @override
   void initState() {
@@ -88,28 +91,25 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isProfessor)
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => CreateCategoryPage(
-                                    course: courseInfo.course,
-                                    canEdit: true,
-                                  ),
+                        CreateCategoryCard(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CreateCategoryPage(
+                                  course: courseInfo.course,
+                                  canEdit: true,
                                 ),
-                              );
-                            },
-                            child: const Text('+ crear categoría'),
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ...courseCategoryIDs.map((catId) {
                         final cat = categoriesController.getCategoryById(catId);
-                        logError("Category fetched for ID $catId: $cat");
                         if (cat == null) return const SizedBox.shrink();
-                        return CategoryCard(
+                        return CategoryListCard(
                           category: cat,
+                          activitiesCount: 0, // TODO: conectar con actividades reales
+                          groupsCount: cat.groupIDs.length,
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -142,41 +142,44 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
               ],
             ),
             child: SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    NavItem(
-                      icon: Icons.book_outlined,
-                      label: "Curso",
-                      isActive: _selectedNavIndex == 0,
-                      onTap: () {
-                        setState(() {
-                          _selectedNavIndex = 0;
-                        });
-                      },
-                    ),
-                    NavItem(
-                      icon: Icons.assignment_outlined,
-                      label: "Evaluaciones",
-                      isActive: _selectedNavIndex == 1,
-                      onTap: () {
-                        setState(() {
-                          _selectedNavIndex = 1;
-                        });
-                      },
-                    ),
-                    NavItem(
-                      icon: Icons.group_outlined,
-                      label: "Grupos",
-                      isActive: _selectedNavIndex == 2,
-                      onTap: () {
-                        setState(() {
-                          _selectedNavIndex = 2;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  NavItem(
+                    icon: Icons.book_outlined,
+                    label: "Curso",
+                    isActive: _selectedNavIndex == 0,
+                    iconColor: isProfessor ? lilac : blue,
+                    onTap: () {
+                      setState(() {
+                        _selectedNavIndex = 0;
+                      });
+                    },
+                  ),
+                  NavItem(
+                    icon: Icons.assignment_outlined,
+                    label: "Evaluaciones",
+                    isActive: _selectedNavIndex == 1,
+                    iconColor: isProfessor ? lilac : blue,
+                    onTap: () {
+                      setState(() {
+                        _selectedNavIndex = 1;
+                      });
+                    },
+                  ),
+                  NavItem(
+                    icon: Icons.group_outlined,
+                    label: "Grupos",
+                    isActive: _selectedNavIndex == 2,
+                    iconColor: isProfessor ? lilac : blue,
+                    onTap: () {
+                      setState(() {
+                        _selectedNavIndex = 2;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
