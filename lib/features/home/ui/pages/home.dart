@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
                   },
                   icon: const Icon(Icons.logout, color: Colors.black87, size: 22),
                   label: const Text(
-                    "Logout",
+                    "Cerrar sesión",
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 15,
@@ -95,7 +95,7 @@ class HomePage extends StatelessWidget {
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "👋 Welcome, User",
+                        "👋 Bienvenido, User",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "My courses",
+                  "Mis cursos",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Material(
@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
-                        "See all",
+                        "Ver todos",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
@@ -143,7 +143,7 @@ class HomePage extends StatelessWidget {
               final filteredCourses = courseCon.userCourses;
               if (filteredCourses.isEmpty) {
                 return const Center(
-                  child: Text('There are no courses available.'),
+                  child: Text('No hay cursos disponibles.'),
                 );
               }
               return SizedBox(
@@ -188,7 +188,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Pending co-evaluations",
+                  "Co-evaluaciones pendientes",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Material(
@@ -201,7 +201,7 @@ class HomePage extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
-                        "See all",
+                        "Ver todas",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
