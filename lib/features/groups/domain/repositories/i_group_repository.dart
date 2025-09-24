@@ -3,7 +3,7 @@ import '../models/groups.dart';
 abstract class IGroupRepository {
   Future<List<Group>> getAllGroups();
 
-  Future<List<Group?>> getGroupById(String id);
+  Future<List<Group>> getGroupById(String id);
 
   Future<Group> createGroup({
     required int maxMembers,

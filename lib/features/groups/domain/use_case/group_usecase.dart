@@ -10,7 +10,7 @@ class GroupUseCase {
     return _repository.getAllGroups();
   }
 
-  Future<List<Group?>> getGroupById(String id) {
+  Future<List<Group>> getGroupById(String id) {
     return _repository.getGroupById(id);
   }
 

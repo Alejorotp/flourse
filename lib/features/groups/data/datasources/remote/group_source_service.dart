@@ -93,7 +93,7 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<List<Group?>> getGroupById(String id) async {
+  Future<List<Group>> getGroupById(String id) async {
     logInfo("Fetching group by ID from API: $id");
     try {
       var groups = await getAllGroups();
