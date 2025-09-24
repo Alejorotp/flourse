@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
+import 'package:flourse/data/data.dart';
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
 import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
-import 'package:flourse/features/home/ui/widgets/course_card.dart'; // El widget CourseCard
+import 'package:flourse/features/home/ui/widgets/course_card.dart';
+import 'package:flourse/features/home/ui/widgets/course_action_card.dart';
 import 'package:get/get.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
@@ -18,24 +19,54 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
-    // Cargar cursos del usuario (solo una vez por build)
     courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.logout),
-          onPressed: () async {
-            await auth.logOut();
-          },
+        elevation: 0,
+        backgroundColor: const Color.fromARGB(50, 239, 229, 248),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "Flourse",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
-        title: const Text("Flourse"),
         centerTitle: true,
-        actions: const [
-          Icon(Icons.notifications_none),
-          SizedBox(width: 12),
-          Icon(Icons.settings),
-          SizedBox(width: 12),
+        actions: [
+          Builder(
+            builder: (context) {
+              double width = MediaQuery.of(context).size.width;
+
+              // 🔹 Si el ancho es mayor a 400px → mostrar icono + texto
+              if (width > 400) {
+                return TextButton.icon(
+                  onPressed: () async {
+                    await auth.logOut();
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.black87, size: 22),
+                  label: const Text(
+                    "Logout",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 15,
+                    ),
+                  ),
+                );
+              } 
+              // 🔹 Si es más pequeño → solo el icono
+              else {
+                return IconButton(
+                  onPressed: () async {
+                    await auth.logOut();
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.black87, size: 22),
+                );
+              }
+            },
+          ),
+          const SizedBox(width: 2),
         ],
       ),
       body: SingleChildScrollView(
@@ -43,23 +74,65 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // My Courses
+            // Bienvenida con card
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: const [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Color.fromARGB(50, 239, 229, 248),
+                      child: Text(
+                        "👤",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "👋 Welcome, User",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(thickness: 0.15, color: Colors.grey),
+
+            // Mis cursos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "My Courses",
+                  "My courses",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(CoursesPage.id);
-                  },
-                  child: const Text(
-                    "See all",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
+                Material(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    highlightColor: Colors.blue.shade100, // efecto azul al presionar
+                    onTap: () {
+                      Navigator.of(context).pushNamed(CoursesPage.id);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        "See all",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -77,12 +150,31 @@ class HomePage extends StatelessWidget {
                 height: 180,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: filteredCourses.length,
+                  itemCount: filteredCourses.length + 1, // +1 para incluir el widget extra
                   itemBuilder: (context, index) {
+                    if (index == filteredCourses.length) {
+                      return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(16),
+                        child: CourseActionCard(),
+                      ),
+                      );
+                    }
+
                     final course = filteredCourses[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: CourseCard(courseInfo: course),
+                      child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(16),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {},
+                        child: CourseCard(courseInfo: course),
+                      ),
+                      ),
                     );
                   },
                 ),
@@ -91,7 +183,7 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Upcoming Evaluations
+            // Evaluaciones pendientes
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -99,29 +191,33 @@ class HomePage extends StatelessWidget {
                   "Pending co-evaluations",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(EvaluationsPage.id);
-                  },
-                  child: const Text(
-                    "See all",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
+                Material(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    highlightColor: Colors.blue.shade100, // efecto azul al presionar
+                    onTap: () {
+                      Navigator.of(context).pushNamed(EvaluationsPage.id);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        "See all",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Upcoming Evaluations
             Column(
               children: upcomingEvaluations.map((evaluation) {
                 return _evaluationItem(context, evaluation);
               }).toList(),
             ),
-            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -130,29 +226,33 @@ class HomePage extends StatelessWidget {
 }
 
 Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CurrentEvaluationPage(evaluation: evaluation),
-        ),
-      );
-    },
-    child: Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    elevation: 2,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CurrentEvaluationPage(evaluation: evaluation),
+          ),
+        );
+      },
       child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: Colors.blue.shade50,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(Icons.settings, color: Colors.grey),
+          child: const Icon(Icons.assignment, color: Colors.blue),
         ),
-        title: Text('${evaluation.title} · ${evaluation.course}'),
+        title: Text(
+          '${evaluation.title} · ${evaluation.course}',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -169,7 +269,7 @@ Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
             ),
           ],
         ),
-        trailing: const Icon(Icons.play_arrow),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
       ),
     ),
   );
