@@ -82,41 +82,14 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate}) async {
     logInfo("Creating evaluation with name: $name, categoryId: $categoryId, visibility: $visibility, creationDate: $creationDate");
 
-    Future<String> generateUniqueCode() async {
+    String generateUniqueCode() {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234S6789';
       final rand = Random();
-      String Code;
-      bool isUnique = false;
-
-      while (!isUnique) {
-        Code = List.generate(6, (index) => chars[rand.nextInt(chars.length)]).join();
-        logInfo("Generated course code: $Code");
-
-        final response = await httpClient.get(
-          Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Evaluation&evaluationID='$Code'"),
-          headers: {'Authorization': 'Bearer $_authToken'},
-        );
-
-        if (response.statusCode == 200) {
-          final List<dynamic> data = json.decode(response.body);
-          if (data.isEmpty) {
-            isUnique = true;
-            logInfo("Course code is unique.");
-            return Code;
-          } else {
-            logWarning("Course code already exists. Regenerating...");
-          }
-        } else {
-          logError("Error checking for course code uniqueness: ${response.statusCode}");
-          // Stop if there's a server error to avoid an infinite loop
-          throw Exception('Failed to verify course code uniqueness');
-        }
-      }
-      // This part should not be reachable due to the return inside the loop
-      throw Exception('Failed to generate a unique course code');
+      String code = List.generate(6, (index) => chars[rand.nextInt(chars.length)]).join();;
+      return code;
     }
 
-    final code = await generateUniqueCode();
+    final code = generateUniqueCode();
     final response = await httpClient.post(
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
@@ -125,18 +98,18 @@ class EvaluationSourceService implements IEvaluationSource {
       },
       body: json.encode({
         'tableName': 'Evaluations',
-        'records': {
+        'records': [{
           'name': name,
           'categoryID': categoryId,
           'visibility': visibility,
           'creationDate': creationDate,
           'evaluationID': code,
-        },
+        }],
       }),
     );
     logInfo("Create evaluation response status: ${response.statusCode}");
     logInfo("Create evaluation response body: ${response.body}");
-    if (response.statusCode != 200) {
+    if (response.statusCode != 201) {
       logError("Failed to create evaluation. Status code: ${response.statusCode}");
       throw Exception('Failed to create evaluation');
     }

@@ -11,7 +11,7 @@ class CurrentEvaluationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Evaluation Details"),
+        title: const Text("Detalles de Evaluación"),
         centerTitle: true,
       ),
       body: Padding(
@@ -20,25 +20,28 @@ class CurrentEvaluationPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Title: ${evaluation.title}",
+              "Nombre: ${evaluation.name}",
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              "Course: ${evaluation.course}",
+              "ID de Evaluación: ${evaluation.evaluationID}",
               style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              "Description:",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const SizedBox(height: 8),
+            Text(
+              "ID de Categoría: ${evaluation.categoryID}",
+              style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 4),
-            Text(evaluation.description),
             const SizedBox(height: 16),
             Text(
-              "Time Remaining: ${evaluation.timeRemaining}",
-              style: const TextStyle(fontSize: 16, color: Colors.blue),
+              "Fecha de creación: ${evaluation.creationDate}",
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Visibilidad: ${evaluation.visibility}",
+              style: const TextStyle(fontSize: 16),
             ),
             // Aquí podrías añadir un botón para 'Empezar Evaluación'
           ],
