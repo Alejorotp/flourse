@@ -73,7 +73,9 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      ...courseInfo.memberNames.map((name) => MemberCard(name: name)),
+                      ...courseInfo.memberNames
+                      .where((name) => name != courseInfo.professorName)
+                      .map((name) => MemberCard(name: name)),
                     ],
                   ),
                 ),

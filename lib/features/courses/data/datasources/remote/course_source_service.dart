@@ -68,12 +68,13 @@ class CourseSourceService implements ICourseSource {
       logInfo("User is not a member of any course.");
       return [];
     }
+    logInfo("User memberships: $userMemberships");
     final memberCourseIds = userMemberships.map((json) => json['courseID'] as String).toSet().toList(); // Usar toSet() para evitar duplicados
 
     // 2. Obtener los detalles de todos esos cursos en paralelo
     final coursesResponses = await Future.wait(memberCourseIds.map((courseId) {
       return httpClient.get(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&_id=$courseId"),
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&courseCode=$courseId"),
         headers: {'Authorization': 'Bearer $_authToken'},
       );
     }));
@@ -122,10 +123,10 @@ class CourseSourceService implements ICourseSource {
       final professorName = await getUserNameById(course.professorID);
 
       // Búsqueda instantánea en el mapa, ¡sin llamadas a la API aquí!
-      logInfo("Looking up members for course ID: ${course.id}");
+      logInfo("Looking up members for course ID: ${course.courseCode}");
       logInfo("Looking up members for course ID: ${course.professorID}");
-      final memberIDs = membersByCourseId[course.id] ?? [];
-      logInfo("Course ID: ${course.id}, Member IDs: $memberIDs");
+      final memberIDs = membersByCourseId[course.courseCode] ?? [];
+      logInfo("Course ID: ${course.courseCode}, Member IDs: $memberIDs");
 
       final memberNames = await Future.wait(memberIDs.map((id) => getUserNameById(id)));
       logInfo("Member names for course ${course.title}: $memberNames");
@@ -306,7 +307,7 @@ class CourseSourceService implements ICourseSource {
       },
       body: json.encode({
         "tableName": "CourseMember",
-        "records": [{"courseID": courseId, "userID": userId}],
+        "records": [{"courseID": courseCode, "userID": userId}],
       }),
     );
 
