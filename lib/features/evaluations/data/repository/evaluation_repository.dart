@@ -22,6 +22,12 @@ class EvaluationRepository implements IEvaluationRepository {
   }
 
   @override
+  Future<List<Evaluation>> getUserEvaluations(String userId) {
+    return evalSource.getUserEvaluations(userId);
+  }
+
+
+  @override
   Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate}) {
     return evalSource.createEvaluation(name: name, categoryId: categoryId, visibility
 : visibility, creationDate: creationDate);

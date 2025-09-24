@@ -3,7 +3,7 @@ import 'package:flourse/features/groups/domain/models/groups.dart';
 abstract class IGroupSource {
   Future<List<Group>> getAllGroups();
 
-  Future<List<Group?>> getGroupById(String id);
+  Future<List<Group>> getGroupById(String id);
 
   Future<Group> createGroup({
     required int maxMembers,

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/evaluations/data/datasources/i_evaluation_source.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
@@ -307,6 +308,26 @@ class EvaluationSourceService implements IEvaluationSource {
       logError("Failed to submit score. Status code: ${response.statusCode}");
       throw Exception('Failed to submit score');
     }
+  }
+
+  @override
+  Future<List<Evaluation>> getUserEvaluations(String userId) {
+    GroupsController groupController = Get.find();
+    final userGroups = groupController.getGroupById(userId);
+    final List<Evaluation> userEvaluations = [];
+    userGroups.then((groups) {
+      for (var group in groups) {
+        logInfo("User group: ${group.id}, categoryID: ${group.categoryID}");
+        getByCategoryID(group.categoryID).then((evaluations) {
+          for (var eval in evaluations) {
+            logInfo("Evaluation for user ${userId}: ${eval.name} in category ${group.categoryID}");
+            userEvaluations.add(eval);
+          }
+        });
+      }
+    });
+
+    return Future.value(userEvaluations);
   }
 
 

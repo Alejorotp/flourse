@@ -36,6 +36,10 @@ class EvaluationController extends GetxController {
     return evaluations;
   }
 
+  Future<List<Evaluation>> getUserEvaluations(String userId) {
+    return evasation.getUserEvaluations(userId);
+  }
+
   String getEvaluationById(String id) {
     final evaluation = evaluations.firstWhere(
       (evaluation) => evaluation.evaluationID == id,

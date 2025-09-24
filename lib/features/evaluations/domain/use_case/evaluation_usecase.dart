@@ -16,6 +16,9 @@ class EvaluationUseCase {
       await _repository.createEvaluation(name: name, categoryId: categoryId, visibility
 : visibility, creationDate: creationDate);
 
+  Future<List<Evaluation>> getUserEvaluations(String userId) async =>
+      await _repository.getUserEvaluations(userId);
+
   Future<List<String?>> getScoresByEvaluationID(String evaluationId) async =>
       await _repository.getScoresByEvaluationID(evaluationId);
 

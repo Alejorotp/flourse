@@ -65,12 +65,12 @@ class GroupsController extends GetxController {
     return result;
   }
 
-  Future<List<Group?>?> getGroupById(String id) async {
+  Future<List<Group>> getGroupById(String id) async {
     try {
       return await groupation.getGroupById(id);
     } catch (e) {
       logError("Error fetching group by ID: $e");
-      return null;
+      return [];
     }
   }
 }

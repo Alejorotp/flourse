@@ -11,6 +11,8 @@ abstract class IEvaluationSource {
 
   Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate});
 
+  Future<List<Evaluation>> getUserEvaluations(String userId);
+
   Future<List<String?>> getScoresByEvaluationID(String evaluationId);
 
   Future<List<String?>> getScoresByGroupID(String groupId, String evaluationId);
