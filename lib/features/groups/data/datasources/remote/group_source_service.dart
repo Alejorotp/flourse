@@ -31,8 +31,56 @@ class GroupSourceService implements IGroupSource {
         },
       );
       if (response.statusCode == 200) {
+
         final List<dynamic> jsonList = json.decode(response.body);
-        final List<Group> fetchedGroups = jsonList.map((json) => Group.fromJson(json)).toList();
+        logError("Groups fetch response body: ${response.body}");
+        
+
+        
+        final List<Group>fetchedGroups = [];
+        for (var data in jsonList) {
+          final maxMemberResponses = await httpClient.get(
+          Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Category&_id=${data['categoryID'].toString()}"),
+          headers: {
+            'Authorization' : 'Bearer $_authToken',
+          }
+        );
+          int maxMembers = 0;
+          if (maxMemberResponses.statusCode == 200) {
+            final List<dynamic> categoryList = json.decode(maxMemberResponses.body);
+            if (categoryList.isNotEmpty) {
+              maxMembers = categoryList[0]['maxMembers'] ?? 0;
+            }
+            logError("Fetched maxMembers: $maxMembers for categoryID ${data['categoryID']}");
+          } else {
+            logError("Failed to fetch maxMembers for categoryID ${data['categoryID']}: ${maxMemberResponses.statusCode}");
+          }
+
+          final memberIDsResponse = await httpClient.get(
+            Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=${data['_id'].toString()}"),
+            headers: {
+              'Authorization' : 'Bearer $_authToken',
+            }
+          );
+          List<String> memberIDs = [];
+          if (memberIDsResponse.statusCode == 200) {
+            final List<dynamic> memberList = json.decode(memberIDsResponse.body);
+            memberIDs = memberList.map((member) => member['userID'].toString()).toList();
+            logError("Fetched memberIDs: $memberIDs for groupID ${data['_id']}");
+          } else {
+            logError("Failed to fetch memberIDs for groupID ${data['_id']}: ${memberIDsResponse.statusCode}");
+          }
+
+
+          final group = Group(
+            id: data['_id'].toString(),
+            maxMembers: maxMembers,
+            memberIDs: memberIDs,
+            categoryID: data['categoryID'].toString(),
+          );
+          logInfo("Fetched group: ${group.id} with maxMembers: ${group.maxMembers},memberIDs: ${group.memberIDs} and categoryID: ${group.categoryID}");
+          fetchedGroups.add(group);
+        }
         return fetchedGroups;
       } else {
         logError("Failed to fetch groups: ${response.statusCode}");
@@ -54,7 +102,7 @@ class GroupSourceService implements IGroupSource {
           'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> jsonList = json.decode(response.body);
         if (jsonList.isNotEmpty) {
           return Group.fromJson(jsonList.first);
@@ -81,18 +129,17 @@ class GroupSourceService implements IGroupSource {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'tableName': 'groups',
+          'tableName': 'Group',
           'records': [
             {
               'groupNumber': groupNumber,
-              'maxMembers': maxMembers,
-              'memberIDs': [], // No existe así que toca 
-              'categoryId': categoryId,
+              'categoryID': categoryId,
             },
           ],
         }),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
+        logError("Group creation response body: ${response.body}");
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['inserted'].isNotEmpty) {
           return Group.fromJson(responseData['inserted'][0]);

@@ -69,7 +69,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                         CourseCodeBox(courseCode: courseInfo.course.courseCode),
                       ],
                       Text(
-                        "Total students: ${courseInfo.memberNames.length-1}",
+                        "Total de estudiantes: ${courseInfo.memberNames.length - 1}",
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),

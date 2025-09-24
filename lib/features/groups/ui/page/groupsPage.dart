@@ -43,7 +43,7 @@ class _GroupsPageState extends State<GroupsPage> {
       body: Obx(
         () {
           final groups = groupsController.groups
-              .where((group) => widget.category.groupIDs.contains(group.id))
+              .where((group) => group.categoryID == widget.category.id)
               .toList();
 
           final currentUserId = auth.currentUser.value.id;
@@ -71,6 +71,7 @@ class _GroupsPageState extends State<GroupsPage> {
                           categoryId: widget.category.id ?? '', // <-- Se pasa el ID como String
                           groupNumber: widget.groupNumber, // esta chocora no sé de dónde toma la info, pero no debería servir porque debería ser random...
                         );
+                        groupsController.getAllGroups(); // Refrescar la lista de grupos
                       },
                       child: const Text('Crear Grupo'),
                     ),
