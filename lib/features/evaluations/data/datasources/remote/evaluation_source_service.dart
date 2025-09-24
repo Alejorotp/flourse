@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flourse/features/evaluations/domain/models/score.dart';  
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
@@ -142,5 +142,177 @@ class EvaluationSourceService implements IEvaluationSource {
 
     logInfo("Evaluation created successfully with code: $code");
   }
+
+
+  @override
+  Future<List<String>> getScoresByCategoryID(String categoryId, String evaluationId) async {
+    final response = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&categoryID=$categoryId&evaluationID=$evaluationId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      },
+    );
+    logInfo("Scores by category fetch response status: ${response.statusCode}");
+    logInfo("Scores by category fetch response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      return responseData.map((data) => Score(
+        punctuality: data['punctuality'],
+        contributions: data['contributions'],
+        commitment: data['commitment'],
+        attitude: data['attitude'],
+      ).toString()).toList();
+    } else {
+      logError("Failed to fetch scores by category. Status code: ${response.statusCode}");
+      return [];
+    }
+
+  }
+
+  @override
+  Future<List<String>> getScoresByEvaluationID(String evaluationId) async {
+    final response = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&evaluationID=$evaluationId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      },
+    );
+    logInfo("Scores by evaluation fetch response status: ${response.statusCode}");
+    logInfo("Scores by evaluation fetch response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      return responseData.map((data) => Score(
+        punctuality: data['punctuality'],
+        contributions: data['contributions'],
+        commitment: data['commitment'],
+        attitude: data['attitude'],
+      ).toString()).toList();
+    } else {
+      logError("Failed to fetch scores by evaluation. Status code: ${response.statusCode}");
+      return [];
+    }
+  }
+
+  @override
+  Future<List<String>> getScoresByGroupID(String groupId, String evaluationId) async {
+    final response = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&groupID=$groupId&evaluationID=$evaluationId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      },
+    );
+    logInfo("Scores by group fetch response status: ${response.statusCode}");
+    logInfo("Scores by group fetch response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      return responseData.map((data) => Score(
+        punctuality: data['punctuality'],
+        contributions: data['contributions'],
+        commitment: data['commitment'],
+        attitude: data['attitude'],
+      ).toString()).toList();
+    } else {
+      logError("Failed to fetch scores by group. Status code: ${response.statusCode}");
+      return [];
+    }
+  }
+
+
+  @override
+  Future<List<String>> getUserScores(String userId, String evaluationId) async {
+    final response = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId&evaluationID=$evaluationId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      },
+    );
+    logInfo("User scores fetch response status: ${response.statusCode}");
+    logInfo("User scores fetch response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      return responseData.map((data) => Score(
+        punctuality: data['punctuality'],
+        contributions: data['contributions'],
+        commitment: data['commitment'],
+        attitude: data['attitude'],
+      ).toString()).toList();
+    } else {
+      logError("Failed to fetch user scores. Status code: ${response.statusCode}");
+      return [];
+    }
+  }
+
+  @override
+  Future<List<String>> getAllUserScores(String userId) async {
+    final response = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      },
+    );
+    logInfo("All user scores fetch response status: ${response.statusCode}");
+    logInfo("All user scores fetch response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      return responseData.map((data) => Score(
+        punctuality: data['punctuality'],
+        contributions: data['contributions'],
+        commitment: data['commitment'],
+        attitude: data['attitude'],
+      ).toString()).toList();
+    } else {
+      logError("Failed to fetch all user scores. Status code: ${response.statusCode}");
+      return [];
+    }
+  }
+
+
+  @override
+  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores}) async {
+    logInfo("Submitting score for userId: $userId, evaluationId: $evaluationId, groupID: $groupID, categoryID: $categoryID");
+
+    final response = await httpClient.post(
+      Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'tableName': 'EvaluationScore',
+        'records': {
+          'userID': userId,
+          'evaluationID': evaluationId,
+          'groupID': groupID,
+          'categoryID': categoryID,
+          'punctuality': scores.punctuality,
+          'contributions': scores.contributions,
+          'commitment': scores.commitment,
+          'attitude': scores.attitude,
+        },
+      }),
+    );
+
+    logInfo("Submit score response status: ${response.statusCode}");
+    logInfo("Submit score response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
+      logInfo("Score submitted successfully: $responseData");
+    } else {
+      logError("Failed to submit score. Status code: ${response.statusCode}");
+      throw Exception('Failed to submit score');
+    }
+  }
+
+
   
+
+
+
+
 }

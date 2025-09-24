@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../domain/models/evaluation.dart';
+import 'package:flourse/features/evaluations/domain/models/score.dart';
 import 'package:loggy/loggy.dart';
 import '../../domain/use_case/evaluation_usecase.dart';
 
@@ -48,6 +49,46 @@ class EvaluationController extends GetxController {
     );
     return evaluation.name;
   }
+
+  Future<List<String?>> getScoresByCategoryID(String categoryId, String evaluationId) {
+    return evasation.getScoresByCategoryID(categoryId, evaluationId);
+  }
+
+  Future<List<String?>> getScoresByEvaluationID(String evaluationId) {
+    return evasation.getScoresByEvaluationID(evaluationId);
+  }
+
+  Future<List<String?>> getScoresByGroupID(String groupId, String evaluationId) {
+    return evasation.getScoresByGroupID(groupId, evaluationId);
+  }
+
+  Future<void> submitScore({
+    required String userId,
+    required String evaluationId,
+    required String groupID,
+    required String categoryID,
+    required Score scores,
+  }) {
+    return evasation.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores);
+  }
+
+  Future<List<String?>> getUserScores(String userId, String evaluationId) {
+    return evasation.getUserScores(userId, evaluationId);
+  }
+
+  Future<List<String?>> getAllUserScores(String userId) {
+    return evasation.getAllUserScores(userId);
+  }
+
+
+    
+
+
+
+
+
+
+
 
 
 }
