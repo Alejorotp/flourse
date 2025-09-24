@@ -59,4 +59,10 @@ class CoursesController extends GetxController {
     await getAllCourses();
     return result;
   }
+
+  Future<String> getUserNameById(String userId) {
+    Future<String> userName = coursation.getUserNameById(userId);
+    logInfo("Fetched user name for ID $userId");
+    return userName;
+  }
 }

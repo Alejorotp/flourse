@@ -178,24 +178,37 @@ class GroupSourceService implements IGroupSource {
   @override
   Future<bool> removeMemberFromGroup(String groupId, String userId) async {
     logInfo("User with ID: $userId being removed from group with ID: $groupId on API");
+
+    final groupMemberResponse = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=$groupId&userID=$userId"),
+      headers: {
+        'Authorization': 'Bearer $_authToken',
+      });
+
+    if (groupMemberResponse.statusCode != 200) {
+      logError("Failed to fetch GroupMember for user $userId in group $groupId: ${groupMemberResponse.statusCode}");
+      return false;
+    }
+    final List<dynamic> groupMemberList = json.decode(groupMemberResponse.body);
+    if (groupMemberList.isEmpty) {
+      logWarning("No GroupMember found for user $userId in group $groupId");
+      return false;
+    }
+    final String groupMemberId = groupMemberList[0]['_id'].toString();
+    logInfo("Found GroupMember ID: $groupMemberId for user $userId in group $groupId");
     try {
-      var vgroup = await getGroupById(groupId);
-      final group = vgroup.isNotEmpty ? vgroup.first : null;
-      if (group == null || !group.memberIDs.contains(userId)) {
-        return false;
-      }
-      final updatedMembers = group.memberIDs..remove(userId);
-      final response = await httpClient.put(
-        Uri.parse("$_apiBaseUrl/$_databaseName/update"),
+      final response = await httpClient.delete(
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember/delete"),
         headers: {
           'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'tableName': 'groups',
-          'idColumn': '_id',
-          'idValue': groupId,
-          'updates': {'memberIDs': updatedMembers},
+          'data':{
+            'tableName': 'GroupMember',
+            'idColumn': '_id',
+            'idValue': groupMemberId,
+          }
         }),
       );
       return response.statusCode == 200;
