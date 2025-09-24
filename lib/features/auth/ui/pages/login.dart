@@ -12,13 +12,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controllers para los campos (necesarios para limpiar)
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController userNameController = TextEditingController();
+  var email = '';
+  var password = '';
+  var userName = '';
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final userNameController = TextEditingController();
 
   static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
   static const blue = Color.fromRGBO(43, 213, 243, 1); // celeste
+
+  void _clearAllFields() {
+    emailController.clear();
+    passwordController.clear();
+    userNameController.clear();
+    email = '';
+    password = '';
+    userName = '';
+  }
 
   @override
   void dispose() {
@@ -26,17 +38,6 @@ class _LoginPageState extends State<LoginPage> {
     passwordController.dispose();
     userNameController.dispose();
     super.dispose();
-  }
-
-  // Limpia todos los campos y quita el foco
-  void _clearAllFields() {
-    emailController.clear();
-    passwordController.clear();
-    userNameController.clear();
-    // quita el foco si había uno
-    FocusScope.of(context).unfocus();
-    // forzamos un rebuild por seguridad
-    setState(() {});
   }
 
   @override
@@ -62,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Flourse".toUpperCase(),
+                  "FLOURSE",
                   style: const TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
@@ -82,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 4,
@@ -93,15 +94,37 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // Al cambiar manualmente, limpiamos campos antes de cambiar el modo
-                      _buildTabButton("Login", auth.isLogin.value, () {
-                        _clearAllFields();
-                        auth.isLogin.value = true;
-                      }),
-                      _buildTabButton("Sign Up", !auth.isLogin.value, () {
-                        _clearAllFields();
-                        auth.isLogin.value = false;
-                      }),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: _buildTabButton(
+                            "Iniciar sesión",
+                            auth.isLogin.value,
+                            () {
+                              _clearAllFields();
+                              auth.isLogin.value = true;
+                            },
+                            isLogin: true,
+                            auth: auth,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: _buildTabButton(
+                            "Registrarse",
+                            !auth.isLogin.value,
+                            () {
+                              _clearAllFields();
+                              auth.isLogin.value = false;
+                            },
+                            isLogin: false,
+                            auth: auth,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -125,7 +148,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildTabButton(String text, bool isActive, VoidCallback onTap) {
+  Widget _buildTabButton(
+    String text,
+    bool isActive,
+    VoidCallback onTap, {
+    required bool isLogin,
+    required AuthenticationController auth,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -133,7 +162,9 @@ class _LoginPageState extends State<LoginPage> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? (text == "Login" ? lilac : blue) : Colors.transparent,
+          color: isActive
+              ? (isLogin ? lilac : blue) // 🔹 se decide según el modo
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -152,6 +183,7 @@ class _LoginPageState extends State<LoginPage> {
     return _TextFieldGeneral(
       labelText: "Nombre de usuario",
       controller: userNameController,
+      onChanged: (value) => userName = value,
     );
   }
 
@@ -159,6 +191,7 @@ class _LoginPageState extends State<LoginPage> {
     return _TextFieldGeneral(
       labelText: "Correo electrónico",
       controller: emailController,
+      onChanged: (value) => email = value,
       keyboardType: TextInputType.emailAddress,
     );
   }
@@ -167,11 +200,11 @@ class _LoginPageState extends State<LoginPage> {
     return _TextFieldGeneral(
       labelText: "Contraseña",
       controller: passwordController,
+      onChanged: (value) => password = value,
       obscureText: true,
     );
   }
 
-  // NOTA: mantengo la lógica de auth intacta; solo que ahora usamos controllers
   void _onLoginAction(AuthenticationController auth, bool stayLoggedIn) async {
     try {
       if (stayLoggedIn) {
@@ -180,18 +213,16 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         auth.rememberMe = false;
       }
-      await auth.login(emailController.text, passwordController.text);
+      await auth.login(email, password);
       Get.snackbar(
         "Éxito",
         "Inicio de sesión exitoso",
         icon: const Icon(Icons.check_circle, color: Colors.green),
         snackPosition: SnackPosition.BOTTOM,
       );
-      // limpiar campos tras login exitoso
-      _clearAllFields();
     } catch (err) {
       Get.snackbar(
-        "Login Error",
+        "Error",
         err.toString(),
         icon: const Icon(Icons.error, color: Colors.red),
         snackPosition: SnackPosition.BOTTOM,
@@ -214,13 +245,13 @@ class _LoginPageState extends State<LoginPage> {
           ),
           onPressed: () async {
             if (auth.isLogin.value!) {
-              // LOGIN: mostramos diálogo (como estaba)
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text("Mantener sesión iniciada"),
-                    content: const Text("¿Deseas mantener la sesión iniciada?"),
+                    content:
+                        const Text("¿Deseas mantener la sesión iniciada?"),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -241,12 +272,9 @@ class _LoginPageState extends State<LoginPage> {
                 },
               );
             } else {
-              // SIGN UP: validación previa
-              if (emailController.text.isEmpty ||
-                  passwordController.text.isEmpty ||
-                  userNameController.text.isEmpty) {
+              if (email.isEmpty || password.isEmpty || userName.isEmpty) {
                 Get.snackbar(
-                  "Registro fallido",
+                  "Error",
                   "Todos los campos son obligatorios",
                   icon: const Icon(Icons.error, color: Colors.red),
                   snackPosition: SnackPosition.BOTTOM,
@@ -254,26 +282,18 @@ class _LoginPageState extends State<LoginPage> {
                 return;
               }
               try {
-                await auth.signUp(
-                  emailController.text,
-                  passwordController.text,
-                  userNameController.text,
-                );
+                await auth.signUp(email, password, userName);
                 Get.snackbar(
                   "Éxito",
                   "Usuario creado exitosamente",
                   icon: const Icon(Icons.check_circle, color: Colors.green),
                   snackPosition: SnackPosition.BOTTOM,
                 );
-
-                // 🔹 Limpiar campos después de éxito
                 _clearAllFields();
-
-                // 🔹 Cambia a login solo si fue exitoso
                 auth.isLogin.value = true;
               } catch (err) {
                 Get.snackbar(
-                  "Registro fallido",
+                  "Error",
                   err.toString(),
                   icon: const Icon(Icons.error, color: Colors.red),
                   snackPosition: SnackPosition.BOTTOM,
@@ -294,12 +314,14 @@ class _LoginPageState extends State<LoginPage> {
 class _TextFieldGeneral extends StatelessWidget {
   final String labelText;
   final TextEditingController controller;
+  final Function(String) onChanged;
   final TextInputType keyboardType;
   final bool obscureText;
 
   const _TextFieldGeneral({
     required this.labelText,
     required this.controller,
+    required this.onChanged,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
   });
@@ -328,6 +350,7 @@ class _TextFieldGeneral extends StatelessWidget {
                 const BorderSide(color: Colors.deepPurpleAccent, width: 2),
           ),
         ),
+        onChanged: onChanged,
       ),
     );
   }
