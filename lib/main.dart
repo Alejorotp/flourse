@@ -8,10 +8,12 @@ import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'package:loggy/loggy.dart';
 
 import 'central.dart';
+
+import 'features/auth/data/datasources/remote/authentication_client.dart';
 
 import 'features/auth/data/datasources/i_authentication_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
@@ -49,10 +51,13 @@ void main() {
 
   runApp(const MainApp());
 
-  Get.put(http.Client()); // Iniciar el cliente HTTP
+  //Get.put(http.Client()); // Iniciar el cliente HTTP
+
+  final authClient = AuthenticatedClient();
+  Get.put(authClient);
 
   // Auth
-  Get.put<IAuthenticationSource>(AuthenticationSourceService());
+  Get.put<IAuthenticationSource>(AuthenticationSourceService(Get.find()));
   Get.put<IAuthRepository>(AuthRepository(Get.find()));
   Get.put(AuthenticationUseCase(Get.find()));
   Get.put(AuthenticationController(Get.find()));

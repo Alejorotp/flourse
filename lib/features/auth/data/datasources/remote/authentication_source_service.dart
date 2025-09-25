@@ -4,18 +4,22 @@ import 'dart:convert';
 import '../../../domain/models/authentication_user.dart';
 import '../i_authentication_source.dart';
 import 'dart:io';
+import 'authentication_client.dart';
 
 class AuthenticationSourceService implements IAuthenticationSource {
-  final http.Client httpClient;
+  //final http.Client httpClient;
+  final AuthenticatedClient client;
+  //String? _refreshToken;
 
-  AuthenticationSourceService({http.Client? client})
-    : httpClient = client ?? http.Client();
+  //AuthenticationSourceService({http.Client? client})
+  //  : httpClient = client ?? http.Client();
+  AuthenticationSourceService(this.client);
 
   @override
   Future<Set<dynamic>> login(AuthenticationUser user) async {
     logInfo("Attempting login for email: ${user.email}");
     try {
-      final response = await httpClient.post(
+      final response = await client.post(
         Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/login"),
         body: {
           'email': user.email,
@@ -25,10 +29,18 @@ class AuthenticationSourceService implements IAuthenticationSource {
       logInfo("Login response status: ${response.statusCode}");
       logInfo("Login response body: ${response.body}");
       final Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Guardar tokens en el client
+      client.updateTokens(
+        accessToken: responseData['accessToken'],
+        refreshToken: responseData['refreshToken'],
+      );
+      
+      // Guardar el refresh token localmente si es necesario
       final authUser = {AuthenticationUser(email: responseData['user']['email'], name: responseData['user']['name'], id: responseData['user']['id'], password: user.password), responseData['accessToken'], responseData['refreshToken']};
 
       try {
-        final responseQuery = await httpClient.get(
+        final responseQuery = await client.get(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=AuthenticationUser&UID=${responseData['user']['id']}"),
           headers: {
             'Authorization': 'Bearer ${responseData['accessToken']}',
@@ -37,7 +49,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
         logInfo("User data fetch response status: ${responseQuery.statusCode}");
         logInfo("User data fetch response body: ${responseQuery.body}");
         if (responseQuery.body.isNotEmpty) {
-          final responseCreateUser = await httpClient.post(
+          final responseCreateUser = await client.post(
             Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/insert"),
             headers: {
               'Authorization': 'Bearer ${responseData['accessToken']}',
@@ -71,7 +83,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
   Future<bool> signUp(AuthenticationUser user) async {
     logInfo("Attempting sign up for email: ${user.email}");
     try {
-    final response = await httpClient.post(
+    final response = await client.post(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/signup-direct"),
       body: {
         'email': user.email,
@@ -91,6 +103,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
   @override
   Future<bool> logOut() async {
     logInfo("Attempting logout");
+    client.updateTokens(accessToken: '', refreshToken: '');
     return Future.value(true);
   }
 
@@ -104,7 +117,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
   Future<String?> refreshToken(String rToken) async {
     logInfo("Attempting token refresh");
     try {
-    final response = await httpClient.post(
+    final response = await http.post(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/refresh-token"),
       headers: {
         'Content-Type': 'application/json',
@@ -153,11 +166,8 @@ class AuthenticationSourceService implements IAuthenticationSource {
   @override
   Future<bool> verifyToken(String accessToken) async {
     logInfo("Attempting token verification");
-    final response = await httpClient.get(
+    final response = await client.get(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/verify-token"),
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-      },
     );
     return response.statusCode == 201;
   }

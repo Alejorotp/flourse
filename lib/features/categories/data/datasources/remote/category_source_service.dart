@@ -5,13 +5,14 @@ import 'package:flourse/features/categories/data/datasources/i_category_source.d
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'dart:convert';
-
+import 'package:flourse/features/auth/data/datasources/remote/authentication_client.dart';
 
 
 class CategorySourceService implements ICategorySource {
   final http.Client httpClient;
 
   AuthenticationController auth = Get.find();
+  final client = Get.find<AuthenticatedClient>();
 
   CategorySourceService({http.Client? client})
     : httpClient = client ?? http.Client();
@@ -19,16 +20,13 @@ class CategorySourceService implements ICategorySource {
   @override
   Future<List<Category>> getAllCategories() async {
     logInfo("Fetching all categories");
-     final responseQuery = await httpClient.get(
+     final responseQuery = await client.get(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category"),
-          headers: {
-            'Authorization': 'Bearer ${auth.accessToken}',
-          },
         );
 
     logInfo("Categories fetch response status: ${responseQuery.statusCode}");
     logInfo("Categories fetch response body: ${responseQuery.body}");
-    final List<dynamic> responseData = responseQuery.body.isNotEmpty ? json.decode(responseQuery.body) : [];
+    final List<dynamic> responseData = responseQuery.body.isNotEmpty ? json.decode(responseQuery.body) as List<dynamic> : [];
     return responseData.map((data) => Category(
       id: data['_id'].toString(),
       name: data['name'],
@@ -53,10 +51,9 @@ class CategorySourceService implements ICategorySource {
       courseId: courseId,
     );
 
-    final responseCreateCategory = await httpClient.post(
+    final responseCreateCategory = await client.post(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/insert"),
       headers: {
-        'Authorization': 'Bearer ${auth.accessToken}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -81,29 +78,21 @@ class CategorySourceService implements ICategorySource {
   @override
   void deleteCategory(String id) async{
     logInfo("Deleting category with id: $id");
-     final responseQuery = await httpClient.delete(
-          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category/delete}"),
-          
-          headers: {
-            'Authorization': 'Bearer ${auth.accessToken}',
-          },
+     final responseQuery = await client.delete(
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category/delete"),
           body: jsonEncode({
             'data':{
-            'tableName': 'Category',
+              'tableName': 'Category',
               'idColumn': '_id',
               'idValue': id
             }
           }),
-        
         );
     logInfo("Category deletion response status: ${responseQuery.statusCode}");
     logInfo("Category deletion response body: ${responseQuery.body}");
 
-      final relatedCoursesResponse = await httpClient.delete(
+      final relatedCoursesResponse = await client.delete(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseCategory/delete"),
-          headers: {
-            'Authorization':'Bearer ${auth.accessToken}',
-          },
           body: jsonEncode({
             'data':{
             'tableName': 'CourseCategory',
@@ -131,11 +120,8 @@ class CategorySourceService implements ICategorySource {
   @override
   Future<Category?> getCategoryById(String id) async {
     logInfo("Fetching category by id: $id");
-    final response = await httpClient.get(
+    final response = await client.get(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category&courseID=$id"),
-      headers: {
-        'Authorization' : 'Bearer ${auth.accessToken}',
-      },
     );
     logInfo("Fetch category by id response status: ${response.statusCode}");
     logInfo("Fetch category by id response body: ${response.body}");
