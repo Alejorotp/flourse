@@ -55,8 +55,6 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
 
-  runApp(const MainApp());
-
   Get.put(http.Client()); // Iniciar el cliente HTTP
 
   // Auth
@@ -89,6 +87,8 @@ void main() {
   Get.put<IEvaluationRepository>(EvaluationRepository(Get.find()));
   Get.put(EvaluationUseCase(Get.find()));
   Get.put(EvaluationController(Get.find()));
+
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {

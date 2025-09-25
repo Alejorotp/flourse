@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flourse/features/auth/ui/pages/login.dart';
 import 'package:flourse/features/groups/data/datasources/i_group_source.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:loggy/loggy.dart';
@@ -74,11 +75,10 @@ class GroupSourceService implements IGroupSource {
 
           final group = Group(
             id: data['_id'].toString(),
-            maxMembers: maxMembers,
             memberIDs: memberIDs,
             categoryID: data['categoryID'].toString(),
           );
-          logInfo("Fetched group: ${group.id} with maxMembers: ${group.maxMembers},memberIDs: ${group.memberIDs} and categoryID: ${group.categoryID}");
+          logInfo("Fetched group: ${group.id} with memberIDs: ${group.memberIDs} and categoryID: ${group.categoryID}");
           fetchedGroups.add(group);
         }
         return fetchedGroups;
@@ -133,7 +133,14 @@ class GroupSourceService implements IGroupSource {
         logError("Group creation response body: ${response.body}");
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['inserted'].isNotEmpty) {
-          return Group.fromJson(responseData['inserted'][0]);
+          logInfo("Group created successfully: ${responseData['inserted'][0]['_id']}");
+          logError(responseData['inserted'][0]);
+          return Group(
+            id: responseData['inserted'][0]['_id'].toString(),
+            memberIDs: [],
+            categoryID: categoryId,
+            groupNumber: groupNumber,
+          );
         }
       }
       logError("Failed to create group: ${response.statusCode}");

@@ -16,10 +16,13 @@ class AuthenticationSourceService implements IAuthenticationSource {
     try {
       final response = await httpClient.post(
         Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/login"),
-        body: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
           'email': user.email,
           'password': user.password,
-        },
+        }),
       );
       logInfo("Login response status: ${response.statusCode}");
       logInfo("Login response body: ${response.body}");

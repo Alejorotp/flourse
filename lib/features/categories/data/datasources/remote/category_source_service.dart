@@ -76,6 +76,9 @@ class CategorySourceService implements ICategorySource {
     logInfo("Category creation response status: ${responseCreateCategory.statusCode}");
     logInfo("Category creation response body: ${responseCreateCategory.body}");
 
+    final responseData = json.decode(responseCreateCategory.body);
+    newCategory.id = responseData["inserted"][0]["_id"];
+
     if (groupingMethod == 'Aleatorio'){
       GroupsController groupsController = Get.find();
       final courseMembersResponse = await httpClient.get(
@@ -93,20 +96,21 @@ class CategorySourceService implements ICategorySource {
         final groupMemberIds = memberIds.skip(i * maxMembers).take(maxMembers).toList();
         if (groupMemberIds.isEmpty) break;
 
-        groupsController.createGroup(
+        await groupsController.createGroup(
           categoryId: newCategory.id!,
           groupNumber: i + 1,
           maxMembers: newCategory.maxMembers,
         );
         logInfo("Creating group ${i + 1} with members: $groupMemberIds");
-
-        groupMemberIds.forEach((memberId) {
-          groupsController.joinGroup(
-            groupsController.groups.last.id,
-            memberId,
-          );
-          logInfo("Added member $memberId to group ${groupsController.groups.last.id}");
+        membersData.forEach((member) async {
+          if (groupMemberIds.contains(member['userID'].toString()) && member['role'] == false) {
+            await groupsController.joinGroup(
+              groupsController.groups.last.id,
+              member['userID'].toString(),
+            );
+          }
         });
+
 
         
 

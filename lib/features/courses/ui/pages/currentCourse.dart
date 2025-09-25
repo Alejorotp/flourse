@@ -18,6 +18,7 @@ import 'package:flourse/features/evaluations/ui/pages/createEvaluation.dart';
 // import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
 import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
+import '../controller/courses_controller.dart';
 
 class CurrentCoursePage extends StatefulWidget {
   static const String courseID = '/course-detail';
@@ -59,6 +60,8 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
   Widget build(BuildContext context) {
     final courseInfo = widget.courseInfo;
     AuthenticationController auth = Get.find();
+    CoursesController courseCon = Get.find();
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
     categoriesController.fetchCategories();
