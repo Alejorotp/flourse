@@ -1,21 +1,20 @@
 class Group {
   final String id;
-  final int maxMembers;
   List<String> memberIDs;
+  final int groupNumber;
   final String categoryID;
 
   Group({
     required this.id,
     required this.categoryID,
-    required this.maxMembers,
     required this.memberIDs,
+    this.groupNumber = 0,
   });
 
   // Constructor de fábrica para crear una instancia de Group desde un mapa JSON.
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
       id: json['_id'] as String,
-      maxMembers: json['maxMembers'] as int,
       // La API devuelve un List<dynamic>, que se convierte a List<String>
       memberIDs: (json['memberIDs'] as List<dynamic>)
           .map((id) => id as String)
@@ -28,9 +27,9 @@ class Group {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'maxMembers': maxMembers,
       'memberIDs': memberIDs,
       'categoryID': categoryID,
+      'groupNumber': groupNumber,
     };
   }
 }

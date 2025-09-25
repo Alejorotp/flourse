@@ -9,8 +9,11 @@ class MemberCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
-        leading: const CircleAvatar(child: Icon(Icons.person)),
-        title: Text(name),
+        leading: const CircleAvatar(
+          backgroundColor: Color.fromARGB(255, 205, 237, 255),
+          child: Icon(Icons.person, color: Color.fromRGBO(43, 213, 243, 1)),
+        ),
+        title: Text(name, style: TextStyle(fontSize: 17)),
       ),
     );
   }

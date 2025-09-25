@@ -42,12 +42,18 @@ import 'features/categories/data/repositories/category_repository.dart';
 import 'features/categories/domain/repositories/i_category_repository.dart';
 import 'features/categories/domain/use_case/category_usecase.dart';
 
+import 'features/evaluations/ui/controller/evaluation_controller.dart';
+import 'features/evaluations/data/datasources/i_evaluation_source.dart';
+import 'features/evaluations/data/datasources/remote/evaluation_source_service.dart';
+import 'features/evaluations/data/repository/evaluation_repository.dart';
+import 'features/evaluations/domain/repositories/i_evaluation_repository.dart';
+import 'features/evaluations/domain/use_case/evaluation_usecase.dart';
+
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
-
-  runApp(const MainApp());
 
   Get.put(http.Client()); // Iniciar el cliente HTTP
 
@@ -76,7 +82,13 @@ void main() {
   Get.put(CategoryUseCase(Get.find()));
   Get.put(CategoriesController(Get.find()));
 
-  
+  // Evaluations
+  Get.put<IEvaluationSource>(EvaluationSourceService());
+  Get.put<IEvaluationRepository>(EvaluationRepository(Get.find()));
+  Get.put(EvaluationUseCase(Get.find()));
+  Get.put(EvaluationController(Get.find()));
+
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {

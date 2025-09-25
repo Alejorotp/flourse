@@ -1,13 +1,15 @@
 class Evaluation {
-  final String title;
-  final String course;
-  final String description;
-  final String timeRemaining;
-
+  final String name;
+  final String categoryID;
+  final String evaluationID;
+  final String creationDate;
+  final String visibility;
+  
   Evaluation({
-    required this.title,
-    required this.course,
-    required this.description,
-    required this.timeRemaining,
+    required this.name,
+    required this.categoryID,
+    required this.evaluationID,
+    required this.creationDate,
+    required this.visibility,
   });
 }

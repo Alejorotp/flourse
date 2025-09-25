@@ -25,6 +25,7 @@ class _CoursesPageState extends State<CoursesPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(50, 239, 229, 248),
         title: const Text(
           "Flourse",
           style: TextStyle(
@@ -46,27 +47,83 @@ class _CoursesPageState extends State<CoursesPage> {
                   'Mis cursos',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline, color: Colors.deepPurpleAccent, size: 32),
-                      tooltip: 'Crear un curso',
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/create-course');
-                      },
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    popupMenuTheme: PopupMenuThemeData(
+                      color: Colors.white.withOpacity(0.95),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.group_add, color: Colors.blue, size: 32),
-                      tooltip: 'Unirse a un curso',
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/join-course');
-                      },
+                  ),
+                    child: PopupMenuButton<int>(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    itemBuilder: (context) => [
+                      PopupMenuItem<int>(
+                      value: 1,
+                      child: Row(
+                        children: [
+                        Container(
+                          decoration: BoxDecoration(
+                          color: const Color.fromRGBO(124, 77, 255, 1),
+                          borderRadius: BorderRadius.circular(6),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text('Crear un curso', style: TextStyle(color: Color.fromRGBO(124, 77, 255, 1), fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      ),
+                      PopupMenuItem<int>(
+                      value: 2,
+                      child: Row(
+                        children: [
+                        Container(
+                          decoration: BoxDecoration(
+                          color: const Color.fromRGBO(43, 213, 243, 1),
+                          borderRadius: BorderRadius.circular(6),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text('Unirse a un curso', style: TextStyle(color: Color.fromRGBO(43, 213, 243, 1), fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 1) {
+                      Navigator.of(context).pushNamed('/create-course');
+                      } else if (value == 2) {
+                      Navigator.of(context).pushNamed('/join-course');
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+                      decoration: BoxDecoration(
+                      color: const Color.fromARGB(125, 224, 224, 224),
+                      borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                      children: const [
+                        Icon(Icons.add, color: Colors.black87, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                        'Agregar',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                        ),
+                      ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
-            const Divider(color: Colors.grey),
+            const Divider(thickness: 0.15, color: Colors.grey),
             const SizedBox(height: 12),
             RoleToggleButtons(
               isProfessor: _isProfessor,
