@@ -1,3 +1,5 @@
+import 'package:flourse/core/local_preferences_secured.dart';
+
 import 'package:flourse/features/auth/data/datasources/remote/authentication_source_service.dart';
 import 'package:flourse/features/auth/ui/pages/login.dart';
 import 'package:flourse/features/courses/ui/pages/joinCourse.dart';
@@ -12,6 +14,9 @@ import 'package:http/http.dart' as http;
 import 'package:loggy/loggy.dart';
 
 import 'central.dart';
+
+import 'core/i_local_preferences.dart';
+import 'core/refresh_client.dart';
 
 import 'features/auth/data/datasources/i_authentication_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
@@ -55,10 +60,20 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
 
-  Get.put(http.Client()); // Iniciar el cliente HTTP
+  Get.put<ILocalPreferences>(LocalPreferencesSecured());
+
+  Get.lazyPut<IAuthenticationSource>(
+    () => AuthenticationSourceService(),
+    fenix: true,
+  );
+
+  Get.put<http.Client>(
+    RefreshClient(http.Client(), Get.find<IAuthenticationSource>()),
+    tag: 'apiClient',
+    permanent: true,
+    ); // Iniciar el cliente HTTP
 
   // Auth
-  Get.put<IAuthenticationSource>(AuthenticationSourceService());
   Get.put<IAuthRepository>(AuthRepository(Get.find()));
   Get.put(AuthenticationUseCase(Get.find()));
   Get.put(AuthenticationController(Get.find()));

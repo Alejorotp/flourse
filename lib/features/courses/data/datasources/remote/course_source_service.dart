@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'dart:convert';
 
 class CourseSourceService implements ICourseSource {
-  final http.Client httpClient;
+  final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
 
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
@@ -19,8 +19,8 @@ class CourseSourceService implements ICourseSource {
 
   String get _authToken => authController.accessToken.value;
 
-  CourseSourceService({http.Client? client})
-    : httpClient = client ?? http.Client();
+  //CourseSourceService({http.Client? client})
+  //  : httpClient = client ?? http.Client();
 
   @override
   Future<String> getUserNameById(String userId) async {
