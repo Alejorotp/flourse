@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
-import 'package:flourse/features/home/ui/widgets/course_action_card.dart';
+import 'package:flourse/features/home/ui/widgets/create_course_card.dart';
+import 'package:flourse/features/home/ui/widgets/join_course_card.dart';
 import 'package:get/get.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
@@ -34,7 +35,6 @@ class HomePage extends StatelessWidget {
           Builder(
             builder: (context) {
               double width = MediaQuery.of(context).size.width;
-
               if (width >= 700) {
                 return TextButton.icon(
                   onPressed: () async {
@@ -49,9 +49,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 );
-              } 
-              // 🔹 Si es más pequeño → solo el icono
-              else {
+              } else {
                 return IconButton(
                   onPressed: () async {
                     await auth.logOut();
@@ -79,18 +77,21 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 24,
-                      backgroundColor: Color.fromARGB(120, 223, 223, 223),
+                      backgroundColor: const Color.fromARGB(120, 223, 223, 223),
                       child: Text(
-                        "👤",
-                        style: TextStyle(fontSize: 24),
+                        (auth.currentUser.value.name.isNotEmpty
+                                ? auth.currentUser.value.name[0]
+                                : 'U')
+                            .toUpperCase(),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "👋 Bienvenido, ${auth.currentUser.value.name.isNotEmpty ? auth.currentUser.value.name : "User"}",
+                        "👋 Bienvenido, ${auth.currentUser.value.name.isNotEmpty ? auth.currentUser.value.name : 'User'}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -103,7 +104,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const Divider(thickness: 0.15, color: Colors.grey),
-
             // Mis cursos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,7 +115,7 @@ class HomePage extends StatelessWidget {
                 Material(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(6),
-                    highlightColor: Colors.blue.shade100, // efecto azul al presionar
+                    highlightColor: Colors.blue.shade100,
                     onTap: () {
                       Navigator.of(context).pushNamed(CoursesPage.id);
                     },
@@ -123,61 +123,80 @@ class HomePage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
                         "Ver todos",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                       ),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const Divider(thickness: 0.15, color: Colors.grey),
+            const SizedBox(height: 4),
+            const Text(
+              'Profesor',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 46, 0, 172), fontSize: 15),
+            ),
+            const SizedBox(height: 8),
+            // Carrusel de profesor
             Obx(() {
-              final filteredCourses = courseCon.userCourses;
-              if (filteredCourses.isEmpty) {
-                return const Center(
-                  child: Text('No hay cursos disponibles.'),
-                );
-              }
+              final profCourses = courseCon.userCourses.where((c) => c.userRole.toLowerCase() == 'profesor').toList();
+              final showCreate = profCourses.length <= 2;
               return SizedBox(
                 height: 180,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: filteredCourses.length + 1, // +1 para incluir el widget extra
+                  itemCount: profCourses.length + (showCreate ? 1 : 0),
                   itemBuilder: (context, index) {
-                    if (index == filteredCourses.length) {
+                    if (showCreate && index == profCourses.length) {
                       return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(16),
-                        child: CourseActionCard(),
-                      ),
+                        padding: const EdgeInsets.only(right: 12),
+                        child: CreateCourseCard(
+                          onTap: () => Get.toNamed("/create-course"),
+                        ),
                       );
                     }
-
-                    final course = filteredCourses[index];
+                    final course = profCourses[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(16),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () {},
-                        child: CourseCard(courseInfo: course),
-                      ),
-                      ),
+                      child: CourseCard(courseInfo: course),
                     );
                   },
                 ),
               );
             }),
-
+            const SizedBox(height: 8),
+            const Text(
+              'Estudiante',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 124, 182), fontSize: 15),
+            ),
+            const SizedBox(height: 8),
+            // Carrusel de estudiante
+            Obx(() {
+              final studentCourses = courseCon.userCourses.where((c) => c.userRole.toLowerCase() == 'estudiante').toList();
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: studentCourses.length + 1, // +1 para card de unirse
+                  itemBuilder: (context, index) {
+                    if (index == studentCourses.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: JoinCourseCard(
+                          onTap: () => Get.toNamed("/join-course"),
+                        ),
+                      );
+                    }
+                    final course = studentCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
+                    );
+                  },
+                ),
+              );
+            }),
             const SizedBox(height: 24),
-
             // Evaluaciones pendientes
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -189,18 +208,15 @@ class HomePage extends StatelessWidget {
                 Material(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(6),
-                    highlightColor: Colors.blue.shade100, // efecto azul al presionar
+                    highlightColor: Colors.blue.shade100,
                     onTap: () {
                       Navigator.of(context).pushNamed(EvaluationsPage.id);
                     },
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
-                        "Ver todas",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        "Ver todos",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
