@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(40, 124, 77, 255), // fondo lilac suave
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
@@ -189,8 +189,8 @@ class HomePage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(40, 43, 213, 243), // fondo azul suave
-                borderRadius: BorderRadius.circular(20),
+                color: const Color.fromARGB(40, 43, 213, 243),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,

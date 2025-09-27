@@ -14,6 +14,8 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> {
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
+  static const blue = Color.fromRGBO(43, 213, 243, 1); // celeste
   bool _isProfessor = true;
 
   @override
@@ -62,14 +64,14 @@ class _CoursesPageState extends State<CoursesPage> {
                         children: [
                         Container(
                           decoration: BoxDecoration(
-                          color: const Color.fromRGBO(124, 77, 255, 1),
+                          color: lilac,
                           borderRadius: BorderRadius.circular(6),
                           ),
                           padding: const EdgeInsets.all(6),
                           child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
                         ),
                         const SizedBox(width: 10),
-                        const Text('Crear un curso', style: TextStyle(color: Color.fromRGBO(124, 77, 255, 1), fontWeight: FontWeight.w600)),
+                        const Text('Crear un curso', style: TextStyle(color: lilac, fontWeight: FontWeight.w600)),
                         ],
                       ),
                       ),
@@ -79,14 +81,14 @@ class _CoursesPageState extends State<CoursesPage> {
                         children: [
                         Container(
                           decoration: BoxDecoration(
-                          color: const Color.fromRGBO(43, 213, 243, 1),
+                          color: blue,
                           borderRadius: BorderRadius.circular(6),
                           ),
                           padding: const EdgeInsets.all(6),
                           child: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 20),
                         ),
                         const SizedBox(width: 10),
-                        const Text('Unirse a un curso', style: TextStyle(color: Color.fromRGBO(43, 213, 243, 1), fontWeight: FontWeight.w600)),
+                        const Text('Unirse a un curso', style: TextStyle(color: blue, fontWeight: FontWeight.w600)),
                         ],
                       ),
                       ),
