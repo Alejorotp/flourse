@@ -76,11 +76,11 @@ class HomePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 24,
+                      radius: 28,
                       backgroundColor: const Color.fromARGB(120, 223, 223, 223),
                       child: Text(
                         (auth.currentUser.value.name.isNotEmpty
