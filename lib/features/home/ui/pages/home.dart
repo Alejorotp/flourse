@@ -11,6 +11,8 @@ import '../../../courses/ui/controller/courses_controller.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
+  static const blue = Color.fromRGBO(43, 213, 243, 1); // celeste
   const HomePage({super.key});
 
   @override
@@ -130,11 +132,29 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(thickness: 0.15, color: Colors.grey),
-            const SizedBox(height: 4),
-            const Text(
-              'Profesor',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 46, 0, 172), fontSize: 15),
+            const SizedBox(height: 8),
+            // Etiqueta Profesor
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(40, 124, 77, 255), // fondo lilac suave
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.school, color: lilac, size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    'Profesor',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: lilac,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             // Carrusel de profesor
@@ -164,10 +184,29 @@ class HomePage extends StatelessWidget {
                 ),
               );
             }),
-            const SizedBox(height: 8),
-            const Text(
-              'Estudiante',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 124, 182), fontSize: 15),
+            const SizedBox(height: 12),
+            // Etiqueta Estudiante
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(40, 43, 213, 243), // fondo azul suave
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person, color: Color.fromARGB(255, 0, 124, 182), size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    'Estudiante',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 124, 182),
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             // Carrusel de estudiante
@@ -230,5 +269,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-

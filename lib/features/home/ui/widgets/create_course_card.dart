@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CreateCourseCard extends StatelessWidget {
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
   final VoidCallback onTap;
   const CreateCourseCard({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    
     return Material(
       elevation: 1,
       borderRadius: BorderRadius.circular(16),
@@ -26,12 +28,12 @@ class CreateCourseCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                Icon(Icons.add_circle_outline, size: 32, color: Colors.deepPurpleAccent),
+                Icon(Icons.add_circle_outline, size: 32, color: lilac),
                 SizedBox(height: 8),
                 Text(
                   "Crear un curso",
                   style: TextStyle(
-                    color: Colors.deepPurpleAccent,
+                    color: lilac,
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),

@@ -19,7 +19,7 @@ class JoinCourseCard extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: const Color.fromARGB(15, 33, 149, 243),
-            border: Border.all(color: Colors.lightBlueAccent),
+            border: Border.all(color: const Color.fromARGB(255, 180, 231, 255)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(
