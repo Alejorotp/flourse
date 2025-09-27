@@ -60,22 +60,27 @@ class JoinCoursePage extends StatelessWidget {
                       userId: userId,
                     );
                     if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Te has unido al curso exitosamente.')),
+                      Get.snackbar(
+                        "Éxito",
+                        "Te has unido al curso éxitosamente",
+                        icon: const Icon(Icons.check_circle, color: Colors.green),
+                        snackPosition: SnackPosition.BOTTOM,
                       );
                       Navigator.of(context).pop();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Curso no existente o ya eres miembro'),
-                        ),
+                      Get.snackbar(
+                        "Error",
+                        "Curso no existente o ya eres miembro",
+                        icon: const Icon(Icons.error, color: Colors.red),
+                        snackPosition: SnackPosition.BOTTOM,
                       );
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('El código no puede estar vacío'),
-                      ),
+                    Get.snackbar(
+                      "Error",
+                      "El código no puede estar vacío",
+                      icon: const Icon(Icons.error, color: Colors.red),
+                      snackPosition: SnackPosition.BOTTOM,
                     );
                   }
                 },

@@ -55,25 +55,29 @@ class CreateCoursePage extends StatelessWidget {
                       professorID: userId,
                     );
                     if (created) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Curso creado exitosamente'),
-                        ),
+                      Get.snackbar(
+                        "Éxito",
+                        "Curso creado éxitosamente",
+                        icon: const Icon(Icons.check_circle, color: Colors.green),
+                        snackPosition: SnackPosition.BOTTOM,
                       );
                       Navigator.of(context).pop();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('No puedes ser profesor de más de 3 cursos'),
-                        ),
+                      Get.snackbar(
+                        "Error",
+                        "No puedes ser profesor de más de 3 cursos",
+                        icon: const Icon(Icons.error, color: Colors.red),
+                        snackPosition: SnackPosition.BOTTOM,
                       );
+                      Navigator.of(context).pop();
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('El nombre no puede estar vacío'),
-                      ),
-                    );
+                      Get.snackbar(
+                        "Error",
+                        "El nombre no puede estar vacío",
+                        icon: const Icon(Icons.error, color: Colors.red),
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                   }
                 },
                 child: const Text("Crear"),

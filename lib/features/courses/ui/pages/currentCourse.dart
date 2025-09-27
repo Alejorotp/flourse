@@ -34,7 +34,6 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
   CategoriesController categoriesController = Get.find();
 
   static const lilac = Color.fromRGBO(124, 77, 255, 1);
-  static const blue = Color.fromRGBO(31, 195, 224, 1);
   static const darkBlue = Color.fromARGB(255, 0, 124, 182);
 
   @override
