@@ -4,6 +4,9 @@ import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:flourse/features/home/ui/widgets/create_course_card.dart';
 import 'package:flourse/features/home/ui/widgets/join_course_card.dart';
+import 'dart:ui';
+import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
+import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
 import 'package:get/get.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
@@ -171,7 +174,17 @@ class HomePage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(right: 12),
                         child: CreateCourseCard(
-                          onTap: () => Get.toNamed("/create-course"),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: const CreateCourseDialog(),
+                              ),
+                            );
+                          },
                         ),
                       );
                     }
@@ -222,7 +235,17 @@ class HomePage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(right: 12),
                         child: JoinCourseCard(
-                          onTap: () => Get.toNamed("/join-course"),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: const JoinCourseDialog(),
+                              ),
+                            );
+                          },
                         ),
                       );
                     }

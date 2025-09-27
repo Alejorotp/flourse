@@ -3,6 +3,9 @@ import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
 import 'package:flourse/features/courses/ui/widgets/RoleToggleButtons.dart';
+import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
+import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
+import 'dart:ui';
 import 'package:get/get.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -55,70 +58,88 @@ class _CoursesPageState extends State<CoursesPage> {
                       color: Colors.white.withOpacity(0.95),
                     ),
                   ),
-                    child: PopupMenuButton<int>(
+                  child: PopupMenuButton<int>(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     itemBuilder: (context) => [
                       PopupMenuItem<int>(
-                      value: 1,
-                      child: Row(
-                        children: [
-                        Container(
-                          decoration: BoxDecoration(
-                          color: lilac,
-                          borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: lilac,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('Crear un curso', style: TextStyle(color: lilac, fontWeight: FontWeight.w600)),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        const Text('Crear un curso', style: TextStyle(color: lilac, fontWeight: FontWeight.w600)),
-                        ],
-                      ),
                       ),
                       PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: [
-                        Container(
-                          decoration: BoxDecoration(
-                          color: blue,
-                          borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 20),
+                        value: 2,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: blue,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('Unirse a un curso', style: TextStyle(color: blue, fontWeight: FontWeight.w600)),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        const Text('Unirse a un curso', style: TextStyle(color: blue, fontWeight: FontWeight.w600)),
-                        ],
-                      ),
                       ),
                     ],
                     onSelected: (value) {
                       if (value == 1) {
-                      Navigator.of(context).pushNamed('/create-course');
+                        // Mostrar el popup de crear curso
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierColor: Colors.black.withOpacity(0.2),
+                          builder: (context) => BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                            child: const CreateCourseDialog(),
+                          ),
+                        );
                       } else if (value == 2) {
-                      Navigator.of(context).pushNamed('/join-course');
+                        // Mostrar el popup de unirse a curso
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierColor: Colors.black.withOpacity(0.2),
+                          builder: (context) => BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                            child: const JoinCourseDialog(),
+                          ),
+                        );
                       }
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
                       decoration: BoxDecoration(
-                      color: const Color.fromARGB(125, 224, 224, 224),
-                      borderRadius: BorderRadius.circular(8),
+                        color: const Color.fromARGB(125, 224, 224, 224),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
-                      children: const [
-                        Icon(Icons.add, color: Colors.black87, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                        'Agregar',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                        ),
-                      ],
+                        children: const [
+                          Icon(Icons.add, color: Colors.black87, size: 18),
+                          SizedBox(width: 6),
+                          Text(
+                            'Agregar',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
