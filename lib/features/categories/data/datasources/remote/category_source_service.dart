@@ -3,16 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/data/datasources/i_category_source.dart';
 import 'package:get/get.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'dart:convert';
-import 'package:flourse/features/groups/ui/controller/group_controller.dart';
+// Removed UI-layer dependency
 
 
 
 class CategorySourceService implements ICategorySource {
   final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');  
-
-  AuthenticationController auth = Get.find();
 
   //CategorySourceService({http.Client? client})
   //  : httpClient = client ?? http.Client();
@@ -20,11 +17,8 @@ class CategorySourceService implements ICategorySource {
   @override
   Future<List<Category>> getAllCategories() async {
     logInfo("Fetching all categories");
-     final responseQuery = await httpClient.get(
+    final responseQuery = await httpClient.get(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category"),
-          headers: {
-            'Authorization': 'Bearer ${auth.accessToken}',
-          },
         );
 
     logInfo("Categories fetch response status: ${responseQuery.statusCode}");
@@ -57,7 +51,6 @@ class CategorySourceService implements ICategorySource {
     final responseCreateCategory = await httpClient.post(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/insert"),
       headers: {
-        'Authorization': 'Bearer ${auth.accessToken}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -79,45 +72,8 @@ class CategorySourceService implements ICategorySource {
     final responseData = json.decode(responseCreateCategory.body);
     newCategory.id = responseData["inserted"][0]["_id"];
 
-    if (groupingMethod == 'Aleatorio'){
-      GroupsController groupsController = Get.find();
-      final courseMembersResponse = await httpClient.get(
-        Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseMember&courseID=$courseId"),
-        headers: {
-          'Authorization': 'Bearer ${auth.accessToken}',
-        },
-      );
-      logInfo("Course members fetch response status: ${courseMembersResponse.statusCode}");
-      logInfo("Course members fetch response body: ${courseMembersResponse.body}");
-      final List<dynamic> membersData = courseMembersResponse.body.isNotEmpty ? json.decode(courseMembersResponse.body) : [];
-      final memberIds = membersData.map((data) => data['userID'].toString()).toList();
-      final groupCount = (memberIds.length / maxMembers).ceil();
-      for (int i = 0; i < groupCount; i++) {
-        final groupMemberIds = memberIds.skip(i * maxMembers).take(maxMembers).toList();
-        if (groupMemberIds.isEmpty) break;
-
-        await groupsController.createGroup(
-          categoryId: newCategory.id!,
-          groupNumber: i + 1,
-          maxMembers: newCategory.maxMembers,
-        );
-        logInfo("Creating group ${i + 1} with members: $groupMemberIds");
-        membersData.forEach((member) async {
-          if (groupMemberIds.contains(member['userID'].toString()) && member['role'] == false) {
-            await groupsController.joinGroup(
-              groupsController.groups.last.id,
-              member['userID'].toString(),
-            );
-          }
-        });
-
-
-        
-
-
-      }
-      logInfo("Created $groupCount groups for category ${newCategory.name} with grouping method 'Aleatorio'");
-    }
+    // Clean architecture: category data source should not orchestrate group creation.
+    // Any automation like random grouping belongs to a domain service/use case.
     
   }
 
@@ -127,9 +83,8 @@ class CategorySourceService implements ICategorySource {
     logInfo("Deleting category with id: $id");
      final responseQuery = await httpClient.delete(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category/delete}"),
-          
           headers: {
-            'Authorization': 'Bearer ${auth.accessToken}',
+            'Content-Type': 'application/json',
           },
           body: jsonEncode({
             'data':{
@@ -146,7 +101,7 @@ class CategorySourceService implements ICategorySource {
       final relatedCoursesResponse = await httpClient.delete(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseCategory/delete"),
           headers: {
-            'Authorization':'Bearer ${auth.accessToken}',
+            'Content-Type': 'application/json',
           },
           body: jsonEncode({
             'data':{
@@ -177,9 +132,6 @@ class CategorySourceService implements ICategorySource {
     logInfo("Fetching category by id: $id");
     final response = await httpClient.get(
       Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category&courseID=$id"),
-      headers: {
-        'Authorization' : 'Bearer ${auth.accessToken}',
-      },
     );
     logInfo("Fetch category by id response status: ${response.statusCode}");
     logInfo("Fetch category by id response body: ${response.body}");

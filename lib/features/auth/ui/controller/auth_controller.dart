@@ -1,7 +1,7 @@
 import 'package:flourse/features/auth/domain/models/authentication_user.dart';
 import 'package:get/get.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flourse/core/i_local_preferences.dart';
 
 import 'package:loggy/loggy.dart';
 
@@ -17,7 +17,7 @@ class AuthenticationController extends GetxController {
   bool rememberMe = true;
 
   AuthenticationUser lastUser = AuthenticationUser(id: '', email: '', name: '', password: '');
-  SharedPreferences? prefs;
+  ILocalPreferences? prefs;
 
   AuthenticationController(this.authentication);
 
@@ -25,17 +25,18 @@ class AuthenticationController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     logInfo('AuthenticationController initialized');
-    prefs = await SharedPreferences.getInstance();
-    rememberMe = prefs?.getBool('rememberMe') ?? false;
-    logInfo('Remember me from prefs: $rememberMe, prefs: ${prefs?.getBool('rememberMe')}');
+    // ILocalPreferences is injected via Get in main.dart
+    prefs = Get.find<ILocalPreferences>();
+    rememberMe = (await prefs!.retrieveData<bool>('rememberMe')) ?? false;
+    logInfo('Remember me from prefs: $rememberMe');
     if (rememberMe) {
       lastUser = AuthenticationUser(
-        email: prefs?.getString('lastUserEmail') ?? '',
+        email: (await prefs!.retrieveData<String>('lastUserEmail')) ?? '',
         name: '',
-        password: prefs?.getString('lastUserPassword') ?? '',
+        password: (await prefs!.retrieveData<String>('lastUserPassword')) ?? '',
       );
-      accessToken.value = prefs?.getString('accessToken') ?? '';
-      refreshToken.value = prefs?.getString('refreshToken') ?? '';
+      accessToken.value = (await prefs!.retrieveData<String>('accessToken')) ?? '';
+      refreshToken.value = (await prefs!.retrieveData<String>('refreshToken')) ?? '';
     }
     logInfo('Remember me: $rememberMe, Last user: ${lastUser.email}');
     logInfo('Access token: ${accessToken.value}, Refresh token: ${refreshToken.value}');
@@ -71,7 +72,7 @@ class AuthenticationController extends GetxController {
   }
 
   Future<Set<dynamic>> login(email, password) async {
-    prefs ??= await SharedPreferences.getInstance();
+    prefs ??= Get.find<ILocalPreferences>();
 
     logInfo('AuthenticationController: Login $email $password');
     String? validationError = validateFields(email, password);
@@ -92,11 +93,11 @@ class AuthenticationController extends GetxController {
         lastUser = rta.first;
 
         try {
-          await prefs!.setBool('rememberMe', true);
-          await prefs!.setString('lastUserEmail', lastUser.email);
-          await prefs!.setString('lastUserPassword', lastUser.password ?? '');
-          await prefs!.setString('accessToken', accessToken.value);
-          await prefs!.setString('refreshToken', refreshToken.value);
+          await prefs!.storeData('rememberMe', true);
+          await prefs!.storeData('lastUserEmail', lastUser.email);
+          await prefs!.storeData('lastUserPassword', lastUser.password ?? '');
+          await prefs!.storeData('accessToken', accessToken.value);
+          await prefs!.storeData('refreshToken', refreshToken.value);
 
           logInfo('AuthenticationController: User logged in - ${currentUser.value.email}');
           logInfo('Access token: ${accessToken.value}, Refresh token: ${refreshToken.value}');
@@ -105,11 +106,11 @@ class AuthenticationController extends GetxController {
         }
       } else {
         logInfo('AuthenticationController: Remember me is disabled');
-        await prefs!.setBool('rememberMe', false);
-        await prefs!.remove('lastUserEmail');
-        await prefs!.remove('lastUserPassword');
-        await prefs!.remove('accessToken');
-        await prefs!.remove('refreshToken');
+        await prefs!.storeData('rememberMe', false);
+        await prefs!.removeData('lastUserEmail');
+        await prefs!.removeData('lastUserPassword');
+        await prefs!.removeData('accessToken');
+        await prefs!.removeData('refreshToken');
       }
     }
 
@@ -134,10 +135,10 @@ class AuthenticationController extends GetxController {
     await authentication.logOut();
     logged.value = false;
     rememberMe = false;
-    await prefs!.setBool('rememberMe', false);
-    await prefs!.remove('lastUserEmail');
-    await prefs!.remove('lastUserPassword');
-    await prefs!.remove('accessToken');
-    await prefs!.remove('refreshToken');
+    await prefs!.storeData('rememberMe', false);
+    await prefs!.removeData('lastUserEmail');
+    await prefs!.removeData('lastUserPassword');
+    await prefs!.removeData('accessToken');
+    await prefs!.removeData('refreshToken');
   }
 }

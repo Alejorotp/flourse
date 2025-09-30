@@ -4,8 +4,7 @@ import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/evaluations/data/datasources/i_evaluation_source.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/groups/ui/controller/group_controller.dart';
+// Removed UI-layer dependencies. Data source should not depend on controllers.
 import 'package:get/get.dart';
 import 'dart:convert';
 
@@ -15,9 +14,7 @@ class EvaluationSourceService implements IEvaluationSource {
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
 
-  final AuthenticationController authController = Get.find();
-
-  String get _authToken => authController.accessToken.value;
+  // Authorization header is handled by RefreshClient; no direct token access here.
 
   //EvaluationSourceService({http.Client? client})
   //  : httpClient = client ?? http.Client();
@@ -27,9 +24,6 @@ class EvaluationSourceService implements IEvaluationSource {
     logInfo("Fetching evaluations for category ID: $categoryId");
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Evaluations&categoryID=$categoryId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
 
     logInfo("Evaluations fetch response status: ${response.statusCode}");
@@ -55,9 +49,6 @@ class EvaluationSourceService implements IEvaluationSource {
     logInfo("Fetching all evaluations");
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Evaluations"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
 
     logInfo("All evaluations fetch response status: ${response.statusCode}");
@@ -93,7 +84,6 @@ class EvaluationSourceService implements IEvaluationSource {
     final response = await httpClient.post(
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
         'Content-Type': 'application/json', 
       },
       body: json.encode({
@@ -122,9 +112,6 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<List<String>> getScoresByCategoryID(String categoryId, String evaluationId) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&categoryID=$categoryId&evaluationID=$evaluationId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
     logInfo("Scores by category fetch response status: ${response.statusCode}");
     logInfo("Scores by category fetch response body: ${response.body}");
@@ -148,9 +135,6 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<List<String>> getScoresByEvaluationID(String evaluationId) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&evaluationID=$evaluationId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
     logInfo("Scores by evaluation fetch response status: ${response.statusCode}");
     logInfo("Scores by evaluation fetch response body: ${response.body}");
@@ -173,9 +157,6 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<List<String>> getScoresByGroupID(String groupId, String evaluationId) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&groupID=$groupId&evaluationID=$evaluationId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
     logInfo("Scores by group fetch response status: ${response.statusCode}");
     logInfo("Scores by group fetch response body: ${response.body}");
@@ -199,9 +180,6 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<List<String>> getUserScores(String userId, String evaluationId) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId&evaluationID=$evaluationId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
     logInfo("User scores fetch response status: ${response.statusCode}");
     logInfo("User scores fetch response body: ${response.body}");
@@ -224,9 +202,6 @@ class EvaluationSourceService implements IEvaluationSource {
   Future<List<String>> getAllUserScores(String userId) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      },
     );
     logInfo("All user scores fetch response status: ${response.statusCode}");
     logInfo("All user scores fetch response body: ${response.body}");
@@ -253,7 +228,6 @@ class EvaluationSourceService implements IEvaluationSource {
     final response = await httpClient.post(
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
         'Content-Type': 'application/json',
       },
       body: json.encode({
@@ -284,23 +258,35 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<Evaluation>> getUserEvaluations(String userId) {
-    GroupsController groupController = Get.find();
-    final userGroups = groupController.getGroupById(userId);
-    final List<Evaluation> userEvaluations = [];
-    userGroups.then((groups) {
-      for (var group in groups) {
-        logInfo("User group: ${group.id}, categoryID: ${group.categoryID}");
-        getByCategoryID(group.categoryID).then((evaluations) {
-          for (var eval in evaluations) {
-            logInfo("Evaluation for user ${userId}: ${eval.name} in category ${group.categoryID}");
-            userEvaluations.add(eval);
-          }
-        });
+  Future<List<Evaluation>> getUserEvaluations(String userId) async {
+    // Pure data access: resolve groups via API, then fetch evaluations per group category.
+    final groupsResponse = await httpClient.get(
+      Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&userID=$userId"),
+    );
+    if (groupsResponse.statusCode != 200) {
+      logError("Failed to fetch user groups: ${groupsResponse.statusCode}");
+      return [];
+    }
+    final List<dynamic> membership = groupsResponse.body.isNotEmpty ? json.decode(groupsResponse.body) : [];
+    final Set<String> categoryIds = {};
+    for (final m in membership) {
+      final groupId = m['groupID'];
+      if (groupId == null) continue;
+      final groupResp = await httpClient.get(
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&_id=$groupId"),
+      );
+      if (groupResp.statusCode == 200) {
+        final List<dynamic> groups = groupResp.body.isNotEmpty ? json.decode(groupResp.body) : [];
+        if (groups.isNotEmpty) {
+          categoryIds.add(groups.first['categoryID'].toString());
+        }
       }
-    });
-
-    return Future.value(userEvaluations);
+    }
+    final List<Evaluation> result = [];
+    for (final categoryId in categoryIds) {
+      result.addAll(await getByCategoryID(categoryId));
+    }
+    return result;
   }
 
 

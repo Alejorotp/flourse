@@ -69,7 +69,7 @@ void main() {
     RefreshClient(http.Client(), Get.find<IAuthenticationSource>()),
     tag: 'apiClient',
     permanent: true,
-    ); // Iniciar el cliente HTTP
+  );
 
   // Auth
   Get.put<IAuthRepository>(AuthRepository(Get.find()));

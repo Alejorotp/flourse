@@ -17,7 +17,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
   Future<Set<dynamic>> login(AuthenticationUser user) async {
     logInfo("Attempting login for email: ${user.email}");
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         Uri.parse("https://roble-api.openlab.uninorte.edu.co/auth/flourse_460df99409/login"),
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
       final authUser = {AuthenticationUser(email: responseData['user']['email'], name: responseData['user']['name'], id: responseData['user']['id'], password: user.password), responseData['accessToken'], responseData['refreshToken']};
 
       try {
-        final responseQuery = await http.get(
+        final responseQuery = await httpClient.get(
           Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=AuthenticationUser&UID=${responseData['user']['id']}"),
           headers: {
             'Authorization': 'Bearer ${responseData['accessToken']}',
@@ -43,7 +43,7 @@ class AuthenticationSourceService implements IAuthenticationSource {
         logInfo("User data fetch response status: ${responseQuery.statusCode}");
         logInfo("User data fetch response body: ${responseQuery.body}");
         if (responseQuery.body.isNotEmpty) {
-          final responseCreateUser = await http.post(
+          final responseCreateUser = await httpClient.post(
             Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/insert"),
             headers: {
               'Authorization': 'Bearer ${responseData['accessToken']}',

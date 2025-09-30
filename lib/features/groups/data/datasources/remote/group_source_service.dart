@@ -5,21 +5,11 @@ import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart'; 
 
 class GroupSourceService implements IGroupSource {
   final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
-  
-  // Instancia del AuthenticationController, como un singleton, gracias a GetX
-  final AuthenticationController authController = Get.find();
-
-  //GroupSourceService({http.Client? client})
-  //  : httpClient = client ?? http.Client();
-
-  // Getter para obtener el token de manera reactiva
-  String get _authToken => authController.accessToken.value;
 
   @override
   Future<List<Group>> getAllGroups() async {
@@ -27,9 +17,7 @@ class GroupSourceService implements IGroupSource {
     try {
       final response = await httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group"),
-        headers: {
-          'Authorization': 'Bearer $_authToken',
-        },
+        // Authorization header is added by RefreshClient
       );
       if (response.statusCode == 200) {
 
@@ -42,9 +30,7 @@ class GroupSourceService implements IGroupSource {
         for (var data in jsonList) {
           final maxMemberResponses = await httpClient.get(
           Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Category&_id=${data['categoryID'].toString()}"),
-          headers: {
-            'Authorization' : 'Bearer $_authToken',
-          }
+          // Authorization header is added by RefreshClient
         );
           int maxMembers = 0;
           if (maxMemberResponses.statusCode == 200) {
@@ -59,9 +45,7 @@ class GroupSourceService implements IGroupSource {
 
           final memberIDsResponse = await httpClient.get(
             Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=${data['_id'].toString()}"),
-            headers: {
-              'Authorization' : 'Bearer $_authToken',
-            }
+            // Authorization header is added by RefreshClient
           );
           List<String> memberIDs = [];
           if (memberIDsResponse.statusCode == 200) {
@@ -116,7 +100,6 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.post(
         Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -158,7 +141,6 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.post(
         Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -188,9 +170,7 @@ class GroupSourceService implements IGroupSource {
 
     final groupMemberResponse = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=$groupId&userID=$userId"),
-      headers: {
-        'Authorization': 'Bearer $_authToken',
-      });
+    );
 
     if (groupMemberResponse.statusCode != 200) {
       logError("Failed to fetch GroupMember for user $userId in group $groupId: ${groupMemberResponse.statusCode}");
@@ -207,7 +187,6 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.delete(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember/delete"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -232,7 +211,6 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.delete(
         Uri.parse("$_apiBaseUrl/$_databaseName/delete"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
