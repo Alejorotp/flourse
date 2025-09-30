@@ -51,7 +51,11 @@ class AuthenticationController extends GetxController {
         currentUser.value = rta.first;
       }
     } else {
-      logged.value = await authentication.validateToken(accessToken.value);
+      if (accessToken.value.isNotEmpty) {
+        logged.value = await authentication.validateToken(accessToken.value);
+      } else {
+        logged.value = false;
+      }
     }
   }
 
@@ -71,7 +75,7 @@ class AuthenticationController extends GetxController {
     isLogin.value = !isLogin.value;
   }
 
-  Future<Set<dynamic>> login(email, password) async {
+  Future<Set<dynamic>> login(String email, String password) async {
     prefs ??= Get.find<ILocalPreferences>();
 
     logInfo('AuthenticationController: Login $email $password');
@@ -118,7 +122,7 @@ class AuthenticationController extends GetxController {
   }
 
 
-  Future<bool> signUp(email, password, userName) async {
+  Future<bool> signUp(String email, String password, String userName) async {
     logInfo('AuthenticationController: Sign Up $email $password $userName');
     String? validationError = validateFields(email, password, name: userName);
     if (validationError != null) {

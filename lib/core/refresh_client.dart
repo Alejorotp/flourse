@@ -34,6 +34,12 @@ class RefreshClient extends http.BaseClient {
     //Si 401, refrescamos y reintentamos
     if (response.statusCode == 401) {
       logWarning("Token expired, attempting to refresh");
+      // Evitar intentar refrescar si no hay refresh token en prefs
+      final hasRefresh = await prefs.retrieveData<String>('refreshToken');
+      if (hasRefresh == null || hasRefresh.isEmpty) {
+        logWarning("No refresh token present, not attempting refresh");
+        return response;
+      }
       final ok = await _auth.refreshToken();
       if (ok) {
         final newToken = await prefs.retrieveData<String>('token');
@@ -41,7 +47,7 @@ class RefreshClient extends http.BaseClient {
           final retry = http.Request(request.method, request.url)
             ..headers.addAll(request.headers)
             ..headers['Authorization'] = 'Bearer $newToken'
-            ..bodyBytes = bodyBytes ?? Uint8List(0)
+            ..bodyBytes = bodyBytes
             ..followRedirects = request.followRedirects
             ..maxRedirects = request.maxRedirects
             ..persistentConnection = request.persistentConnection;
