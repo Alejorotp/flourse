@@ -11,6 +11,8 @@ abstract class IAuthenticationSource {
 
   Future<bool> refreshToken();
 
+  Future<String?> refreshToken2(String refreshToken);
+
   Future<bool> forgotPassword(String email);
 
   Future<bool> resetPassword(

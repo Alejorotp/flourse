@@ -10,12 +10,12 @@ import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 
 
 class CategorySourceService implements ICategorySource {
-  final http.Client httpClient;
+  final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');  
 
   AuthenticationController auth = Get.find();
 
-  CategorySourceService({http.Client? client})
-    : httpClient = client ?? http.Client();
+  //CategorySourceService({http.Client? client})
+  //  : httpClient = client ?? http.Client();
 
   @override
   Future<List<Category>> getAllCategories() async {

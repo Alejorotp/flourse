@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'dart:convert';
 
 class EvaluationSourceService implements IEvaluationSource {
-  final http.Client httpClient;
+  final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
 
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
@@ -19,8 +19,8 @@ class EvaluationSourceService implements IEvaluationSource {
 
   String get _authToken => authController.accessToken.value;
 
-  EvaluationSourceService({http.Client? client})
-    : httpClient = client ?? http.Client();
+  //EvaluationSourceService({http.Client? client})
+  //  : httpClient = client ?? http.Client();
 
   @override
   Future<List<Evaluation>> getByCategoryID(String categoryId) async {

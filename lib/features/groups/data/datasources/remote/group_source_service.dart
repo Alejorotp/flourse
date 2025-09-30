@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flourse/features/auth/ui/pages/login.dart';
+//import 'package:flourse/features/auth/ui/pages/login.dart';
 import 'package:flourse/features/groups/data/datasources/i_group_source.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:loggy/loggy.dart';
@@ -8,15 +8,15 @@ import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart'; 
 
 class GroupSourceService implements IGroupSource {
-  final http.Client httpClient;
+  final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
   
   // Instancia del AuthenticationController, como un singleton, gracias a GetX
   final AuthenticationController authController = Get.find();
 
-  GroupSourceService({http.Client? client})
-    : httpClient = client ?? http.Client();
+  //GroupSourceService({http.Client? client})
+  //  : httpClient = client ?? http.Client();
 
   // Getter para obtener el token de manera reactiva
   String get _authToken => authController.accessToken.value;
