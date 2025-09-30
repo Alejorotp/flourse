@@ -4,25 +4,25 @@ import '../../domain/models/category.dart';
 
 abstract class ICategorySource {
 
-  List<Category> getAllCategories();
+  Future<List<Category>> getAllCategories();
 
   void createCategory({
     required String name,
     required String groupingMethod,
     required int maxMembers,
-    required int courseId,
+    required String courseId,
   });
 
-  void deleteCategory(int id);
+  void deleteCategory(String id);
 
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
   });
 
-  Category? getCategoryById(int id);
+  Future<Category?> getCategoryById(String id);
 
 
 }

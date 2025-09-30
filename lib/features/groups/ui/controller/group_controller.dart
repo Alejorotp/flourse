@@ -1,64 +1,76 @@
-import 'package:flourse/features/categories/domain/models/category.dart';
+//import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
-import 'package:flourse/data/data.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/groups/domain/use_case/group_usecase.dart';
 import 'package:loggy/loggy.dart';
 
-
-
-class GroupsController extends GetxController{
+class GroupsController extends GetxController {
   final GroupUseCase groupation;
   GroupsController(this.groupation);
 
+  var groups = <Group>[].obs;
 
-  final List<Group> groups = myGroups;
-
-  void createGroup({
-    required int id,
+  Future<void> createGroup({
     required int maxMembers,
-    required Category categoryId
-  }) {
+    required String categoryId,
+    required int groupNumber
+  }) async {
     try {
-  final newGroup = Group(
-    id: groups.length + 1,
-    maxMembers: maxMembers
-  );
-  myGroups.add(newGroup);
-  categoryId.groupIDs.add(newGroup.id);
-  print("Group created: $newGroup");
-} on Exception catch (e) {
-  print("Error creating group: $e");
-}
-  }
-
-  void deleteGroup(int id) {
-    groups.removeWhere((group) => group.id == id);
-
-    for (var category in myCategories) {
-      category.groupIDs.remove(id);
+      final newGroup = await groupation.createGroup(maxMembers: maxMembers, categoryId: categoryId, groupNumber: groupNumber);
+      logInfo("Group created successfully: $newGroup");
+      await getAllGroups();
+    } on Exception catch (e) {
+      logError("Error creating group: $e");
     }
   }
 
-  List<Group> getAllGroups() {
-    return myGroups;
+  Future<void> deleteGroup(String id) async {
+    try {
+      await groupation.deleteGroup(id);
+      logInfo("Group with id $id deleted successfully");
+      await getAllGroups();
+    } on Exception catch (e) {
+      logError("Error deleting group: $e");
+    }
   }
 
-    // Unirse a un grupo
-  bool joinGroup(int groupId, int userId) {
-    return groupation.joinGroup(groupId, userId);
+  Future<List<Group>> getAllGroups() async {
+    final fetchedGroups = await groupation.getAllGroups();
+    groups.assignAll(fetchedGroups);
+    logInfo("Fetched groups in Controller: ${fetchedGroups.length}");
+    return fetchedGroups;
+  }
+
+  // Unirse a un grupo
+  Future<bool> joinGroup(String groupId, String userId) async {
+    final result = await groupation.joinGroup(groupId, userId);
+    if (result) {
+      logInfo("User $userId joined group $groupId");
+    } else {
+      logWarning("User $userId could not join group $groupId");
+    }
+    await getAllGroups();
+    return result;
   }
 
   // Eliminar miembro de un grupo
-  bool removeMemberFromGroup(int groupId, int userId) {
-    return groupation.removeMemberFromGroup(groupId, userId);
+  Future<bool> removeMemberFromGroup(String groupId, String userId) async {
+    final result = await groupation.removeMemberFromGroup(groupId, userId);
+    if (result) {
+      logInfo("User $userId removed from group $groupId");
+    } else {
+      logWarning("User $userId could not be removed from group $groupId");
+    }
+    await getAllGroups();
+    return result;
   }
 
-  Group? getGroupById(int id) {
+  Future<List<Group>> getGroupById(String id) async {
     try {
-      return myGroups.firstWhere((group) => group.id == id);
+      return await groupation.getGroupById(id);
     } catch (e) {
-      return null;
+      logError("Error fetching group by ID: $e");
+      return [];
     }
   }
 }

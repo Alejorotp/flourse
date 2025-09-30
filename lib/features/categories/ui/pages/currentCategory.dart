@@ -9,11 +9,13 @@ class CurrentCategoryPage extends StatefulWidget {
   static const String id = '/category-detail';
   final Category category;
   final bool canEdit;
+  final int? groupNumber;
 
   const CurrentCategoryPage({
     super.key,
     required this.category,
     this.canEdit = false,
+    this.groupNumber,
   });
 
   @override
@@ -98,6 +100,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                     Get.to(() => GroupsPage(
                           category: widget.category,
                           canEdit: widget.canEdit,
+                          groupNumber: widget.groupNumber ?? 0,
                         ));
                   },
                   child: const Text('Ver Grupos'),
@@ -109,7 +112,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     categoriesController.updateCategory(
-                      id: widget.category.id,
+                      id: widget.category.id!,
                       newName: _nameController.text,
                       newGroupingMethod: _groupingController.text,
                       newMaxMembers: int.tryParse(_maxMembersController.text),
@@ -123,9 +126,9 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                   onPressed: () {
-                    categoriesController.deleteCategory(widget.category.id);
+                    categoriesController.deleteCategory(widget.category.id!);
                     Navigator.of(context).pop('deleted');
                   },
                   child: const Text("Eliminar"),
@@ -158,6 +161,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                     Get.to(() => GroupsPage(
                           category: widget.category,
                           canEdit: widget.canEdit,
+                          groupNumber: widget.groupNumber ?? 0,
                         ));
                   },
                   child: const Text('Ver Grupos'),

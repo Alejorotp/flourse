@@ -6,7 +6,7 @@ class CategoryUseCase {
 
   CategoryUseCase(this._repository);
 
-  List<Category> getAllCategories() {
+  Future<List<Category>> getAllCategories() {
     return _repository.getAllCategories();
   }
 
@@ -14,7 +14,7 @@ class CategoryUseCase {
     required String name,
     required String groupingMethod,
     required int maxMembers,
-    required int courseId,
+    required String courseId,
   }) {
     _repository.createCategory(
       name: name,
@@ -24,12 +24,12 @@ class CategoryUseCase {
     );
   }
 
-  void deleteCategory(int id) {
+  void deleteCategory(String id) {
     _repository.deleteCategory(id);
   }
 
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
@@ -42,7 +42,7 @@ class CategoryUseCase {
     );
   }
 
-  Category? getCategoryById(int id) {
+  Future<Category?> getCategoryById(String id) {
     return _repository.getCategoryById(id);
   }
 

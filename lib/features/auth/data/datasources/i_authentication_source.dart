@@ -1,7 +1,7 @@
-import '../../../domain/models/authentication_user.dart';
+import '../../domain/models/authentication_user.dart';
 
 abstract class IAuthenticationSource {
-  Future<AuthenticationUser?> login(AuthenticationUser user);
+  Future<Set<dynamic>> login(AuthenticationUser user);
 
   Future<bool> signUp(AuthenticationUser user);
 
@@ -11,6 +11,8 @@ abstract class IAuthenticationSource {
 
   Future<bool> refreshToken();
 
+  Future<String?> refreshToken2(String refreshToken);
+
   Future<bool> forgotPassword(String email);
 
   Future<bool> resetPassword(
@@ -19,5 +21,5 @@ abstract class IAuthenticationSource {
     String validationCode,
   );
 
-  Future<bool> verifyToken();
+  Future<bool> verifyToken(String accessToken);
 }

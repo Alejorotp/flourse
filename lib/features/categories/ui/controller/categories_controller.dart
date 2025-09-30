@@ -1,15 +1,21 @@
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/courses/domain/models/course.dart';
-import 'package:flourse/data/data.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/categories/domain/use_case/category_usecase.dart';
+import 'package:loggy/loggy.dart';
 
 
 class CategoriesController extends GetxController{
   final CategoryUseCase categoryation;
   CategoriesController(this.categoryation);
 
-  final List<Category> categories = myCategories;
+  final RxList<Category> categories = <Category>[].obs;
+
+  Future<void> fetchCategories() async {
+    final fetchedCategories = await categoryation.getAllCategories();
+    categories.assignAll(fetchedCategories);
+    logInfo("Fetched categories in Controller: ${fetchedCategories.length}");
+  }
 
   void createCategory({
     required String name,
@@ -17,26 +23,16 @@ class CategoriesController extends GetxController{
     required int maxMembers,
     required Course course,
   }) {
-    final newCategory = Category(
-      id: categories.length + 1,
-      name: name,
-      groupingMethod: groupingMethod,
-      maxMembers: maxMembers,
-    );
-    categories.add(newCategory);
-    course.categoryIDs.add(newCategory.id);
+    categoryation.createCategory(name: name, groupingMethod: groupingMethod, maxMembers: maxMembers, courseId: course.courseCode);
   }
 
-  void deleteCategory(int id) {
+  void deleteCategory(String id) {
     categories.removeWhere((category) => category.id == id);
-
-    for (var course in myCourses) {
-      course.categoryIDs.remove(id);
-    }
+    categoryation.deleteCategory(id);
   }
 
   void updateCategory({
-    required int id,
+    required String id,
     String? newName,
     String? newGroupingMethod,
     int? newMaxMembers,
@@ -49,6 +45,7 @@ class CategoriesController extends GetxController{
         name: newName ?? category.name,
         groupingMethod: newGroupingMethod ?? category.groupingMethod,
         maxMembers: newMaxMembers ?? category.maxMembers,
+        courseId: category.courseId,
       );
     }
   }
@@ -57,22 +54,23 @@ class CategoriesController extends GetxController{
     return categories;
   }
 
-  String getCategoryNameById(int id) {
+  String getCategoryNameById(String id) {
     final category = categories.firstWhere(
       (category) => category.id == id,
       orElse: () => Category(
-        id: 0,
+        id: '0',
         name: 'Desconocida',
         groupingMethod: 'N/A',
         maxMembers: 0,
+        courseId: 'N/A',
       ),
     );
     return category.name;
   }
 
-  Category? getCategoryById(int id) {
+  Category? getCategoryById(String id) {
     try {
-      return categories.firstWhere((category) => category.id == id);
+      return categories.firstWhere((category) => category.id.toString() == id);
     } catch (e) {
       return null;
     }

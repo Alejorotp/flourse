@@ -1,42 +1,40 @@
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import '../repositories/i_group_repository.dart';
 
-
-
 class GroupUseCase {
-
   final IGroupRepository _repository;
 
   GroupUseCase(this._repository);
 
-  List<Group> getAllGroups() {
+  Future<List<Group>> getAllGroups() {
     return _repository.getAllGroups();
   }
 
-  Group? getGroupById(int id) {
+  Future<List<Group>> getGroupById(String id) {
     return _repository.getGroupById(id);
   }
 
-  void createGroup({
-    required int id,
-    required int maxMembers
+  Future<Group> createGroup({
+    required int maxMembers,
+    required String categoryId,
+    required int groupNumber,
   }) {
-    _repository.createGroup(
-      id: id,
-      maxMembers: maxMembers
+    return _repository.createGroup(
+      maxMembers: maxMembers,
+      categoryId: categoryId,
+      groupNumber: groupNumber,
     );
   }
 
-  bool joinGroup(int groupId, int userId) {
+  Future<bool> joinGroup(String groupId, String userId) {
     return _repository.joinGroup(groupId, userId);
   }
 
-  bool removeMemberFromGroup(int groupId, int userId) {
+  Future<bool> removeMemberFromGroup(String groupId, String userId) {
     return _repository.removeMemberFromGroup(groupId, userId);
   }
 
-  void deleteGroup(int id) {
-    _repository.deleteGroup(id);
+  Future<void> deleteGroup(String id) {
+    return _repository.deleteGroup(id);
   }
-  
 }

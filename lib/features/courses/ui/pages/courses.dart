@@ -2,6 +2,10 @@ import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
+import 'package:flourse/features/courses/ui/widgets/RoleToggleButtons.dart';
+import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
+import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
+import 'dart:ui';
 import 'package:get/get.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -13,161 +17,168 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> {
-  bool showFloatingButtons = false;
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
+  static const blue = Color.fromRGBO(43, 213, 243, 1); // celeste
+  bool _isProfessor = true;
 
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
+    // Cargar cursos del usuario (solo una vez por build)
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     return Scaffold(
-      // --- AppBar de la página ---
       appBar: AppBar(
-        title: const Text('Flourse'),
+        backgroundColor: const Color.fromARGB(50, 239, 229, 248),
+        title: const Text(
+          "Flourse",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.notifications_none),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.person_outline),
-          ),
-        ],
       ),
-      // --- Cuerpo de la página ---
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          if (showFloatingButtons) {
-            setState(() {
-              showFloatingButtons = false;
-            });
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // --- Encabezado "My Courses" ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'My Courses',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  showFloatingButtons
-                      ? Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.create, color: Colors.blue, size: 32),
-                              tooltip: 'Create Course',
-                              onPressed: () {
-                                setState(() => showFloatingButtons = false);
-                                Navigator.of(context).pushNamed('/create-course');
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.group_add, color: Colors.green, size: 32),
-                              tooltip: 'Join Course',
-                              onPressed: () {
-                                setState(() => showFloatingButtons = false);
-                                Navigator.of(context).pushNamed('/join-course');
-                              },
-                            ),
-                          ],
-                        )
-                      : IconButton(
-                          onPressed: () {
-                            setState(() {
-                              showFloatingButtons = true;
-                            });
-                          },
-                          icon: const Icon(Icons.add_circle_outline),
-                        ),
-                ],
-              ),
-              const Divider(color: Colors.grey),
-              const SizedBox(height: 12),
-
-              // --- Botones de "Sort" y "Filter" ---
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Lógica para ordenar
-                    },
-                    icon: const Icon(Icons.sort),
-                    label: const Text('Sort'),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      // Lógica para filtrar
-                    },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              Expanded(
-                child: Obx(
-                  () => FutureBuilder(
-                  future: courseCon.getCourseInfo(auth.currentUser.value.id ?? 0),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      ); // Muestra un spinner mientras carga
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      ); // Muestra un mensaje si hay un error
-                    } else if (snapshot.hasData) {
-                      final filteredCourses = snapshot.data!;
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 16.0,
-                              childAspectRatio: 0.9,
-                            ),
-                        itemCount: filteredCourses.length,
-                        itemBuilder: (context, index) {
-                          final course = filteredCourses[index];
-                          return CourseCard(courseInfo: course);
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('No hay cursos disponibles.'),
-                      ); // Si no hay datos
-                    }
-                  },
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Mis cursos',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                )
-                
-              ),
-            ],
-          ),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    popupMenuTheme: PopupMenuThemeData(
+                      color: Colors.white.withOpacity(0.95),
+                    ),
+                  ),
+                  child: PopupMenuButton<int>(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    itemBuilder: (context) => [
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: lilac,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('Crear un curso', style: TextStyle(color: lilac, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 2,
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: blue,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('Unirse a un curso', style: TextStyle(color: blue, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 1) {
+                        // Mostrar el popup de crear curso
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierColor: Colors.black.withOpacity(0.2),
+                          builder: (context) => BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                            child: const CreateCourseDialog(),
+                          ),
+                        );
+                      } else if (value == 2) {
+                        // Mostrar el popup de unirse a curso
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierColor: Colors.black.withOpacity(0.2),
+                          builder: (context) => BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                            child: const JoinCourseDialog(),
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(125, 224, 224, 224),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.add, color: Colors.black87, size: 18),
+                          SizedBox(width: 6),
+                          Text(
+                            'Agregar',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(thickness: 0.15, color: Colors.grey),
+            const SizedBox(height: 12),
+            RoleToggleButtons(
+              isProfessor: _isProfessor,
+              onChanged: (val) => setState(() => _isProfessor = val),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Obx(() {
+                final allCourses = courseCon.userCourses;
+                final filteredCourses = allCourses.where((c) => _isProfessor ? c.userRole == 'Profesor' : c.userRole != 'Profesor').toList();
+                if (filteredCourses.isEmpty) {
+                  return const Center(
+                    child: Text('No hay cursos disponibles.'),
+                  );
+                }
+                return GridView.builder(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                    childAspectRatio: 0.9,
+                  ),
+                  itemCount: filteredCourses.length,
+                  itemBuilder: (context, index) {
+                    final course = filteredCourses[index];
+                    return CourseCard(courseInfo: course);
+                  },
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flourse/data/data.dart'; // Importa el archivo de datos compartidos
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
-import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
-import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
-import 'package:flourse/features/home/ui/widgets/course_card.dart'; // El widget CourseCard
+import 'package:flourse/features/home/ui/widgets/course_card.dart';
+import 'package:flourse/features/home/ui/widgets/create_course_card.dart';
+import 'package:flourse/features/home/ui/widgets/join_course_card.dart';
+import 'dart:ui';
+import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
+import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
 import 'package:get/get.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
@@ -12,28 +14,57 @@ import '../../../courses/ui/controller/courses_controller.dart';
 
 class HomePage extends StatelessWidget {
   static const String id = '/home';
+  static const lilac = Color.fromRGBO(124, 77, 255, 1); // lila
+  static const blue = Color.fromRGBO(43, 213, 243, 1); // celeste
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.logout),
-          onPressed: () async {
-            await auth.logOut();
-          },
+        backgroundColor: const Color.fromARGB(50, 239, 229, 248),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "Flourse",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
-        title: const Text("Flourse"),
         centerTitle: true,
-        actions: const [
-          Icon(Icons.notifications_none),
-          SizedBox(width: 12),
-          Icon(Icons.settings),
-          SizedBox(width: 12),
+        actions: [
+          Builder(
+            builder: (context) {
+              double width = MediaQuery.of(context).size.width;
+              if (width >= 700) {
+                return TextButton.icon(
+                  onPressed: () async {
+                    await auth.logOut();
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.black87, size: 22),
+                  label: const Text(
+                    "Cerrar sesión",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 15,
+                    ),
+                  ),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () async {
+                    await auth.logOut();
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.black87, size: 22),
+                );
+              }
+            },
+          ),
+          const SizedBox(width: 2),
         ],
       ),
       body: SingleChildScrollView(
@@ -41,194 +72,223 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // My Courses
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "My Courses",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(CoursesPage.id);
-                  },
-                  child: const Text(
-                    "See all",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            Obx(
-              () => FutureBuilder(
-                future: courseCon.getCourseInfo(auth.currentUser.value.id ?? 0),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    ); // Muestra un spinner mientras carga
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    ); // Muestra un mensaje si hay un error
-                  } else if (snapshot.hasData) {
-                    final filteredCourses = snapshot.data!;
-                    if (filteredCourses.isEmpty) {
-                      return const Center(
-                        child: Text('No hay cursos disponibles.'),
-                      );
-                    }
-                    return SizedBox(
-                      height: 180,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filteredCourses.length,
-                        itemBuilder: (context, index) {
-                          final course = filteredCourses[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: CourseCard(courseInfo: course),
-                          );
-                        },
+            // Bienvenida con card
+            Card(
+              elevation: 1,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: const Color.fromARGB(120, 223, 223, 223),
+                      child: Text(
+                        (auth.currentUser.value.name.isNotEmpty
+                                ? auth.currentUser.value.name[0]
+                                : 'U')
+                            .toUpperCase(),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                    );
-                  } else {
-                    return const Center(
-                      child: Text('No hay cursos disponibles.'),
-                    ); // Si no hay datos
-                  }
-                },
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "👋 Bienvenido, ${auth.currentUser.value.name.isNotEmpty ? auth.currentUser.value.name : 'User'}",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // Upcoming Evaluations
+            const Divider(thickness: 0.15, color: Colors.grey),
+            // Mis cursos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Upcoming evaluations",
+                  "Mis cursos",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(EvaluationsPage.id);
-                  },
-                  child: const Text(
-                    "See all",
+                Material(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    highlightColor: Colors.blue.shade100,
+                    onTap: () {
+                      Navigator.of(context).pushNamed(CoursesPage.id);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        "Ver todos",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Etiqueta Profesor
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(40, 124, 77, 255), // fondo lilac suave
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.school, color: lilac, size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    'Profesor',
                     style: TextStyle(
-                      color: Colors.blue,
                       fontWeight: FontWeight.bold,
+                      color: lilac,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Carrusel de profesor
+            Obx(() {
+              final profCourses = courseCon.userCourses.where((c) => c.userRole.toLowerCase() == 'profesor').toList();
+              final showCreate = profCourses.length <= 2;
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: profCourses.length + (showCreate ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (showCreate && index == profCourses.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: CreateCourseCard(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: const CreateCourseDialog(),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    final course = profCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
+                    );
+                  },
+                ),
+              );
+            }),
+            const SizedBox(height: 12),
+            // Etiqueta Estudiante
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(40, 43, 213, 243),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person, color: Color.fromARGB(255, 0, 124, 182), size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    'Estudiante',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 124, 182),
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Carrusel de estudiante
+            Obx(() {
+              final studentCourses = courseCon.userCourses.where((c) => c.userRole.toLowerCase() == 'estudiante').toList();
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: studentCourses.length + 1, // +1 para card de unirse
+                  itemBuilder: (context, index) {
+                    if (index == studentCourses.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: JoinCourseCard(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: const JoinCourseDialog(),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    final course = studentCourses[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: CourseCard(courseInfo: course),
+                    );
+                  },
+                ),
+              );
+            }),
+            const SizedBox(height: 24),
+            // Evaluaciones pendientes
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Evaluaciones pendientes",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Material(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    highlightColor: Colors.blue.shade100,
+                    onTap: () {
+                      Navigator.of(context).pushNamed(EvaluationsPage.id);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        "Ver todos",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Upcoming Evaluations
-            Column(
-              children: upcomingEvaluations.map((evaluation) {
-                return _evaluationItem(context, evaluation);
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-
-            // Quick Access
-            const Text(
-              "Quick Access",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                _QuickAccessItem("Last Course"),
-                _QuickAccessItem("Last Course +1"),
-                _QuickAccessItem("Last Course +2"),
-                _QuickAccessItem(""),
-              ],
-            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-Widget _evaluationItem(BuildContext context, Evaluation evaluation) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CurrentEvaluationPage(evaluation: evaluation),
-        ),
-      );
-    },
-    child: Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(Icons.settings, color: Colors.grey),
-        ),
-        title: Text('${evaluation.title} · ${evaluation.course}'),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              evaluation.description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              evaluation.timeRemaining,
-              style: const TextStyle(fontSize: 12, color: Colors.blue),
-            ),
-          ],
-        ),
-        trailing: const Icon(Icons.play_arrow),
-      ),
-    ),
-  );
-}
-
-class _QuickAccessItem extends StatelessWidget {
-  final String label;
-  const _QuickAccessItem(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(Icons.folder, color: Colors.grey),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 10)),
-      ],
     );
   }
 }

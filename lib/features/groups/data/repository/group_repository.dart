@@ -4,46 +4,45 @@ import 'package:flourse/features/groups/domain/repositories/i_group_repository.d
 
 
 class GroupRepository implements IGroupRepository {
-
   late IGroupSource groupSource;
 
   GroupRepository(this.groupSource);
 
   @override
-  List<Group> getAllGroups() {
+  Future<List<Group>> getAllGroups() {
     return groupSource.getAllGroups();
   }
 
   @override
-  Group? getGroupById(int id) {
+  Future<List<Group>> getGroupById(String id) {
     return groupSource.getGroupById(id);
   }
 
   @override
-  void createGroup({
-    required int id,
-    required int maxMembers
+  Future<Group> createGroup({
+    required int maxMembers,
+    required String categoryId,
+    required int groupNumber
   }) {
-    groupSource.createGroup(
-      id: id,
-      maxMembers: maxMembers
+    return groupSource.createGroup(
+      maxMembers: maxMembers,
+      categoryId: categoryId,
+      groupNumber: groupNumber,
     );
   }
 
   @override
-  bool joinGroup(int groupId, int userId) {
+  Future<bool> joinGroup(String groupId, String userId) {
     return groupSource.joinGroup(groupId, userId);
   }
 
   @override
-  bool removeMemberFromGroup(int groupId, int userId) {
+  Future<bool> removeMemberFromGroup(String groupId, String userId) {
     return groupSource.removeMemberFromGroup(groupId, userId);
   }
 
   @override
-  void deleteGroup(int id) {
-    groupSource.deleteGroup(id);
+  Future<void> deleteGroup(String id) {
+    return groupSource.deleteGroup(id);
   }
-
-
 }

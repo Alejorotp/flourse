@@ -1,15 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
-import 'package:flourse/features/home/ui/widgets/category_card.dart';
 import 'package:flourse/features/categories/ui/pages/createCategory.dart';
 import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
+import 'package:flourse/features/categories/ui/widgets/create_category_card.dart';
+import 'package:flourse/features/categories/ui/widgets/category_list_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flourse/features/courses/domain/models/course_info.dart';
+import 'package:flourse/features/courses/ui/widgets/member_card.dart';
+import 'package:flourse/features/courses/ui/widgets/professor_box.dart';
+import 'package:flourse/features/courses/ui/widgets/course_code_box.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:loggy/loggy.dart';
+import 'package:flourse/features/courses/ui/widgets/Navitem.dart';
+import 'package:flourse/features/evaluations/ui/widgets/evaluation_list_card.dart';
+import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_card.dart';
+import 'package:flourse/features/evaluations/ui/pages/createEvaluation.dart';
+import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
+import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
+import '../controller/courses_controller.dart';
 
 class CurrentCoursePage extends StatefulWidget {
-  static const String id = '/course-detail';
+  static const String courseID = '/course-detail';
   final UserCourseInfo courseInfo;
 
   const CurrentCoursePage({super.key, required this.courseInfo});
@@ -19,123 +29,266 @@ class CurrentCoursePage extends StatefulWidget {
 }
 
 class _CurrentCoursePageState extends State<CurrentCoursePage> {
-  final CategoriesController categoriesController = Get.find<CategoriesController>();
+  EvaluationController evaluationController = Get.find();
+  int _selectedNavIndex = 0;
+  CategoriesController categoriesController = Get.find();
+
+  static const lilac = Color.fromRGBO(124, 77, 255, 1);
+  static const darkBlue = Color.fromARGB(255, 0, 124, 182);
+
+  @override
+  void initState() {
+    super.initState();
+    categoriesController = Get.find<CategoriesController>();
+    evaluationController = Get.find<EvaluationController>();
+    Future.microtask(() {
+      final courseCategoryIDs = categoriesController.categories
+          .where((cat) => cat.courseId == widget.courseInfo.course.courseCode)
+          .map((cat) => cat.id)
+          .whereType<String>()
+          .toList();
+      for (final catId in courseCategoryIDs) {
+        evaluationController.fetchEvaluationsByCategory(catId);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final courseInfo = widget.courseInfo;
+    AuthenticationController auth = Get.find();
+    CoursesController courseCon = Get.find();
+    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
+
+    final userId = auth.currentUser.value.id ?? '';
+    final isProfessor = courseInfo.course.professorID == userId;
+
+    categoriesController.fetchCategories();
+    final courseCategories = categoriesController.categories
+        .where((cat) => cat.courseId == courseInfo.course.courseCode)
+        .toList();
+    final courseCategoryIDs = courseCategories.map((cat) => cat.id!).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(courseInfo.course.title), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Código del curso: ${courseInfo.course.courseCode}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Profesor: ${courseInfo.professorName}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Total de miembros: ${courseInfo.memberNames.length}",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Lista de estudiantes:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...courseInfo.memberNames.map((name) => Text('- $name')),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(50, 239, 229, 248),
+        title: Text(courseInfo.course.title),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: IndexedStack(
+              index: _selectedNavIndex,
               children: [
-                const Text(
-                  "Categorías del curso",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Builder(
-                  builder: (context) {
-                    AuthenticationController auth = Get.find();
-                    final userId = auth.currentUser.value.id ?? '';
-                    final isProfessor = courseInfo.course.professorID == userId;
-                    logInfo("Is professor: $isProfessor");
-                    logInfo("User ID: $userId, ${userId.runtimeType}");
-                    logInfo("Professor ID: ${courseInfo.course.professorID}, ${courseInfo.course.professorID.runtimeType}");
-                    if (!isProfessor) return const SizedBox.shrink();
-                    return InkWell(
-                      onTap: () async {
-                        Get.to(() => CreateCategoryPage(course: courseInfo.course, canEdit: isProfessor,));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: Text(
-                          "Add",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                // 0: Curso
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Box Profesor
+                      ProfessorBox(professorName: courseInfo.professorName),
+
+
+
+                      // Box código de curso (solo profe)
+                      if (isProfessor) ...[
+                        CourseCodeBox(courseCode: courseInfo.course.courseCode),
+                      ],
+                      const Divider(thickness: 0.25, color: Colors.grey),
+                      const SizedBox(height: 4),
+                      // Header Estudiantes con chip
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(40, 43, 213, 243),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.group,
+                                    color: darkBlue, size: 26),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "Total de estudiantes: ${courseInfo.memberNames.length - 1}",
+                                  style: const TextStyle(
+                                    color: darkBlue,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  },
+                      const SizedBox(height: 8),
+
+                      // Lista de estudiantes
+                      ...courseInfo.memberNames
+                          .where((name) => name != courseInfo.professorName)
+                          .map((name) => MemberCard(name: name)),
+                    ],
+                  ),
+                ),
+
+                // 1: Evaluaciones
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isProfessor)
+                        CreateEvaluationCard(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CreateEvaluationPage(
+                                  courseId: courseInfo.course.courseCode,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      const SizedBox(height: 12),
+                      Obx(() {
+                        final courseCategoryIDs = categoriesController.categories
+                            .where((cat) =>
+                                cat.courseId == courseInfo.course.courseCode)
+                            .map((cat) => cat.id)
+                            .whereType<String>()
+                            .toList();
+
+                        final evals = evaluationController.evaluations
+                            .where((eval) =>
+                                courseCategoryIDs.contains(eval.categoryID))
+                            .toList();
+
+                        if (evals.isEmpty) {
+                          return const Center(
+                              child: Text('No hay evaluaciones para este curso.'));
+                        }
+                        return Column(
+                          children: evals
+                              .map((eval) => EvaluationListCard(
+                                    evaluation: eval,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => CurrentEvaluationPage(
+                                              evaluation: eval),
+                                        ),
+                                      );
+                                    },
+                                  ))
+                              .toList(),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+
+                // 2: Categorías (Grupos)
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isProfessor)
+                        CreateCategoryCard(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CreateCategoryPage(
+                                  course: courseInfo.course,
+                                  canEdit: true,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      const SizedBox(height: 12),
+                      ...courseCategoryIDs.map((catId) {
+                        final cat =
+                            categoriesController.getCategoryById(catId);
+                        if (cat == null) return const SizedBox.shrink();
+                        return CategoryListCard(
+                          category: cat,
+                          activitiesCount: 0,
+                          groupsCount: cat.groupIDs.length,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CurrentCategoryPage(
+                                  category: cat,
+                                  canEdit: isProfessor,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            if (courseInfo.course.categoryIDs.isEmpty)
-              const Text('No hay categorías asignadas.')
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemCount: courseInfo.course.categoryIDs.length,
-                itemBuilder: (context, index) {
-                  final id = courseInfo.course.categoryIDs[index];
-                  final category = categoriesController.getCategoryById(id);
-                  if (category == null) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: CategoryCard(
-                      category: category,
-                      onTap: () async {
-                        AuthenticationController auth = Get.find();
-                        final userId = auth.currentUser.value.id ?? '';
-                        final isProfessor =
-                            courseInfo.course.professorID == userId;
-                        final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CurrentCategoryPage(
-                              category: category,
-                              canEdit: isProfessor,
-                            ),
-                          ),
-                        );
-                        if (result == 'deleted') {
-                          widget.courseInfo.course.categoryIDs.remove(
-                            category.id,
-                          );
-                        }
-                        // If updated or deleted, refresh the UI to show latest category data
-                        setState(() {});
-                      },
-                    ),
-                  );
-                },
+          ),
+
+          // Bottom nav
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(38, 0, 0, 0),
+                  spreadRadius: 2,
+                  blurRadius: 6,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  NavItem(
+                    icon: Icons.book_outlined,
+                    label: "Curso",
+                    isActive: _selectedNavIndex == 0,
+                    iconColor: isProfessor ? lilac : darkBlue,
+                    onTap: () {
+                      setState(() => _selectedNavIndex = 0);
+                    },
+                  ),
+                  NavItem(
+                    icon: Icons.assignment_outlined,
+                    label: "Evaluaciones",
+                    isActive: _selectedNavIndex == 1,
+                    iconColor: isProfessor ? lilac : darkBlue,
+                    onTap: () {
+                      setState(() => _selectedNavIndex = 1);
+                    },
+                  ),
+                  NavItem(
+                    icon: Icons.group_outlined,
+                    label: "Grupos",
+                    isActive: _selectedNavIndex == 2,
+                    iconColor: isProfessor ? lilac : darkBlue,
+                    onTap: () {
+                      setState(() => _selectedNavIndex = 2);
+                    },
+                  ),
+                ],
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,7 +1,7 @@
 import '../models/authentication_user.dart';
 
 abstract class IAuthRepository {
-  Future<AuthenticationUser?> login(AuthenticationUser user);
+  Future<Set<dynamic>> login(AuthenticationUser user);
 
   Future<bool> signUp(AuthenticationUser user);
 
@@ -9,7 +9,7 @@ abstract class IAuthRepository {
 
   Future<bool> validate(String email, String validationCode);
 
-  Future<bool> validateToken();
+  Future<bool> validateToken(String accessToken);
 
   Future<void> forgotPassword(String email);
 }

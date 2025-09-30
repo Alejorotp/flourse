@@ -1,14 +1,14 @@
 class AuthenticationUser {
-  int? id;
+  String? id;
   final String email;
   final String name;
-  final String password;
+  final String? password;
 
   AuthenticationUser({
     this.id,
     required this.email,
     required this.name,
-    required this.password,
+    this.password,
   });
 
   factory AuthenticationUser.fromJson(Map<String, dynamic> json) {

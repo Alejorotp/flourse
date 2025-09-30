@@ -1,21 +1,19 @@
-
 import 'package:flourse/features/groups/domain/models/groups.dart';
 
 abstract class IGroupSource {
+  Future<List<Group>> getAllGroups();
 
-  List<Group> getAllGroups();
+  Future<List<Group>> getGroupById(String id);
 
-  Group? getGroupById(int id);
-
-  void createGroup({
-    required int id,
-    required int maxMembers
+  Future<Group> createGroup({
+    required int maxMembers,
+    required String categoryId,
+    required int groupNumber
   });
 
-  bool joinGroup(int groupId, int userId);
+  Future<bool> joinGroup(String groupId, String userId);
 
-  bool removeMemberFromGroup(int groupId, int userId);
+  Future<bool> removeMemberFromGroup(String groupId, String userId);
 
-  void deleteGroup(int id);
-
+  Future<void> deleteGroup(String id);
 }
