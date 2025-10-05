@@ -25,20 +25,20 @@ import 'features/auth/ui/controller/auth_controller.dart';
 
 import 'features/courses/data/datasources/i_course_source.dart';
 import 'features/courses/data/datasources/remote/course_source_service.dart';
-import 'features/courses/data/repository/course_repository.dart';
+import 'features/courses/data/repositories/course_repository.dart';
 import 'features/courses/domain/repositories/i_course_repository.dart';
 import 'features/courses/domain/use_case/course_usecase.dart';
 import 'features/courses/ui/controller/courses_controller.dart';
 
-import'features/groups/ui/controller/group_controller.dart';
+import 'features/groups/ui/controller/group_controller.dart';
 import 'features/groups/data/datasources/i_group_source.dart';
 import 'features/groups/data/datasources/remote/group_source_service.dart';
-import 'features/groups/data/repository/group_repository.dart';
+import 'features/groups/data/repositories/group_repository.dart';
 import 'features/groups/domain/repositories/i_group_repository.dart';
 import 'features/groups/domain/use_case/group_usecase.dart';
 
 
-import'features/categories/ui/controller/categories_controller.dart';
+import 'features/categories/ui/controller/categories_controller.dart';
 import 'features/categories/data/datasources/i_category_source.dart';
 import 'features/categories/data/datasources/remote/category_source_service.dart';
 import 'features/categories/data/repositories/category_repository.dart';
@@ -48,7 +48,7 @@ import 'features/categories/domain/use_case/category_usecase.dart';
 import 'features/evaluations/ui/controller/evaluation_controller.dart';
 import 'features/evaluations/data/datasources/i_evaluation_source.dart';
 import 'features/evaluations/data/datasources/remote/evaluation_source_service.dart';
-import 'features/evaluations/data/repository/evaluation_repository.dart';
+import 'features/evaluations/data/repositories/evaluation_repository.dart';
 import 'features/evaluations/domain/repositories/i_evaluation_repository.dart';
 import 'features/evaluations/domain/use_case/evaluation_usecase.dart';
 
@@ -92,7 +92,7 @@ void main() {
   // Categories
   Get.put<ICategorySource>(CategorySourceService());
   Get.put<ICategoryRepository>(CategoryRepository(Get.find()));
-  Get.put(CategoryUseCase(Get.find()));
+  Get.put(CategoryUseCase(Get.find(), Get.find<GroupUseCase>()));
   Get.put(CategoriesController(Get.find()));
 
   // Evaluations

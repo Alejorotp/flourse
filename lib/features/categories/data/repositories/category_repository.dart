@@ -14,13 +14,13 @@ class CategoryRepository implements ICategoryRepository {
   }
 
   @override
-  void createCategory({
+  Future<void> createCategory({
     required String name,
     required String groupingMethod,
     required int maxMembers,
     required String courseId,
-  }) {
-      categorySource.createCategory(
+  }) async {
+      await categorySource.createCategory(
       name: name,
       groupingMethod: groupingMethod,
       maxMembers: maxMembers,
@@ -53,11 +53,9 @@ class CategoryRepository implements ICategoryRepository {
     return categorySource.getCategoryById(id);
   }
 
-
-
-  
-
-  
-
+  @override
+  Future<List<Map<String, dynamic>>> getCourseMembers(String courseId) {
+    return categorySource.getCourseMembers(courseId);
+  }
 
 }

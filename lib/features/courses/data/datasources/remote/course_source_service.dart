@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import '../../../domain/models/course.dart';
 import '../../../domain/models/course_info.dart';
 import '../i_course_source.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
@@ -15,21 +14,17 @@ class CourseSourceService implements ICourseSource {
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
 
-  final AuthenticationController authController = Get.find();
-
-  String get _authToken => authController.accessToken.value;
-
   //CourseSourceService({http.Client? client})
   //  : httpClient = client ?? http.Client();
 
   @override
-  Future<String> getUserNameById(String userId) async {
+  Future<String> getUserNameById(String userId, String accessToken) async {
     logInfo("Fetching user name for userId: $userId");
     try {
       final response = await httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=AuthenticationUser&UID=$userId"),
         headers: {
-          'Authorization': 'Bearer $_authToken',
+          'Authorization': 'Bearer $accessToken',
         },
       );
 
@@ -49,13 +44,13 @@ class CourseSourceService implements ICourseSource {
   }
 
   @override
-  Future<List<UserCourseInfo>> getCourseInfo(String? userId) async {
+  Future<List<UserCourseInfo>> getCourseInfo(String userId, String accessToken) async {
     logInfo("Fetching course info for all courses related to userId: $userId");
 
     // 1. Obtener los IDs de los cursos a los que pertenece el usuario
     final responseCourseMember = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&userID=$userId"),
-      headers: {'Authorization': 'Bearer $_authToken'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (responseCourseMember.statusCode != 200) {
@@ -75,7 +70,7 @@ class CourseSourceService implements ICourseSource {
     final coursesResponses = await Future.wait(memberCourseIds.map((courseId) {
       return httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&courseCode=$courseId"),
-        headers: {'Authorization': 'Bearer $_authToken'},
+        headers: {'Authorization': 'Bearer $accessToken'},
       );
     }));
 
@@ -96,7 +91,7 @@ class CourseSourceService implements ICourseSource {
     final allMembersResponses = await Future.wait(memberCourseIds.map((courseId) {
       return httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&courseID=$courseId"),
-        headers: {'Authorization': 'Bearer $_authToken'},
+        headers: {'Authorization': 'Bearer $accessToken'},
       );
     }));
 
@@ -120,7 +115,7 @@ class CourseSourceService implements ICourseSource {
     final coursesFutures = allCoursesJson.map<Future<UserCourseInfo>>((courseJson) async {
       final course = Course.fromJson(courseJson);
       final userRole = course.professorID == userId ? "Profesor" : "Estudiante";
-      final professorName = await getUserNameById(course.professorID);
+      final professorName = await getUserNameById(course.professorID, accessToken);
 
       // Búsqueda instantánea en el mapa, ¡sin llamadas a la API aquí!
       logInfo("Looking up members for course ID: ${course.courseCode}");
@@ -128,7 +123,7 @@ class CourseSourceService implements ICourseSource {
       final memberIDs = membersByCourseId[course.courseCode] ?? [];
       logInfo("Course ID: ${course.courseCode}, Member IDs: $memberIDs");
 
-      final memberNames = await Future.wait(memberIDs.map((id) => getUserNameById(id)));
+      final memberNames = await Future.wait(memberIDs.map((id) => getUserNameById(id, accessToken)));
       logInfo("Member names for course ${course.title}: $memberNames");
 
       return UserCourseInfo(
@@ -143,12 +138,12 @@ class CourseSourceService implements ICourseSource {
   }
 
   @override
-  Future<List<UserCourseInfo>> getAllCourses() async {
+  Future<List<UserCourseInfo>> getAllCourses(String accessToken) async {
     logInfo("Fetching all courses");
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -156,9 +151,9 @@ class CourseSourceService implements ICourseSource {
       final List<dynamic> jsonList = json.decode(response.body);
       final coursesFutures = jsonList.map((json) async {
         final memberIDs = json['memberIDs'] as List<dynamic>? ?? [];
-        final memberNamesFutures = memberIDs.map((id) => getUserNameById(id as String)).toList();
+        final memberNamesFutures = memberIDs.map((id) => getUserNameById(id as String, accessToken)).toList();
         final memberNames = await Future.wait(memberNamesFutures);
-        final professorNameFuture = getUserNameById(json['professorID'] as String);
+        final professorNameFuture = getUserNameById(json['professorID'] as String, accessToken);
         final professorName = await professorNameFuture;
         final course = Course.fromJson(json);
         return UserCourseInfo(
@@ -184,6 +179,7 @@ class CourseSourceService implements ICourseSource {
   Future<void> createCourse({
     required String title,
     required String professorID,
+    required String accessToken,
   }) async {
     logInfo("Creating course with title: $title for professorID: $professorID");
 
@@ -199,7 +195,7 @@ class CourseSourceService implements ICourseSource {
 
         final response = await httpClient.get(
           Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&courseCode='$courseCode'"),
-          headers: {'Authorization': 'Bearer $_authToken'},
+          headers: {'Authorization': 'Bearer $accessToken'},
         );
 
         if (response.statusCode == 200) {
@@ -234,7 +230,7 @@ class CourseSourceService implements ICourseSource {
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
       body: json.encode({
         "tableName": "Course",
@@ -255,17 +251,17 @@ class CourseSourceService implements ICourseSource {
 
     logInfo("Successfully created course with code $code");
     // Add the user as a member of the course
-    await joinCourse(courseCode: code, userId: professorID);  
+    await joinCourse(courseCode: code, userId: professorID, accessToken: accessToken);  
   }
 
   @override
-  Future<bool> joinCourse({required String courseCode, required String userId}) async {
+  Future<bool> joinCourse({required String courseCode, required String userId, required String accessToken}) async {
     logInfo("User with ID: $userId joining course with code: $courseCode");
 
     // Find the course by courseCode
     final courseResponse = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Course&courseCode=$courseCode"),
-      headers: {'Authorization': 'Bearer $_authToken'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (courseResponse.statusCode != 200) {
@@ -284,7 +280,7 @@ class CourseSourceService implements ICourseSource {
     // Check if the user is already a member
     final memberCheckResponse = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=CourseMember&userID=$userId&courseID=$courseId"),
-      headers: {'Authorization': 'Bearer $_authToken'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (memberCheckResponse.statusCode == 200) {
@@ -303,7 +299,7 @@ class CourseSourceService implements ICourseSource {
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
       body: json.encode({
         "tableName": "CourseMember",

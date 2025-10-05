@@ -28,9 +28,8 @@ class EvaluationRepository implements IEvaluationRepository {
 
 
   @override
-  Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate}) {
-    return evalSource.createEvaluation(name: name, categoryId: categoryId, visibility
-: visibility, creationDate: creationDate);
+  Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate, required String accessToken}) {
+    return evalSource.createEvaluation(name: name, categoryId: categoryId, visibility: visibility, creationDate: creationDate, accessToken: accessToken);
 }
 
   @override
@@ -39,8 +38,8 @@ class EvaluationRepository implements IEvaluationRepository {
   }
 
   @override
-  Future<List<String?>> getScoresByGroupID(String groupId, String evaluationId) {
-    return evalSource.getScoresByGroupID(groupId, evaluationId);
+  Future<List<String?>> getScoresByGroupID(String groupId, String evaluationId, String accessToken) {
+    return evalSource.getScoresByGroupID(groupId, evaluationId, accessToken);
   }
 
   @override
@@ -59,11 +58,8 @@ class EvaluationRepository implements IEvaluationRepository {
   }
 
   @override
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores}) {
-    return evalSource.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores);
+  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores, required String accessToken}) {
+    return evalSource.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores, accessToken: accessToken);
   }
-
-  
-
 
 }

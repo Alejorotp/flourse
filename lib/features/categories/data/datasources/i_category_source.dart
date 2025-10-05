@@ -6,7 +6,7 @@ abstract class ICategorySource {
 
   Future<List<Category>> getAllCategories();
 
-  void createCategory({
+  Future<void> createCategory({
     required String name,
     required String groupingMethod,
     required int maxMembers,
@@ -24,5 +24,6 @@ abstract class ICategorySource {
 
   Future<Category?> getCategoryById(String id);
 
+  Future<List<Map<String, dynamic>>> getCourseMembers(String courseId);
 
 }

@@ -4,8 +4,6 @@ import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
 import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
 import 'package:flourse/features/evaluations/data/datasources/i_evaluation_source.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
@@ -15,20 +13,16 @@ class EvaluationSourceService implements IEvaluationSource {
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
 
-  final AuthenticationController authController = Get.find();
-
-  String get _authToken => authController.accessToken.value;
-
   //EvaluationSourceService({http.Client? client})
   //  : httpClient = client ?? http.Client();
 
   @override
-  Future<List<Evaluation>> getByCategoryID(String categoryId) async {
+  Future<List<Evaluation>> getByCategoryID(String categoryId, String accessToken) async {
     logInfo("Fetching evaluations for category ID: $categoryId");
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Evaluations&categoryID=$categoryId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -51,12 +45,12 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<Evaluation>> getAllEval() async {
+  Future<List<Evaluation>> getAllEval(String accessToken) async {
     logInfo("Fetching all evaluations");
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Evaluations"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -79,7 +73,7 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate}) async {
+  Future<void> createEvaluation({required String name, required String categoryId, required String visibility, required String creationDate, required String accessToken}) async {
     logInfo("Creating evaluation with name: $name, categoryId: $categoryId, visibility: $visibility, creationDate: $creationDate");
 
     String generateUniqueCode() {
@@ -93,7 +87,7 @@ class EvaluationSourceService implements IEvaluationSource {
     final response = await httpClient.post(
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json', 
       },
       body: json.encode({
@@ -119,11 +113,11 @@ class EvaluationSourceService implements IEvaluationSource {
 
 
   @override
-  Future<List<String>> getScoresByCategoryID(String categoryId, String evaluationId) async {
+  Future<List<String>> getScoresByCategoryID(String categoryId, String evaluationId, String accessToken) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&categoryID=$categoryId&evaluationID=$evaluationId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     logInfo("Scores by category fetch response status: ${response.statusCode}");
@@ -145,11 +139,11 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<String>> getScoresByEvaluationID(String evaluationId) async {
+  Future<List<String>> getScoresByEvaluationID(String evaluationId, String accessToken) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&evaluationID=$evaluationId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     logInfo("Scores by evaluation fetch response status: ${response.statusCode}");
@@ -170,11 +164,11 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<String>> getScoresByGroupID(String groupId, String evaluationId) async {
+  Future<List<String>> getScoresByGroupID(String groupId, String evaluationId, String accessToken) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&groupID=$groupId&evaluationID=$evaluationId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     logInfo("Scores by group fetch response status: ${response.statusCode}");
@@ -196,11 +190,11 @@ class EvaluationSourceService implements IEvaluationSource {
 
 
   @override
-  Future<List<String>> getUserScores(String userId, String evaluationId) async {
+  Future<List<String>> getUserScores(String userId, String evaluationId, String accessToken) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId&evaluationID=$evaluationId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     logInfo("User scores fetch response status: ${response.statusCode}");
@@ -221,11 +215,11 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<String>> getAllUserScores(String userId) async {
+  Future<List<String>> getAllUserScores(String userId, String accessToken) async {
     final response = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&userID=$userId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       },
     );
     logInfo("All user scores fetch response status: ${response.statusCode}");
@@ -247,13 +241,13 @@ class EvaluationSourceService implements IEvaluationSource {
 
 
   @override
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores}) async {
+  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores, required String accessToken}) async {
     logInfo("Submitting score for userId: $userId, evaluationId: $evaluationId, groupID: $groupID, categoryID: $categoryID");
 
     final response = await httpClient.post(
       Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       },
       body: json.encode({
@@ -284,23 +278,12 @@ class EvaluationSourceService implements IEvaluationSource {
   }
 
   @override
-  Future<List<Evaluation>> getUserEvaluations(String userId) {
-    GroupsController groupController = Get.find();
-    final userGroups = groupController.getGroupById(userId);
-    final List<Evaluation> userEvaluations = [];
-    userGroups.then((groups) {
-      for (var group in groups) {
-        logInfo("User group: ${group.id}, categoryID: ${group.categoryID}");
-        getByCategoryID(group.categoryID).then((evaluations) {
-          for (var eval in evaluations) {
-            logInfo("Evaluation for user $userId: ${eval.name} in category ${group.categoryID}");
-            userEvaluations.add(eval);
-          }
-        });
-      }
-    });
-
-    return Future.value(userEvaluations);
+  Future<List<Evaluation>> getUserEvaluations(String userId, String accessToken) async {
+    logInfo("Fetching user evaluations for user: $userId");
+    // This method should be implemented to get evaluations for a specific user
+    // For now, return an empty list as this requires proper implementation
+    // through the use case layer that can coordinate with groups
+    return [];
   }
 
 

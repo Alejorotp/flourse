@@ -5,30 +5,19 @@ import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:flourse/features/auth/ui/controller/auth_controller.dart'; 
-
 class GroupSourceService implements IGroupSource {
   final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
   final String _databaseName = "flourse_460df99409";
   final String _apiBaseUrl = "https://roble-api.openlab.uninorte.edu.co/database";
-  
-  // Instancia del AuthenticationController, como un singleton, gracias a GetX
-  final AuthenticationController authController = Get.find();
-
-  //GroupSourceService({http.Client? client})
-  //  : httpClient = client ?? http.Client();
-
-  // Getter para obtener el token de manera reactiva
-  String get _authToken => authController.accessToken.value;
 
   @override
-  Future<List<Group>> getAllGroups() async {
+  Future<List<Group>> getAllGroups(String accessToken) async {
     logInfo("Fetching all groups from API");
     try {
       final response = await httpClient.get(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group"),
         headers: {
-          'Authorization': 'Bearer $_authToken',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       if (response.statusCode == 200) {
@@ -93,10 +82,10 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<List<Group>> getGroupById(String id) async {
+  Future<List<Group>> getGroupById(String id, String accessToken) async {
     logInfo("Fetching group by ID from API: $id");
     try {
-      var groups = await getAllGroups();
+      var groups = await getAllGroups(accessToken);
       groups = groups.where((group) => group.id == id).toList();
       return groups;
     } catch (e) {
@@ -109,14 +98,15 @@ class GroupSourceService implements IGroupSource {
   Future<Group> createGroup({
     required int maxMembers,
     required String categoryId,
-    required int groupNumber
+    required int groupNumber,
+    required String accessToken
   }) async {
     logInfo("Creating group on API with maxMembers: $maxMembers for category: $categoryId");
     try {
       final response = await httpClient.post(
         Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
+          'Authorization': 'Bearer $accessToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -152,13 +142,13 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<bool> joinGroup(String groupId, String userId) async {
+  Future<bool> joinGroup(String groupId, String userId, String accessToken) async {
     logInfo("User with ID: $userId joining group with ID: $groupId on API");
     try {
       final response = await httpClient.post(
         Uri.parse("$_apiBaseUrl/$_databaseName/insert"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
+          'Authorization': 'Bearer $accessToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -183,13 +173,13 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<bool> removeMemberFromGroup(String groupId, String userId) async {
+  Future<bool> removeMemberFromGroup(String groupId, String userId, String accessToken) async {
     logInfo("User with ID: $userId being removed from group with ID: $groupId on API");
 
     final groupMemberResponse = await httpClient.get(
       Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=$groupId&userID=$userId"),
       headers: {
-        'Authorization': 'Bearer $_authToken',
+        'Authorization': 'Bearer $accessToken',
       });
 
     if (groupMemberResponse.statusCode != 200) {
@@ -207,7 +197,7 @@ class GroupSourceService implements IGroupSource {
       final response = await httpClient.delete(
         Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember/delete"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
+          'Authorization': 'Bearer $accessToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
@@ -226,13 +216,13 @@ class GroupSourceService implements IGroupSource {
   }
 
   @override
-  Future<void> deleteGroup(String id) async {
+  Future<void> deleteGroup(String id, String accessToken) async {
     logInfo("Deleting group with id: $id from API");
     try {
       final response = await httpClient.delete(
         Uri.parse("$_apiBaseUrl/$_databaseName/delete"),
         headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
+          'Authorization': 'Bearer $accessToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
         },
         body: jsonEncode({

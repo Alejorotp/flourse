@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../../domain/models/course.dart';
 import '../../domain/models/course_info.dart';
+import '../../../auth/ui/controller/auth_controller.dart';
 
 import 'package:loggy/loggy.dart';
 
@@ -8,6 +9,7 @@ import '../../domain/use_case/course_usecase.dart';
 
 class CoursesController extends GetxController {
   final CourseUseCase coursation;
+  final AuthenticationController authController = Get.find();
   CoursesController(this.coursation);
 
   var courses = <Course>[].obs;
@@ -19,7 +21,7 @@ class CoursesController extends GetxController {
     
     _currentUserId = userId;
     try {
-      final result = await coursation.getCourseInfo(userId);
+      final result = await coursation.getCourseInfo(userId, authController.accessToken.value);
       userCourses.assignAll(result);
       logInfo("User courses loaded: \\${result.length}");
     } catch (e) {
@@ -28,10 +30,10 @@ class CoursesController extends GetxController {
   }
 
   Future<List<UserCourseInfo>> getAllCourses() async {
-    coursation.getAllCourses()
+    coursation.getAllCourses(authController.accessToken.value)
       .then((value) => logInfo("All courses fetched: \\${value.length}"))
       .catchError((error) => logError("Error fetching all courses: $error"));
-    return await coursation.getAllCourses();
+    return await coursation.getAllCourses(authController.accessToken.value);
   }
 
   Future<bool> createCourse({required String title, required String professorID}) async {
@@ -41,7 +43,7 @@ class CoursesController extends GetxController {
       logInfo("User already professor of 3 or more courses");
       return false;
     }
-    await coursation.createCourse(title: title, professorID: professorID);
+    await coursation.createCourse(title: title, professorID: professorID, accessToken: authController.accessToken.value);
     logInfo("Course created: $title");
     if (_currentUserId != null) {
       await loadUserCourses(_currentUserId!);
@@ -51,7 +53,7 @@ class CoursesController extends GetxController {
   }
 
   Future<bool> joinCourse({required String courseCode, required String userId}) async {
-    final result = await coursation.joinCourse(courseCode: courseCode, userId: userId);
+    final result = await coursation.joinCourse(courseCode: courseCode, userId: userId, accessToken: authController.accessToken.value);
     logInfo("Joined course with code: $courseCode");
     if (_currentUserId != null) {
       await loadUserCourses(_currentUserId!);
@@ -61,7 +63,7 @@ class CoursesController extends GetxController {
   }
 
   Future<String> getUserNameById(String userId) {
-    Future<String> userName = coursation.getUserNameById(userId);
+    Future<String> userName = coursation.getUserNameById(userId, authController.accessToken.value);
     logInfo("Fetched user name for ID $userId");
     return userName;
   }

@@ -4,7 +4,7 @@ import 'package:flourse/features/categories/domain/models/category.dart';
 abstract class ICategoryRepository {
   Future<List<Category>> getAllCategories();
 
-  void createCategory({
+  Future<void> createCategory({
     required String name,
     required String groupingMethod,
     required int maxMembers,
@@ -21,4 +21,6 @@ abstract class ICategoryRepository {
   });
 
   Future<Category?> getCategoryById(String id);
+
+  Future<List<Map<String, dynamic>>> getCourseMembers(String courseId);
 }

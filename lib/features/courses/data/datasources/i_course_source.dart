@@ -3,13 +3,13 @@ import '../../domain/models/course_info.dart';
 
 abstract class ICourseSource {
 
-  Future<String> getUserNameById(String userId);
-  Future<List<UserCourseInfo>> getCourseInfo(String userId);
+  Future<String> getUserNameById(String userId, String accessToken);
+  Future<List<UserCourseInfo>> getCourseInfo(String userId, String accessToken);
 
-  Future<List<UserCourseInfo>> getAllCourses();
+  Future<List<UserCourseInfo>> getAllCourses(String accessToken);
 
-  Future<void> createCourse({required String title, required String professorID});
+  Future<void> createCourse({required String title, required String professorID, required String accessToken});
 
-  Future<bool> joinCourse({required String courseCode, required String userId});
+  Future<bool> joinCourse({required String courseCode, required String userId, required String accessToken});
 
 }

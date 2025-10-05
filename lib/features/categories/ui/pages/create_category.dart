@@ -93,7 +93,7 @@ class _CreateCategoryPageState extends State<CreateCategoryPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final name = _nameController.text.trim();
                     final grouping = _selectedGrouping ?? "";
                     final maxMembers =
@@ -102,13 +102,13 @@ class _CreateCategoryPageState extends State<CreateCategoryPage> {
                     if (name.isNotEmpty &&
                         grouping.isNotEmpty &&
                         maxMembers > 0) {
-                      categoriesController.createCategory(
+                      await categoriesController.createCategory(
                         name: name,
                         groupingMethod: grouping,
                         maxMembers: maxMembers,
                         course: widget.course,
                       );
-                      Navigator.of(context).pop();
+                      if (context.mounted) Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

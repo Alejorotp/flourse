@@ -17,13 +17,13 @@ class CategoriesController extends GetxController{
     logInfo("Fetched categories in Controller: ${fetchedCategories.length}");
   }
 
-  void createCategory({
+  Future<void> createCategory({
     required String name,
     required String groupingMethod,
     required int maxMembers,
     required Course course,
-  }) {
-    categoryation.createCategory(name: name, groupingMethod: groupingMethod, maxMembers: maxMembers, courseId: course.courseCode);
+  }) async {
+    await categoryation.createCategory(name: name, groupingMethod: groupingMethod, maxMembers: maxMembers, courseId: course.courseCode);
   }
 
   void deleteCategory(String id) {
