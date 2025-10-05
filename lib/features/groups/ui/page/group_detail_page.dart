@@ -86,7 +86,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                             )
                           : null,
                     );
-                  }).toList(),
+                  }),
               ],
             ),
           );

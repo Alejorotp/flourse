@@ -61,7 +61,7 @@ class EvaluationListCard extends StatelessWidget {
                         const SizedBox(width: 12),
                         Icon(Icons.visibility, size: 16, color: Colors.grey),
                         const SizedBox(width: 4),
-                        Text('${evaluation.visibility}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(evaluation.visibility, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                       ],
                     ),
                   ],

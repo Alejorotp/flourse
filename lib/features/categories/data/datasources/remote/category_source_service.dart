@@ -102,14 +102,14 @@ class CategorySourceService implements ICategorySource {
           maxMembers: newCategory.maxMembers,
         );
         logInfo("Creating group ${i + 1} with members: $groupMemberIds");
-        membersData.forEach((member) async {
+        for (final member in membersData) {
           if (groupMemberIds.contains(member['userID'].toString()) && member['role'] == false) {
             await groupsController.joinGroup(
               groupsController.groups.last.id,
               member['userID'].toString(),
             );
           }
-        });
+        }
 
 
         

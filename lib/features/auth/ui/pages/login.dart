@@ -5,7 +5,7 @@ import 'package:loggy/loggy.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = '/login';
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -230,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget _buttonLogReg(final auth) {
+  Widget _buttonLogReg(final AuthenticationController auth) {
     return Obx(
       () => AnimatedContainer(
         duration: const Duration(milliseconds: 400),
@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
           ),
           onPressed: () async {
-            if (auth.isLogin.value!) {
+            if (auth.isLogin.value) {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {

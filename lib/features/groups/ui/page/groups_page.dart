@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/groups/ui/page/groupDetailPage.dart';
+import 'package:flourse/features/groups/ui/page/group_detail_page.dart';
+import 'package:loggy/loggy.dart';
 
 class GroupsPage extends StatefulWidget {
   static const String id = '/groups-page';
@@ -65,7 +66,7 @@ class _GroupsPageState extends State<GroupsPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async { // <-- Se añade async
-                        print('Crear nuevo grupo en la categoría ${widget.category.name}');
+                        logInfo('Crear nuevo grupo en la categoría ${widget.category.name}');
                         await groupsController.createGroup( // <-- Se añade await
                           maxMembers: widget.category.maxMembers,
                           categoryId: widget.category.id ?? '', // <-- Se pasa el ID como String

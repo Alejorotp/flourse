@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
-import 'package:flourse/features/courses/ui/pages/currentCourse.dart';
+import 'package:flourse/features/courses/ui/pages/current_course.dart';
 
 class CourseCard extends StatelessWidget {
   final UserCourseInfo courseInfo;
@@ -21,11 +21,11 @@ class CourseCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         highlightColor: isProfessor
-            ? Colors.deepPurpleAccent.withOpacity(0.12)
-            : Colors.lightBlueAccent.withOpacity(0.12),
+            ? Colors.deepPurpleAccent.withValues(alpha: 0.12)
+            : Colors.lightBlueAccent.withValues(alpha: 0.12),
         splashColor: isProfessor
-            ? Colors.deepPurpleAccent.withOpacity(0.18)
-            : Colors.lightBlueAccent.withOpacity(0.18),
+            ? Colors.deepPurpleAccent.withValues(alpha: 0.18)
+            : Colors.lightBlueAccent.withValues(alpha: 0.18),
         onTap: () {
           Navigator.push(
             context,

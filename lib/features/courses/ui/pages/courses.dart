@@ -2,7 +2,7 @@ import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/home/ui/widgets/course_card.dart';
-import 'package:flourse/features/courses/ui/widgets/RoleToggleButtons.dart';
+import 'package:flourse/features/courses/ui/widgets/role_toggle_buttons.dart';
 import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
 import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
 import 'dart:ui';
@@ -55,7 +55,7 @@ class _CoursesPageState extends State<CoursesPage> {
                 Theme(
                   data: Theme.of(context).copyWith(
                     popupMenuTheme: PopupMenuThemeData(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                     ),
                   ),
                   child: PopupMenuButton<int>(
@@ -102,7 +102,7 @@ class _CoursesPageState extends State<CoursesPage> {
                         showDialog(
                           context: context,
                           barrierDismissible: true,
-                          barrierColor: Colors.black.withOpacity(0.2),
+                          barrierColor: Colors.black.withValues(alpha: 0.2),
                           builder: (context) => BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                             child: const CreateCourseDialog(),
@@ -113,7 +113,7 @@ class _CoursesPageState extends State<CoursesPage> {
                         showDialog(
                           context: context,
                           barrierDismissible: true,
-                          barrierColor: Colors.black.withOpacity(0.2),
+                          barrierColor: Colors.black.withValues(alpha: 0.2),
                           builder: (context) => BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                             child: const JoinCourseDialog(),

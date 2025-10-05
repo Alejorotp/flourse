@@ -13,8 +13,8 @@ class CreateCourseCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        highlightColor: Colors.deepPurpleAccent.withOpacity(0.12),
-        splashColor: Colors.deepPurpleAccent.withOpacity(0.18),
+        highlightColor: Colors.deepPurpleAccent.withValues(alpha: 0.12),
+        splashColor: Colors.deepPurpleAccent.withValues(alpha: 0.18),
         onTap: onTap,
         child: Container(
           width: 160,
