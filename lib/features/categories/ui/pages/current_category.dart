@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 //import 'package:flourse/features/categories/ui/pages/groupsPage.dart'; // Importa la página de grupos
-import 'package:flourse/features/groups/ui/page/groupsPage.dart';
+import 'package:flourse/features/groups/ui/page/groups_page.dart';
 import 'package:get/get.dart';
 
 class CurrentCategoryPage extends StatefulWidget {

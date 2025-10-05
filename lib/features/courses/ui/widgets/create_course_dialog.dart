@@ -8,7 +8,7 @@ class CreateCourseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
     CoursesController courseCon = Get.find();
     AuthenticationController auth = Get.find();
 
@@ -78,7 +78,7 @@ class CreateCourseDialog extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             TextField(
-              controller: _nameController,
+              controller: nameController,
               decoration: InputDecoration(
                 hintText: "Ej: Matemáticas 101",
                 filled: true,
@@ -107,7 +107,7 @@ class CreateCourseDialog extends StatelessWidget {
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: const Text("Crear curso", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 onPressed: () async {
-                  final name = _nameController.text.trim();
+                  final name = nameController.text.trim();
                   if (name.isNotEmpty) {
                     final userId = auth.currentUser.value.id?.toString() ?? '';
                     final created = await courseCon.createCourse(
@@ -121,7 +121,7 @@ class CreateCourseDialog extends StatelessWidget {
                         icon: const Icon(Icons.check_circle, color: Colors.green),
                         snackPosition: SnackPosition.BOTTOM,
                       );
-                      Navigator.of(context).pop();
+                      if (context.mounted) Navigator.of(context).pop();
                     } else {
                       Get.snackbar(
                         "Error",
@@ -129,7 +129,7 @@ class CreateCourseDialog extends StatelessWidget {
                         icon: const Icon(Icons.error, color: Colors.red),
                         snackPosition: SnackPosition.BOTTOM,
                       );
-                      Navigator.of(context).pop();
+                      if (context.mounted) Navigator.of(context).pop();
                     }
                   } else {
                     Get.snackbar(

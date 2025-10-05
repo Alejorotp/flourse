@@ -10,7 +10,7 @@ class JoinCourseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _codeController = TextEditingController();
+    final TextEditingController codeController = TextEditingController();
     CoursesController courseCon = Get.find();
     AuthenticationController auth = Get.find();
 
@@ -81,7 +81,7 @@ class JoinCourseDialog extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             TextField(
-              controller: _codeController,
+              controller: codeController,
               decoration: InputDecoration(
                 hintText: "Ej: ABC123",
                 filled: true,
@@ -110,7 +110,7 @@ class JoinCourseDialog extends StatelessWidget {
                 icon: const Icon(Icons.person_add_alt_1_outlined, color: Colors.white),
                 label: const Text("Unirse al curso", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 onPressed: () async {
-                  final code = _codeController.text.trim();
+                  final code = codeController.text.trim();
                   if (code.isNotEmpty) {
                     final userId = auth.currentUser.value.id ?? "0";
                     final success = await courseCon.joinCourse(
@@ -124,7 +124,7 @@ class JoinCourseDialog extends StatelessWidget {
                         icon: const Icon(Icons.check_circle, color: Colors.green),
                         snackPosition: SnackPosition.BOTTOM,
                       );
-                      Navigator.of(context).pop();
+                      if (context.mounted) Navigator.of(context).pop();
                     } else {
                       Get.snackbar(
                         "Error",

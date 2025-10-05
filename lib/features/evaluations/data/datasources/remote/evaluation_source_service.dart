@@ -85,7 +85,7 @@ class EvaluationSourceService implements IEvaluationSource {
     String generateUniqueCode() {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234S6789';
       final rand = Random();
-      String code = List.generate(6, (index) => chars[rand.nextInt(chars.length)]).join();;
+      String code = List.generate(6, (index) => chars[rand.nextInt(chars.length)]).join();
       return code;
     }
 
@@ -293,7 +293,7 @@ class EvaluationSourceService implements IEvaluationSource {
         logInfo("User group: ${group.id}, categoryID: ${group.categoryID}");
         getByCategoryID(group.categoryID).then((evaluations) {
           for (var eval in evaluations) {
-            logInfo("Evaluation for user ${userId}: ${eval.name} in category ${group.categoryID}");
+            logInfo("Evaluation for user $userId: ${eval.name} in category ${group.categoryID}");
             userEvaluations.add(eval);
           }
         });

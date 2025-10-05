@@ -1,5 +1,5 @@
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
-import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
+import 'package:flourse/features/categories/ui/pages/current_category.dart';
 import 'package:flourse/features/categories/ui/widgets/create_category_card.dart';
 import 'package:flourse/features/categories/ui/widgets/category_list_card.dart';
 import 'package:flourse/features/categories/ui/widgets/create_category_dialog.dart';
@@ -12,7 +12,7 @@ import 'package:flourse/features/courses/ui/widgets/professor_box.dart';
 import 'package:flourse/features/courses/ui/widgets/course_code_box.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
-import 'package:flourse/features/courses/ui/widgets/Navitem.dart';
+import 'package:flourse/features/courses/ui/widgets/nav_item.dart';
 import 'package:flourse/features/evaluations/ui/widgets/evaluation_list_card.dart';
 import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_card.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
@@ -254,7 +254,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             );
                           },
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

@@ -54,7 +54,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedCategoryId,
+                initialValue: _selectedCategoryId,
                 decoration: const InputDecoration(
                   labelText: 'Categoría',
                   border: OutlineInputBorder(),
@@ -72,7 +72,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedVisibility,
+                initialValue: _selectedVisibility,
                 decoration: const InputDecoration(
                   labelText: 'Visibilidad',
                   border: OutlineInputBorder(),

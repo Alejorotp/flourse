@@ -11,8 +11,8 @@ class JoinCourseCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        highlightColor: Colors.lightBlueAccent.withOpacity(0.12),
-        splashColor: Colors.lightBlueAccent.withOpacity(0.18),
+        highlightColor: Colors.lightBlueAccent.withValues(alpha: 0.12),
+        splashColor: Colors.lightBlueAccent.withValues(alpha: 0.18),
         onTap: onTap,
         child: Container(
           width: 160,

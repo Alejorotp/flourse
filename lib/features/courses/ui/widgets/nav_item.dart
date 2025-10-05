@@ -8,13 +8,13 @@ class NavItem extends StatelessWidget {
   final Color? iconColor;
 
   const NavItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     this.isActive = false,
     this.onTap,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class NavItem extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: isActive ? color.withOpacity(0.12) : Colors.transparent,
+                color: isActive ? color.withValues(alpha: 0.12) : Colors.transparent,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color),

@@ -7,7 +7,7 @@ class ProfessorBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const lilac = Color.fromRGBO(124, 77, 255, 1);
-    final chipBg = lilac.withOpacity(0.12);
+    final chipBg = lilac.withValues(alpha: 0.12);
     final cardBg = Theme.of(context).cardColor;
 
     return Card(
