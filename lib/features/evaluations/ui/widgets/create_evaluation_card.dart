@@ -31,7 +31,7 @@ class CreateEvaluationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     Text(
-                      'Crear Nueva Evaluación',
+                      'Crear Nueva Coevaluación',
                       style: TextStyle(
                         color: Color.fromRGBO(124, 77, 255, 1),
                         fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class CreateEvaluationCard extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Agregar una nueva evaluación para este curso',
+                      'Agregar una nueva coevaluación para este curso',
                       style: TextStyle(
                         color: Colors.black54,
                         fontSize: 13,

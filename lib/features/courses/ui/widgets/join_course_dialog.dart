@@ -15,7 +15,7 @@ class JoinCourseDialog extends StatelessWidget {
     AuthenticationController auth = Get.find();
 
     return Dialog(
-      backgroundColor: const Color.fromARGB(245, 247, 253, 255),
+      backgroundColor: const Color.fromARGB(255, 247, 253, 255),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),

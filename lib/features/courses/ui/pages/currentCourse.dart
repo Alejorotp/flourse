@@ -1,8 +1,10 @@
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
-import 'package:flourse/features/categories/ui/pages/createCategory.dart';
 import 'package:flourse/features/categories/ui/pages/currentCategory.dart';
 import 'package:flourse/features/categories/ui/widgets/create_category_card.dart';
 import 'package:flourse/features/categories/ui/widgets/category_list_card.dart';
+import 'package:flourse/features/categories/ui/widgets/create_category_dialog.dart';
+import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_dialog.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
 import 'package:flourse/features/courses/ui/widgets/member_card.dart';
@@ -13,7 +15,6 @@ import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/widgets/Navitem.dart';
 import 'package:flourse/features/evaluations/ui/widgets/evaluation_list_card.dart';
 import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_card.dart';
-import 'package:flourse/features/evaluations/ui/pages/createEvaluation.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
 import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
 import '../controller/courses_controller.dart';
@@ -146,11 +147,13 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                       if (isProfessor)
                         CreateEvaluationCard(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => CreateEvaluationPage(
-                                  courseId: courseInfo.course.courseCode,
-                                ),
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: CreateEvaluationDialog(courseId: courseInfo.course.courseCode),
                               ),
                             );
                           },
@@ -171,7 +174,15 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
 
                         if (evals.isEmpty) {
                           return const Center(
-                              child: Text('No hay evaluaciones para este curso.'));
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Text(
+                                'No hay coevaluaciones para este curso.',
+                                style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
                         }
                         return Column(
                           children: evals
@@ -202,20 +213,31 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                       if (isProfessor)
                         CreateCategoryCard(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => CreateCategoryPage(
-                                  course: courseInfo.course,
-                                  canEdit: true,
-                                ),
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.2),
+                              builder: (context) => BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: CreateCategoryDialog(course: courseInfo.course, canEdit: true),
                               ),
                             );
                           },
                         ),
                       const SizedBox(height: 12),
-                      ...courseCategoryIDs.map((catId) {
-                        final cat =
-                            categoriesController.getCategoryById(catId);
+                      if (courseCategoryIDs.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Text(
+                              'No hay categorías para este curso.',
+                              style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      else ...courseCategoryIDs.map((catId) {
+                        final cat = categoriesController.getCategoryById(catId);
                         if (cat == null) return const SizedBox.shrink();
                         return CategoryListCard(
                           category: cat,
@@ -268,7 +290,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                   ),
                   NavItem(
                     icon: Icons.assignment_outlined,
-                    label: "Evaluaciones",
+                    label: "Coevaluaciones",
                     isActive: _selectedNavIndex == 1,
                     iconColor: isProfessor ? lilac : darkBlue,
                     onTap: () {
