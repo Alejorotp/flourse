@@ -9,6 +9,8 @@ import 'dart:ui';
 import 'package:flourse/features/courses/ui/widgets/create_course_dialog.dart';
 import 'package:flourse/features/courses/ui/widgets/join_course_dialog.dart';
 import 'package:get/get.dart';
+import 'package:flourse/features/evaluations/ui/widgets/evaluation_list_card.dart';
+import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
 
 import '../../../auth/ui/controller/auth_controller.dart';
 import '../../../courses/ui/controller/courses_controller.dart';
@@ -25,6 +27,7 @@ class HomePage extends StatelessWidget {
     CoursesController courseCon = Get.find();
     EvaluationController evalCon = Get.find();
     courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
+    evalCon.getUserEvaluations( auth.currentUser.value.id ?? "0");
 
 
 
@@ -290,8 +293,50 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
+            Obx(() {
+              // Filtra las evaluaciones pendientes del usuario
+              final pendingEvals = evalCon.evaluations;
 
+              if (pendingEvals.isEmpty) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Text(
+                      'No tienes evaluaciones pendientes.',
+                      style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
 
+              return SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: pendingEvals.length,
+                  itemBuilder: (context, index) {
+                    final eval = pendingEvals[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: SizedBox(
+                        width: 320, 
+                        child: EvaluationListCard(
+                          evaluation: eval,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CurrentEvaluationPage(evaluation: eval),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
           ],
         ),
       ),

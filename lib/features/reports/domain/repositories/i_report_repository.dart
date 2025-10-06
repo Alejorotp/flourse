@@ -10,4 +10,6 @@ abstract class IReportRepository {
   Future<List<Report>> getReportsByGroupId(String groupId);
 
   Future<List<Report>> getReportsByEvaluationId(String evaluationId);
+
+  Future <List<Report>> getReportsByCategoryId(String categoryId);
 }

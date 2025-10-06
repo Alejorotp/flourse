@@ -16,4 +16,6 @@ abstract class IGroupSource {
   Future<bool> removeMemberFromGroup(String groupId, String userId);
 
   Future<void> deleteGroup(String id);
+
+  Future<List<Group>> getUserGroups(String userId);
 }

@@ -45,4 +45,9 @@ class GroupRepository implements IGroupRepository {
   Future<void> deleteGroup(String id) {
     return groupSource.deleteGroup(id);
   }
+
+  @override
+  Future<List<Group>> getUserGroups(String userId) {
+    return groupSource.getUserGroups(userId);
+  }
 }
