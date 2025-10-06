@@ -152,18 +152,13 @@ class CurrentEvaluationPage extends StatelessWidget {
                     .then((_) async {
                   // Filtrar los IDs de grupos únicos
                   final reports = reportController.reports;
-                  final uniqueGroupIds = reports
-                      .map((r) => r.groupId)
-                      .whereType<String>()
-                      .toSet()
-                      .toList();
+                  final uniqueGroupIds = evaluation.categoryID;
+                  logInfo(uniqueGroupIds);
                   // Obtener los grupos por ID
-                  final evaluatedGroups = [];
-                  for (final id in uniqueGroupIds) {
-                    final group = await groupsController.getGroupById(id);
-                    evaluatedGroups.add(group);
+                  final evaluatedGroups =   await groupsController.getGroupById(uniqueGroupIds);
+                  for (var group in evaluatedGroups) {
+                    logInfo("Group fetched: ${group.groupNumber}");
                   }
-                  logInfo(evaluatedGroups);
                   return evaluatedGroups;
                 }),
                 builder: (context, snapshot) {

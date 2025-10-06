@@ -100,18 +100,49 @@ class GroupSourceService implements IGroupSource {
     logInfo("Fetching group by ID from API: $id");
     try {
       var response = await httpClient.get(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&_id=$id"),
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&categoryID=$id"),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
       );
+      logInfo("Group fetch response body: ${response.body}, with response status: ${response.statusCode}");
       if (response.statusCode == 200) {
-        final List<dynamic> jsonList = json.decode(response.body);
-        return jsonList.map((data) => Group.fromJson(data)).toList();
+        if (response.body.isNotEmpty) {
+          final dynamic decodedBody = json.decode(response.body);
+          if (decodedBody is List) {
+            final List<dynamic> jsonList = decodedBody;
+            final List<Group> fetchedGroups = [];
+            for (var data in jsonList) {
+              final memberIDsResponse = await httpClient.get(
+                Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&groupID=${data['_id'].toString()}"),
+                headers: {
+                  'Authorization' : 'Bearer $_authToken',
+                }
+              );
+              List<String> memberIDs = [];
+              if (memberIDsResponse.statusCode == 200) {
+                final List<dynamic> memberList = json.decode(memberIDsResponse.body);
+                memberIDs = memberList.map((member) => member['userID'].toString()).toList();
+              } else {
+                logError("Failed to fetch memberIDs for groupID ${data['_id']}: ${memberIDsResponse.statusCode}");
+              }
+              logInfo("Fetched memberIDs: $memberIDs for groupID ${data}");
+              final group = Group(
+                id: data['_id'].toString(),
+                groupNumber: data['groupNumber'] as int,
+                categoryID: data['categoryID'].toString(),
+                memberIDs: memberIDs,
+              );
+              fetchedGroups.add(group);
+            }
+            return fetchedGroups;
+          }
+        }
+        return [];
       }
       return [];
-    } catch (e) {
-      logError("Error fetching group by ID: $e");
+    } catch (e, s) {
+      logError("Error fetching group by ID: $e", s);
     }
     return [];
   }
