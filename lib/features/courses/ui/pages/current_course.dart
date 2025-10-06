@@ -139,7 +139,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             showDialog(
                               context: context,
                               barrierDismissible: true,
-                              barrierColor: Colors.black.withOpacity(0.2),
+                              barrierColor: Colors.black.withValues(alpha: 0.2),
                               builder: (context) => BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                                 child: CreateEvaluationDialog(courseId: courseInfo.course.courseCode),
@@ -205,7 +205,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             showDialog(
                               context: context,
                               barrierDismissible: true,
-                              barrierColor: Colors.black.withOpacity(0.2),
+                              barrierColor: Colors.black.withValues(alpha: 0.2),
                               builder: (context) => BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                                 child: CreateCategoryDialog(course: courseInfo.course, canEdit: true),
