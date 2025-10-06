@@ -22,11 +22,11 @@ class GroupSourceService implements IGroupSource {
   String get _authToken => authController.accessToken.value;
 
   @override
-  Future<List<Group>> getAllGroups() async {
+  Future<List<Group>> getAllGroups({required String categoryId}) async {
     logInfo("Fetching all groups from API");
     try {
       final response = await httpClient.get(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group"),
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&categoryID=$categoryId"),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
@@ -96,9 +96,17 @@ class GroupSourceService implements IGroupSource {
   Future<List<Group>> getGroupById(String id) async {
     logInfo("Fetching group by ID from API: $id");
     try {
-      var groups = await getAllGroups();
-      groups = groups.where((group) => group.id == id).toList();
-      return groups;
+      var response = await httpClient.get(
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&_id=$id"),
+        headers: {
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
+        return jsonList.map((data) => Group.fromJson(data)).toList();
+      }
+      return [];
     } catch (e) {
       logError("Error fetching group by ID: $e");
     }

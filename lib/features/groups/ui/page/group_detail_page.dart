@@ -79,7 +79,8 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                                   color: Colors.red),
                               onPressed: () async { // <-- Se añade async
                                 await groupsController.removeMemberFromGroup( 
-                                    widget.group.id, memberId
+                                    widget.group.id, memberId,
+                                    widget.category.id ?? '',
                                 );
                                 setState(() {});
                               },

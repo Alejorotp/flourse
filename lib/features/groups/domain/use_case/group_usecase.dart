@@ -6,8 +6,8 @@ class GroupUseCase {
 
   GroupUseCase(this._repository);
 
-  Future<List<Group>> getAllGroups() {
-    return _repository.getAllGroups();
+  Future<List<Group>> getAllGroups({required String categoryId}) {
+    return _repository.getAllGroups(categoryId: categoryId);
   }
 
   Future<List<Group>> getGroupById(String id) {

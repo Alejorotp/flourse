@@ -17,7 +17,6 @@ import 'package:flourse/features/evaluations/ui/widgets/evaluation_list_card.dar
 import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_card.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
 import 'package:flourse/features/evaluations/ui/pages/currentevaluation.dart';
-import '../controller/courses_controller.dart';
 
 class CurrentCoursePage extends StatefulWidget {
   static const String courseID = '/course-detail';
@@ -42,24 +41,12 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     super.initState();
     categoriesController = Get.find<CategoriesController>();
     evaluationController = Get.find<EvaluationController>();
-    Future.microtask(() {
-      final courseCategoryIDs = categoriesController.categories
-          .where((cat) => cat.courseId == widget.courseInfo.course.courseCode)
-          .map((cat) => cat.id)
-          .whereType<String>()
-          .toList();
-      for (final catId in courseCategoryIDs) {
-        evaluationController.fetchEvaluationsByCategory(catId);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     final courseInfo = widget.courseInfo;
     AuthenticationController auth = Get.find();
-    CoursesController courseCon = Get.find();
-    courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
 
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
@@ -144,7 +131,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (isProfessor)
+                      //if (isProfessor)
                         CreateEvaluationCard(
                           onTap: () {
                             showDialog(

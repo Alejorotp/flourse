@@ -9,8 +9,8 @@ class GroupRepository implements IGroupRepository {
   GroupRepository(this.groupSource);
 
   @override
-  Future<List<Group>> getAllGroups() {
-    return groupSource.getAllGroups();
+  Future<List<Group>> getAllGroups({required String categoryId}) {
+    return groupSource.getAllGroups(categoryId: categoryId);
   }
 
   @override

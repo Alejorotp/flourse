@@ -32,7 +32,7 @@ class _GroupsPageState extends State<GroupsPage> {
   @override
   void initState() {
     super.initState();
-    groupsController.getAllGroups();
+    groupsController.getAllGroups(categoryId: widget.category.id ?? '');
   }
 
   @override
@@ -72,7 +72,7 @@ class _GroupsPageState extends State<GroupsPage> {
                           categoryId: widget.category.id ?? '', // <-- Se pasa el ID como String
                           groupNumber: widget.groupNumber, // esta chocora no sé de dónde toma la info, pero no debería servir porque debería ser random...
                         );
-                        groupsController.getAllGroups(); // Refrescar la lista de grupos
+                        groupsController.getAllGroups(categoryId: widget.category.id ?? ''); // Refrescar la lista de grupos
                       },
                       child: const Text('Crear Grupo'),
                     ),
@@ -116,6 +116,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                       await groupsController.joinGroup( // <-- Se añade await
                                         group.id,
                                         currentUserId!,
+                                        widget.category.id ?? '',
                                       );
                                     },
                                     child: const Text('Unirse'),

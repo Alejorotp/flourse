@@ -60,7 +60,7 @@ class CurrentEvaluationPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             FutureBuilder<List<Group>>(
-              future: groupsController.getAllGroups(),
+              future: groupsController.getAllGroups(categoryId: evaluation.categoryID),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
