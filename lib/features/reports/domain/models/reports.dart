@@ -4,10 +4,10 @@ class Report {
   final String evaluationId;
   final String groupId;
   final String categoryId;
-  final double punctuality;
-  final double contributions;
-  final double commitment;
-  final double attitude;
+  final String punctuality;
+  final String contributions;
+  final String commitment;
+  final String attitude;
 
   Report({
     required this.id,

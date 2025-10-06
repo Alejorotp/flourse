@@ -5,7 +5,7 @@ import 'package:flourse/features/reports/domain/repositories/i_report_repository
 class ReportRepository implements IReportRepository {
   late IReportsSource reportSource;
 
-  ReportRepository({required this.reportSource});
+  ReportRepository(this.reportSource);
 
   @override
   Future<List<Report>> getAllReports({required String courseId}) {

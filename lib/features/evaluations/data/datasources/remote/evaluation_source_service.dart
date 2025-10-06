@@ -274,7 +274,7 @@ class EvaluationSourceService implements IEvaluationSource {
     logInfo("Submit score response status: ${response.statusCode}");
     logInfo("Submit score response body: ${response.body}");
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final List<dynamic> responseData = response.body.isNotEmpty ? json.decode(response.body) : [];
       logInfo("Score submitted successfully: $responseData");
     } else {

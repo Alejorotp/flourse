@@ -181,7 +181,9 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => CurrentEvaluationPage(
-                                              evaluation: eval),
+                                              evaluation: eval,
+                                              isProfessor: isProfessor,
+                                              ),
                                         ),
                                       );
                                     },

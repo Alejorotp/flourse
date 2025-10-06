@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'dart:convert';
 
+import 'package:loggy/loggy.dart';
+
 class ReportSourceService implements IReportsSource {
   final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');
   final String _databaseName = "flourse_460df99409";
@@ -24,7 +26,7 @@ class ReportSourceService implements IReportsSource {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {
@@ -63,7 +65,7 @@ class ReportSourceService implements IReportsSource {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {
@@ -84,7 +86,7 @@ class ReportSourceService implements IReportsSource {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {
@@ -99,12 +101,13 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getReportsByEvaluationId(String evaluationId) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/reports?evaluationId=$evaluationId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&evaluationID=$evaluationId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
       );
-
+      logInfo(response.body);
+      logInfo(response.statusCode);
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
@@ -125,7 +128,7 @@ class ReportSourceService implements IReportsSource {
           'Authorization': 'Bearer $_authToken',
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {
