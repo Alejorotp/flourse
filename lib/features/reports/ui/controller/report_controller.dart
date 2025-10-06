@@ -50,6 +50,16 @@ class ReportController extends GetxController {
     }
   }
 
+  Future<void> fetchReportsByCategoryId(String categoryId) async {
+    try {
+      final fetchedReports = await reportUseCase.getReportsByCategoryId(categoryId);
+      reports.assignAll(fetchedReports);
+      logInfo("Fetched ${fetchedReports.length} reports for category $categoryId");
+    } catch (e) {
+      logError("Error fetching reports by category: $e");
+    }
+  }
+
   Future<void> deleteReport(String id, {String? courseId}) async {
     try {
       await reportUseCase.deleteReport(id);

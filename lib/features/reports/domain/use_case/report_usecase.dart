@@ -22,6 +22,10 @@ class ReportUseCase {
     return _repository.getReportsByGroupId(groupId);
   }
 
+  Future<List<Report>> getReportsByCategoryId(String categoryId) {
+    return _repository.getReportsByCategoryId(categoryId);
+  }
+
   Future<List<Report>> getReportsByEvaluationId(String evaluationId) {
     return _repository.getReportsByEvaluationId(evaluationId);
   }

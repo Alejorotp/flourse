@@ -115,4 +115,24 @@ class ReportSourceService implements IReportsSource {
       throw Exception('Failed to load reports: $e');
     }
   }
+
+  @override
+  Future<List<Report>> getReportsByCategoryId(String categoryId) async {
+    try {
+      final response = await httpClient.get(
+        Uri.parse('$_apiBaseUrl/$_databaseName/reports?categoryId=$categoryId'),
+        headers: {
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Report.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load reports');
+      }
+    } catch (e) {
+      throw Exception('Failed to load reports: $e');
+    }
+  }
 }

@@ -31,4 +31,9 @@ class ReportRepository implements IReportRepository {
   Future<List<Report>> getReportsByEvaluationId(String evaluationId) {
     return reportSource.getReportsByEvaluationId(evaluationId);
   }
+
+  @override
+  Future<List<Report>> getReportsByCategoryId(String categoryId) {
+    return reportSource.getReportsByCategoryId(categoryId);
+  }
 }
