@@ -249,17 +249,22 @@ class GroupSourceService implements IGroupSource {
   Future<void> deleteGroup(String id) async {
     logInfo("Deleting group with id: $id from API");
     try {
-      final response = await httpClient.delete(
-        Uri.parse("$_apiBaseUrl/$_databaseName/delete"),
-        headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'tableName': 'groups',
+      final response = await dioClient.delete(
+        "$_apiBaseUrl/$_databaseName/delete",
+        data: {
+          'tableName': 'Group',
           'idColumn': '_id',
           'idValue': id,
-        }),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $_authToken',
+          },
+          validateStatus: (status) {
+            // Accept all status codes to handle them manually
+            return true;
+          },
+        ),
       );
       if (response.statusCode == 200) {
         logInfo("Group $id deleted successfully from API");

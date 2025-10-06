@@ -1,5 +1,6 @@
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flourse/features/categories/domain/models/category.dart';
 import 'package:flourse/features/categories/data/datasources/i_category_source.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 
 class CategorySourceService implements ICategorySource {
   final http.Client httpClient = Get.find<http.Client>(tag: 'apiClient');  
+  final Dio dioClient = Dio();
 
   AuthenticationController auth = Get.find();
 
@@ -126,39 +128,21 @@ class CategorySourceService implements ICategorySource {
   @override
   void deleteCategory(String id) async{
     logInfo("Deleting category with id: $id");
-     final responseQuery = await httpClient.delete(
-          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/delete"),
-          
-          headers: {
-            'Authorization': 'Bearer ${auth.accessToken}',
-          },
-          body: {
-            'data':{
+     final response = await dioClient.delete(
+        "https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/delete",
+        data: {
             'tableName': 'Category',
               'idColumn': '_id',
               'idValue': id
-            }
-          },
-        
-        );
-    logInfo("Category deletion response status: ${responseQuery.statusCode}");
-    logInfo("Category deletion response body: ${responseQuery.body}");
-
-      final relatedCoursesResponse = await httpClient.delete(
-          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/delete"),
+        },
+        options: Options(
           headers: {
-            'Authorization':'Bearer ${auth.accessToken}',
+            'Authorization': 'Bearer ${auth.accessToken}',
           },
-          body: {
-            'data':{
-            'tableName': 'CourseCategory',
-              'idColumn': 'categoryID',
-              'idValue': id
-            }
-          },
-        );
-    logInfo("Related CourseCategory deletion response status: ${relatedCoursesResponse.statusCode}");
-    logInfo("Related CourseCategory deletion response body: ${relatedCoursesResponse.body}");
+        ),
+      );
+    logInfo("Category deletion response status: ${response.statusCode}");
+    logInfo("Category deletion response body: ${response.data}");
   }
 
 
