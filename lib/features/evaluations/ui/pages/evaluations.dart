@@ -59,7 +59,7 @@ class _EvaluationsPageState extends State<EvaluationsPage> {
                     return EvaluationListCard(
                       evaluation: eval,
                       onTap: () {
-                         Navigator.of(context).push(MaterialPageRoute(builder: (_) => CurrentEvaluationPage(evaluation: eval)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => CurrentEvaluationPage(evaluation: eval, isProfessor: false,)));
                       },
                     );
                   },
