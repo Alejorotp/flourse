@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
 import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 import 'package:get/get.dart';
-import 'dart:ui';
+//import 'dart:ui';
 
 class CreateEvaluationDialog extends StatefulWidget {
   final String courseId;
@@ -131,7 +131,7 @@ class _CreateEvaluationDialogState extends State<CreateEvaluationDialog> {
                 ),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
-                  value: _selectedCategoryId,
+                  initialValue: _selectedCategoryId,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color.fromARGB(15, 124, 77, 255),
@@ -162,7 +162,7 @@ class _CreateEvaluationDialogState extends State<CreateEvaluationDialog> {
                 ),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
-                  value: _selectedVisibility,
+                  initialValue: _selectedVisibility,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color.fromARGB(15, 124, 77, 255),
