@@ -52,6 +52,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     final isProfessor = courseInfo.course.professorID == userId;
 
     categoriesController.fetchCategories();
+    evaluationController.fetchAllEvaluations();
     final courseCategories = categoriesController.categories
         .where((cat) => cat.courseId == courseInfo.course.courseCode)
         .toList();
@@ -154,7 +155,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             .whereType<String>()
                             .toList();
 
-                        final evals = evaluationController.evaluations
+                        var evals = evaluationController.evaluations
                             .where((eval) =>
                                 courseCategoryIDs.contains(eval.categoryID))
                             .toList();
