@@ -9,6 +9,7 @@ class GroupsController extends GetxController {
   GroupsController(this.groupation);
 
   var groups = <Group>[].obs;
+  var userGroups = <Group>[].obs;
 
   Future<void> createGroup({
     required int maxMembers,
@@ -72,5 +73,17 @@ class GroupsController extends GetxController {
       logError("Error fetching group by ID: $e");
       return [];
     }
+  }
+
+  Future<List<Group>> getUserGroups(String userId) async {
+    try {
+      final userGroups = await groupation.getUserGroups(userId);
+      logInfo("Fetched groups for user ID: $userId");
+      this.userGroups.assignAll(userGroups);
+      return userGroups;
+    } catch (e) {
+      logError("Error fetching user groups: $e");
+    }
+    return [];
   }
 }
