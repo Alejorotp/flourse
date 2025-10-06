@@ -57,11 +57,25 @@ class EvaluationListCard extends StatelessWidget {
                       children: [
                         Icon(Icons.calendar_today, size: 16, color: Colors.grey),
                         const SizedBox(width: 4),
-                        Text('Creado: ${evaluation.creationDate}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Flexible(
+                          child: Text(
+                            'Creado: ${evaluation.creationDate}',
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Icon(Icons.visibility, size: 16, color: Colors.grey),
                         const SizedBox(width: 4),
-                        Text(evaluation.visibility, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Flexible(
+                          child: Text(
+                            evaluation.visibility,
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
                       ],
                     ),
                   ],
