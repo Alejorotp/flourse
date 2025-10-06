@@ -213,7 +213,7 @@ class GroupSourceService implements IGroupSource {
     logInfo("Found GroupMember ID: $groupMemberId for user $userId in group $groupId");
     try {
       final response = await httpClient.delete(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember/delete"),
+        Uri.parse("$_apiBaseUrl/$_databaseName/delete"),
         headers: {
           'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
           'Content-Type': 'application/json',
@@ -226,7 +226,8 @@ class GroupSourceService implements IGroupSource {
           }
         }),
       );
-      return response.statusCode == 200;
+      logInfo(response.body);
+      return response.statusCode == 201;
     } catch (e) {
       logError("Error removing member from group: $e");
     }

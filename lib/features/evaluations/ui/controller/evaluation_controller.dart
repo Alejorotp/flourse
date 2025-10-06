@@ -30,6 +30,13 @@ class EvaluationController extends GetxController {
     required String creationDate,
   }) {
     evasation.createEvaluation(name: name, categoryId: categoryId, visibility: visibility, creationDate: creationDate);
+    evaluations.add(Evaluation(
+      evaluationID: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      categoryID: categoryId,
+      visibility: visibility,
+      creationDate: creationDate,
+    ));
   }
 
   List<Evaluation> getAllEvaluations() {
@@ -37,7 +44,9 @@ class EvaluationController extends GetxController {
   }
 
   Future<List<Evaluation>> getUserEvaluations(String userId) {
+
     return evasation.getUserEvaluations(userId);
+    
   }
 
   String getEvaluationById(String id) {
@@ -83,16 +92,5 @@ class EvaluationController extends GetxController {
   Future<List<String?>> getAllUserScores(String userId) {
     return evasation.getAllUserScores(userId);
   }
-
-
-    
-
-
-
-
-
-
-
-
 
 }

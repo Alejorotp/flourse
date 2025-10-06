@@ -51,6 +51,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
 
+  
     categoriesController.fetchCategories();
     evaluationController.fetchAllEvaluations();
     final courseCategories = categoriesController.categories
