@@ -1,7 +1,7 @@
 import '../models/groups.dart';
 
 abstract class IGroupRepository {
-  Future<List<Group>> getAllGroups();
+  Future<List<Group>> getAllGroups({required String categoryId});
 
   Future<List<Group>> getGroupById(String id);
 

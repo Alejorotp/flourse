@@ -1,7 +1,7 @@
 import 'package:flourse/features/groups/domain/models/groups.dart';
 
 abstract class IGroupSource {
-  Future<List<Group>> getAllGroups();
+  Future<List<Group>> getAllGroups({required String categoryId});
 
   Future<List<Group>> getGroupById(String id);
 
