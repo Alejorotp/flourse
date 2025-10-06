@@ -295,9 +295,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
             Obx(() {
               // Filtra las evaluaciones pendientes del usuario
-              final pendingEvals = evalCon.evaluations
-                  .where((e) => auth.currentUser.value.id == auth.currentUser.value.id)
-                  .toList();
+              final pendingEvals = evalCon.evaluations;
 
               if (pendingEvals.isEmpty) {
                 return const Center(

@@ -270,4 +270,46 @@ class GroupSourceService implements IGroupSource {
       logError("Error deleting group: $e");
     }
   }
+
+  @override
+  Future<List<Group>> getUserGroups(String userId) async {
+    logInfo("Fetching groups for user with ID: $userId from API");
+    try {
+      final response = await httpClient.get(
+        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember&userID=$userId"),
+        headers: {
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
+        logInfo("Fetched ${jsonList.length} group memberships for user $userId");
+        final List<Group> userGroups = [];
+        for (var data in jsonList) {
+          final groupId = data['groupID'].toString();
+          final groupResponse = await httpClient.get(
+            Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=Group&_id=$groupId"),
+            headers: {
+              'Authorization': 'Bearer $_authToken',
+            },
+          );
+          if (groupResponse.statusCode == 200) {
+            final List<dynamic> groupList = json.decode(groupResponse.body);
+            if (groupList.isNotEmpty) {
+              userGroups.add(Group.fromJson(groupList[0]));
+              logInfo("Added group ${groupList[0]['_id']} to user $userId's groups");
+            }
+          } else {
+            logWarning("Failed to fetch group $groupId for user $userId: ${groupResponse.statusCode}");
+          }
+        }
+        return userGroups;
+      } else {
+        logWarning("Failed to fetch user groups: ${response.statusCode}");
+      }
+    } catch (e) {
+      logError("Error fetching user groups: $e");
+    }
+    return [];
+  }
 }

@@ -37,4 +37,8 @@ class GroupUseCase {
   Future<void> deleteGroup(String id) {
     return _repository.deleteGroup(id);
   }
+
+  Future<List<Group>> getUserGroups(String userId) {
+    return _repository.getUserGroups(userId);
+  }
 }

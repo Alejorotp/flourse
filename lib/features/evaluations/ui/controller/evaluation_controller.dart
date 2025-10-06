@@ -9,6 +9,7 @@ class EvaluationController extends GetxController {
   EvaluationController(this.evasation);
 
   final RxList<Evaluation> evaluations = <Evaluation>[].obs;
+  final RxList<Evaluation> userEvals = <Evaluation>[].obs;
 
 
   Future<void> fetchEvaluationsByCategory(String categoryId) async {
@@ -43,10 +44,11 @@ class EvaluationController extends GetxController {
     return evaluations;
   }
 
-  Future<List<Evaluation>> getUserEvaluations(String userId) {
-
-    return evasation.getUserEvaluations(userId);
-    
+  Future<List<Evaluation>> getUserEvaluations(String userId) async {
+    final fetchedEvaluations = await evasation.getUserEvaluations(userId);
+    userEvals.assignAll(fetchedEvaluations);
+    logInfo("Fetched user evaluations in Controller: ${fetchedEvaluations.length}");
+    return userEvals;
   }
 
   String getEvaluationById(String id) {
