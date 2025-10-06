@@ -5,17 +5,25 @@ import 'package:flourse/features/groups/ui/controller/group_controller.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
+import 'package:flourse/features/reports/ui/controller/report_controller.dart';
+import 'package:loggy/loggy.dart';
 import 'evaluate.dart';
 
 class CurrentEvaluationPage extends StatelessWidget {
   static const String id = '/evaluation-detail';
   final Evaluation evaluation;
+  final bool isProfessor; // ✅ Variable recibida desde el constructor
 
-  const CurrentEvaluationPage({super.key, required this.evaluation});
+  const CurrentEvaluationPage({
+    super.key,
+    required this.evaluation,
+    required this.isProfessor,
+  });
 
   @override
   Widget build(BuildContext context) {
     final GroupsController groupsController = Get.find();
+    final ReportController reportController = Get.find();
     final String currentUserId =
         Get.find<AuthenticationController>().currentUser.value.id ?? '';
 
@@ -54,77 +62,146 @@ class CurrentEvaluationPage extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Compañeros en tu grupo:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            FutureBuilder<List<Group>>(
-              future: groupsController.getAllGroups(categoryId: evaluation.categoryID),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text("No hay grupos disponibles.");
-                }
-                // Filtra los grupos por la categoría de la evaluación
-                final groups = snapshot.data!
-                    .where((g) => g.categoryID == evaluation.categoryID)
-                    .toList();
-                // Busca el grupo del usuario actual
-                final userGroup =
-                    groups
-                        .where((g) => g.memberIDs.contains(currentUserId))
-                        .isNotEmpty
-                    ? groups.firstWhere(
-                        (g) => g.memberIDs.contains(currentUserId),
-                      )
-                    : null;
-                if (userGroup == null) {
-                  return const Text(
-                    "No estás en ningún grupo para esta categoría.",
-                  );
-                }
-                // Lista de compañeros (excluye al usuario actual)
-                final teammates = userGroup.memberIDs
-                    .where((id) => id != currentUserId)
-                    .toList();
-                if (teammates.isEmpty) {
-                  return const Text("No tienes compañeros en este grupo.");
-                }
-                return Wrap(
-                  spacing: 8,
-                  children: teammates.map((memberId) {
-                    return FutureBuilder<String>(
-                      future: Get.find<CoursesController>().getUserNameById(
-                        memberId,
-                      ),
-                      builder: (context, nameSnapshot) {
-                        final name = nameSnapshot.data ?? memberId;
-                        return ElevatedButton(
-                          onPressed: () {
-                            
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Seleccionaste a $name')),
-                            );
-                            Get.to(
-                              () => EvaluatePage(
-                                teammateId: memberId,
-                                teammateName: name,
-                                evaluation: evaluation,
-                                groupID: userGroup.id,
-                              ),
-                            );
-                          },
-                          child: Text(name),
-                        );
-                      },
+
+            // ✅ Lógica condicional según si es profesor o estudiante
+            if (!isProfessor) ...[
+              const Text(
+                "Compañeros en tu grupo:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              FutureBuilder<List<Group>>(
+                future:
+                    groupsController.getAllGroups(categoryId: evaluation.categoryID),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text("No hay grupos disponibles.");
+                  }
+
+                  final groups = snapshot.data!
+                      .where((g) => g.categoryID == evaluation.categoryID)
+                      .toList();
+
+                  final userGroup = groups
+                          .where((g) => g.memberIDs.contains(currentUserId))
+                          .isNotEmpty
+                      ? groups.firstWhere(
+                          (g) => g.memberIDs.contains(currentUserId),
+                        )
+                      : null;
+
+                  if (userGroup == null) {
+                    return const Text(
+                      "No estás en ningún grupo para esta categoría.",
                     );
-                  }).toList(),
-                );
-              },
-            ),
+                  }
+
+                  final teammates = userGroup.memberIDs
+                      .where((id) => id != currentUserId)
+                      .toList();
+
+                  if (teammates.isEmpty) {
+                    return const Text("No tienes compañeros en este grupo.");
+                  }
+
+                  return Wrap(
+                    spacing: 8,
+                    children: teammates.map((memberId) {
+                      return FutureBuilder<String>(
+                        future: Get.find<CoursesController>().getUserNameById(
+                          memberId,
+                        ),
+                        builder: (context, nameSnapshot) {
+                          final name = nameSnapshot.data ?? memberId;
+                          return ElevatedButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Seleccionaste a $name')),
+                              );
+                              Get.to(
+                                () => EvaluatePage(
+                                  teammateId: memberId,
+                                  teammateName: name,
+                                  evaluation: evaluation,
+                                  groupID: userGroup.id,
+                                ),
+                              );
+                            },
+                            child: Text(name),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ] else ...[
+              const Text(
+                "Grupos con coevaluaciones realizadas:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+
+              // ✅ Lógica para el profesor
+              FutureBuilder(
+                future: reportController
+                    .fetchReportsByEvaluationId(evaluation.evaluationID)
+                    .then((_) async {
+                  // Filtrar los IDs de grupos únicos
+                  final reports = reportController.reports;
+                  final uniqueGroupIds = reports
+                      .map((r) => r.groupId)
+                      .whereType<String>()
+                      .toSet()
+                      .toList();
+                  // Obtener los grupos por ID
+                  final evaluatedGroups = [];
+                  for (final id in uniqueGroupIds) {
+                    final group = await groupsController.getGroupById(id);
+                    evaluatedGroups.add(group);
+                  }
+                  logInfo(evaluatedGroups);
+                  return evaluatedGroups;
+                }),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text(
+                      "Aún no hay grupos que hayan realizado coevaluaciones.",
+                    );
+                  }
+
+                  final evaluatedGroups = snapshot.data!;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: evaluatedGroups.map((group) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            "Grupo ${group.groupNumber}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                              "Integrantes: ${group.memberIDs.length}"),
+                          leading: const Icon(Icons.group, color: Colors.blue),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),

@@ -52,6 +52,12 @@ import 'features/evaluations/data/repository/evaluation_repository.dart';
 import 'features/evaluations/domain/repositories/i_evaluation_repository.dart';
 import 'features/evaluations/domain/use_case/evaluation_usecase.dart';
 
+import 'features/reports/ui/controller/report_controller.dart';
+import 'features/reports/data/datasources/i_report_source.dart';
+import 'features/reports/data/datasources/remote/report_source_service.dart';
+import 'features/reports/data/repository/report_repository.dart';
+import 'features/reports/domain/repositories/i_report_repository.dart';
+import 'features/reports/domain/use_case/report_usecase.dart';
 
 
 void main() {
@@ -101,6 +107,11 @@ void main() {
   Get.put(EvaluationUseCase(Get.find()));
   Get.put(EvaluationController(Get.find()));
 
+  // Reports
+  Get.put<IReportsSource>(ReportSourceService());
+  Get.put<IReportRepository>(ReportRepository(Get.find()));
+  Get.put(ReportUseCase(Get.find()));
+  Get.put(ReportController(Get.find()));
   runApp(const MainApp());
 }
 

@@ -326,7 +326,7 @@ class HomePage extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => CurrentEvaluationPage(evaluation: eval),
+                                builder: (_) => CurrentEvaluationPage(evaluation: eval, isProfessor: false),
                               ),
                             );
                           },
