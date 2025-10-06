@@ -1,3 +1,4 @@
+import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/ui/pages/courses.dart';
 import 'package:flourse/features/evaluations/ui/pages/evaluations.dart';
@@ -22,7 +23,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthenticationController auth = Get.find();
     CoursesController courseCon = Get.find();
+    EvaluationController evalCon = Get.find();
     courseCon.loadUserCourses(auth.currentUser.value.id ?? "0");
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -286,6 +290,8 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
+
+
           ],
         ),
       ),

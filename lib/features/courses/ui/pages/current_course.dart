@@ -51,6 +51,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
 
+  
     categoriesController.fetchCategories();
     evaluationController.fetchAllEvaluations();
     final courseCategories = categoriesController.categories
@@ -138,7 +139,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             showDialog(
                               context: context,
                               barrierDismissible: true,
-                              barrierColor: Colors.black.withOpacity(0.2),
+                              barrierColor: Colors.black.withValues(alpha: 0.2),
                               builder: (context) => BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                                 child: CreateEvaluationDialog(courseId: courseInfo.course.courseCode),
@@ -204,7 +205,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                             showDialog(
                               context: context,
                               barrierDismissible: true,
-                              barrierColor: Colors.black.withOpacity(0.2),
+                              barrierColor: Colors.black.withValues(alpha: 0.2),
                               builder: (context) => BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                                 child: CreateCategoryDialog(course: courseInfo.course, canEdit: true),

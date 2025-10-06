@@ -128,7 +128,7 @@ class _CurrentCategoryPageState extends State<CurrentCategoryPage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                   onPressed: () {
-                    categoriesController.deleteCategory(widget.category.id!);
+                    categoriesController.deleteCategory(widget.category.id! );
                     Navigator.of(context).pop('deleted');
                   },
                   child: const Text("Eliminar"),

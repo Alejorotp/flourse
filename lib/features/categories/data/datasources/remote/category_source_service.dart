@@ -127,35 +127,35 @@ class CategorySourceService implements ICategorySource {
   void deleteCategory(String id) async{
     logInfo("Deleting category with id: $id");
      final responseQuery = await httpClient.delete(
-          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=Category/delete}"),
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/delete"),
           
           headers: {
             'Authorization': 'Bearer ${auth.accessToken}',
           },
-          body: jsonEncode({
+          body: {
             'data':{
             'tableName': 'Category',
               'idColumn': '_id',
               'idValue': id
             }
-          }),
+          },
         
         );
     logInfo("Category deletion response status: ${responseQuery.statusCode}");
     logInfo("Category deletion response body: ${responseQuery.body}");
 
       final relatedCoursesResponse = await httpClient.delete(
-          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/read?tableName=CourseCategory/delete"),
+          Uri.parse("https://roble-api.openlab.uninorte.edu.co/database/flourse_460df99409/delete"),
           headers: {
             'Authorization':'Bearer ${auth.accessToken}',
           },
-          body: jsonEncode({
+          body: {
             'data':{
             'tableName': 'CourseCategory',
               'idColumn': 'categoryID',
               'idValue': id
             }
-          }),
+          },
         );
     logInfo("Related CourseCategory deletion response status: ${relatedCoursesResponse.statusCode}");
     logInfo("Related CourseCategory deletion response body: ${relatedCoursesResponse.body}");
