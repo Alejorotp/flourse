@@ -255,11 +255,11 @@ class CourseSourceService implements ICourseSource {
 
     logInfo("Successfully created course with code $code");
     // Add the user as a member of the course
-    await joinCourse(courseCode: code, userId: professorID);  
+    await joinCourse(courseCode: code, userId: professorID, role: true);  
   }
 
   @override
-  Future<bool> joinCourse({required String courseCode, required String userId}) async {
+  Future<bool> joinCourse({required String courseCode, required String userId, bool role = false}) async {
     logInfo("User with ID: $userId joining course with code: $courseCode");
 
     // Find the course by courseCode
@@ -307,7 +307,7 @@ class CourseSourceService implements ICourseSource {
       },
       body: json.encode({
         "tableName": "CourseMember",
-        "records": [{"courseID": courseCode, "userID": userId}],
+        "records": [{"courseID": courseCode, "userID": userId, "role": role}],
       }),
     );
 

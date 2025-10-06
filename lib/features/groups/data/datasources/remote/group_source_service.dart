@@ -4,6 +4,7 @@ import 'package:flourse/features/groups/data/datasources/i_group_source.dart';
 import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:loggy/loggy.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart'; 
 
@@ -14,6 +15,8 @@ class GroupSourceService implements IGroupSource {
   
   // Instancia del AuthenticationController, como un singleton, gracias a GetX
   final AuthenticationController authController = Get.find();
+
+  final Dio dioClient = Dio();
 
   //GroupSourceService({http.Client? client})
   //  : httpClient = client ?? http.Client();
@@ -212,20 +215,29 @@ class GroupSourceService implements IGroupSource {
     final String groupMemberId = groupMemberList[0]['_id'].toString();
     logInfo("Found GroupMember ID: $groupMemberId for user $userId in group $groupId");
     try {
-      final response = await httpClient.delete(
-        Uri.parse("$_apiBaseUrl/$_databaseName/read?tableName=GroupMember/delete"),
-        headers: {
-          'Authorization': 'Bearer $_authToken', // <-- Uso del token aquí
-          'Content-Type': 'application/json',
+      final response = await dioClient.delete(
+        "$_apiBaseUrl/$_databaseName/delete",
+        data: {
+          'tableName': 'GroupMember',
+          'idColumn': '_id',
+          'idValue': groupMemberId,
         },
-        body: jsonEncode({
-          'data':{
-            'tableName': 'GroupMember',
-            'idColumn': '_id',
-            'idValue': groupMemberId,
-          }
-        }),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $_authToken',
+          },
+          validateStatus: (status) {
+            // Accept all status codes to handle them manually
+            return true;
+          },
+        ),
       );
+      logInfo("Remove member response status: ${response.statusCode} and response body: ${response.data}");
+      if (response.statusCode == 401) {
+        logError("Unauthorized: Invalid or expired token.", response);
+        // Optionally, trigger a logout or token refresh here
+        return false;
+      }
       return response.statusCode == 200;
     } catch (e) {
       logError("Error removing member from group: $e");
