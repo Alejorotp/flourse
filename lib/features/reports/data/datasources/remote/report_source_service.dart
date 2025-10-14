@@ -20,7 +20,7 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getAllReports({required String courseId}) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/reports?courseId=$courseId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tablename=EvaluationScore&courseId=$courseId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
@@ -59,7 +59,7 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getReportsByUserId(String userId) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/reports?userId=$userId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tablename=EvaluationScore&userId=$userId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
@@ -80,7 +80,7 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getReportsByGroupId(String groupId) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/reports?groupId=$groupId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tablename=EvaluationScore&groupId=$groupId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
@@ -123,12 +123,12 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getReportsByCategoryId(String categoryId) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/reports?categoryId=$categoryId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tablename=EvaluationScore&categoryId=$categoryId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {
