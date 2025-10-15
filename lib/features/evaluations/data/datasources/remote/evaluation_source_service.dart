@@ -323,9 +323,11 @@ class EvaluationSourceService implements IEvaluationSource {
     required String groupID,
     required String categoryID,
     required Score scores,
+    required String courseID,
+    required String evaluatorId,
   }) async {
     logInfo(
-      "Submitting score for userId: $userId, evaluationId: $evaluationId, groupID: $groupID, categoryID: $categoryID",
+      "Submitting score for userId: $userId, evaluationId: $evaluationId, groupID: $groupID, categoryID: $categoryID, evaluatorId: $evaluatorId, courseID: $courseID",
     );
 
     final response = await httpClient.post(
@@ -342,6 +344,8 @@ class EvaluationSourceService implements IEvaluationSource {
             'evaluationID': evaluationId,
             'groupID': groupID,
             'categoryID': categoryID,
+            'courseID': courseID,
+            'evaluatorID': evaluatorId,
             'punctuality': scores.punctuality,
             'contributions': scores.contributions,
             'commitment': scores.commitment,
@@ -354,7 +358,7 @@ class EvaluationSourceService implements IEvaluationSource {
     logInfo("Submit score response status: ${response.statusCode}");
     logInfo("Submit score response body: ${response.body}");
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final List<dynamic> responseData = response.body.isNotEmpty
           ? json.decode(response.body)
           : [];

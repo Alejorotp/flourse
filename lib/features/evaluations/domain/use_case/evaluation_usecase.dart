@@ -34,7 +34,7 @@ class EvaluationUseCase {
   Future<List<String?>> getAllUserScores(String userId) async =>
       await _repository.getAllUserScores(userId);
 
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores}) async =>
-      await _repository.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores);
+  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String courseID, required String categoryID, required Score scores, required String evaluatorId}) async =>
+      await _repository.submitScore(userId: userId, evaluationId: evaluationId, courseID: courseID, groupID: groupID, categoryID: categoryID, scores: scores, evaluatorId: evaluatorId);
 
 }

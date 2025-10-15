@@ -81,10 +81,12 @@ class EvaluationController extends GetxController {
     required String userId,
     required String evaluationId,
     required String groupID,
+    required String courseID,
     required String categoryID,
+    required String evaluatorID,
     required Score scores,
   }) {
-    return evasation.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores);
+    return evasation.submitScore(userId: userId, evaluationId: evaluationId, courseID: courseID, groupID: groupID, categoryID: categoryID, scores: scores, evaluatorId: evaluatorID);
   }
 
   Future<List<String?>> getUserScores(String userId, String evaluationId) {

@@ -12,11 +12,11 @@ class CoursesController extends GetxController {
 
   var courses = <Course>[].obs;
   var userCourses = <UserCourseInfo>[].obs;
+  String? currentCourseId;
   String? _currentUserId;
 
   // Call this when user logs in or id changes
   Future<void> loadUserCourses(String userId) async {
-    
     _currentUserId = userId;
     try {
       final result = await coursation.getCourseInfo(userId);
@@ -28,15 +28,21 @@ class CoursesController extends GetxController {
   }
 
   Future<List<UserCourseInfo>> getAllCourses() async {
-    coursation.getAllCourses()
-      .then((value) => logInfo("All courses fetched: \\${value.length}"))
-      .catchError((error) => logError("Error fetching all courses: $error"));
+    coursation
+        .getAllCourses()
+        .then((value) => logInfo("All courses fetched: \\${value.length}"))
+        .catchError((error) => logError("Error fetching all courses: $error"));
     return await coursation.getAllCourses();
   }
 
-  Future<bool> createCourse({required String title, required String professorID}) async {
+  Future<bool> createCourse({
+    required String title,
+    required String professorID,
+  }) async {
     // Contar cursos donde el usuario es profesor
-    final profCourses = userCourses.where((c) => c.userRole == 'Profesor').toList();
+    final profCourses = userCourses
+        .where((c) => c.userRole == 'Profesor')
+        .toList();
     if (profCourses.length >= 3) {
       logInfo("User already professor of 3 or more courses");
       return false;
@@ -50,8 +56,14 @@ class CoursesController extends GetxController {
     return true;
   }
 
-  Future<bool> joinCourse({required String courseCode, required String userId}) async {
-    final result = await coursation.joinCourse(courseCode: courseCode, userId: userId);
+  Future<bool> joinCourse({
+    required String courseCode,
+    required String userId,
+  }) async {
+    final result = await coursation.joinCourse(
+      courseCode: courseCode,
+      userId: userId,
+    );
     logInfo("Joined course with code: $courseCode");
     if (_currentUserId != null) {
       await loadUserCourses(_currentUserId!);
@@ -65,4 +77,16 @@ class CoursesController extends GetxController {
     logInfo("Fetched user name for ID $userId");
     return userName;
   }
+
+  void setCurrentCourseId(String courseId) {
+    currentCourseId = courseId;
+    update(); // Notify listeners of the change
+    logInfo("Current course ID set to: $courseId");
+  }
+
+  String? getCurrentCourseId() {
+    return currentCourseId;
+  }
+
+
 }

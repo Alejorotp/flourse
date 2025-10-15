@@ -1,8 +1,12 @@
+import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
+import 'package:flourse/features/reports/ui/controller/report_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flourse/features/evaluations/domain/models/score.dart';
 import 'package:flourse/features/evaluations/ui/controller/evaluation_controller.dart';
-import 'package:flourse/features/evaluations/domain/models/evaluation.dart';     
+import 'package:flourse/features/evaluations/domain/models/evaluation.dart';
+import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
+import 'package:loggy/loggy.dart';
 
 class EvaluatePage extends StatefulWidget {
   final String teammateId;
@@ -24,6 +28,10 @@ class EvaluatePage extends StatefulWidget {
 
 class _EvaluatePageState extends State<EvaluatePage> {
   EvaluationController evaluationController = Get.find();
+  AuthenticationController auth = Get.find();
+  ReportController reportController = Get.find();
+  CoursesController coursesController = Get.find();
+
   double punctuality = 3.0;
   double contributions = 3.0;
   double commitment = 3.0;
@@ -79,79 +87,118 @@ class _EvaluatePageState extends State<EvaluatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Evaluar a ${widget.teammateName}'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Evalúa a tu compañero",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildSlider(
-                label: "Puntualidad",
-                value: punctuality,
-                rubric: getPunctualityRubric(punctuality),
-                onChanged: (v) => setState(() => punctuality = v),
-              ),
-              _buildSlider(
-                label: "Contribuciones",
-                value: contributions,
-                rubric: getContributionsRubric(contributions),
-                onChanged: (v) => setState(() => contributions = v),
-              ),
-              _buildSlider(
-                label: "Compromiso",
-                value: commitment,
-                rubric: getCommitmentRubric(commitment),
-                onChanged: (v) => setState(() => commitment = v),
-              ),
-              _buildSlider(
-                label: "Actitud",
-                value: attitude,
-                rubric: getAttitudeRubric(attitude),
-                onChanged: (v) => setState(() => attitude = v),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final score = Score(
-                      punctuality: punctuality.toStringAsFixed(1),
-                      contributions: contributions.toStringAsFixed(1),
-                      commitment: commitment.toStringAsFixed(1),
-                      attitude: attitude.toStringAsFixed(1),
-                    );
-                    evaluationController.submitScore(
-                      userId: widget.teammateId,
-                      evaluationId: widget.evaluation.evaluationID, 
-                      groupID: widget.groupID, 
-                      categoryID: widget.evaluation.categoryID, 
-                      scores: score,
-                    );
+    // Check if the current user has already scored this teammate for this evaluation
+    final currentUserId = auth.currentUser.value.id!;
+     List<String>? score = reportController.getScore(
+      widget.teammateId,
+      currentUserId,
+      widget.evaluation.evaluationID,
+    );
+    logInfo("Score fetched: $score");
 
+    bool alreadyScored = score != null;
 
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Evaluación enviada para ${widget.teammateName}')),
-                    );
-                    Get.back(); // Vuelve a la página anterior
-                  },
-                  child: const Text('Enviar Evaluación'),
-                ),
-              ),
-            ],
+    logInfo(alreadyScored);
+
+    if (alreadyScored) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Evaluar a ${widget.teammateName}'),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Text(
+              'Ya has evaluado a este compañero para esta actividad.',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Evaluar a ${widget.teammateName}'),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Evalúa a tu compañero",
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildSlider(
+                  label: "Puntualidad",
+                  value: punctuality,
+                  rubric: getPunctualityRubric(punctuality),
+                  onChanged: (v) => setState(() => punctuality = v),
+                ),
+                _buildSlider(
+                  label: "Contribuciones",
+                  value: contributions,
+                  rubric: getContributionsRubric(contributions),
+                  onChanged: (v) => setState(() => contributions = v),
+                ),
+                _buildSlider(
+                  label: "Compromiso",
+                  value: commitment,
+                  rubric: getCommitmentRubric(commitment),
+                  onChanged: (v) => setState(() => commitment = v),
+                ),
+                _buildSlider(
+                  label: "Actitud",
+                  value: attitude,
+                  rubric: getAttitudeRubric(attitude),
+                  onChanged: (v) => setState(() => attitude = v),
+                ),
+                const SizedBox(height: 24),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final score = Score(
+                        punctuality: punctuality.toStringAsFixed(1),
+                        contributions: contributions.toStringAsFixed(1),
+                        commitment: commitment.toStringAsFixed(1),
+                        attitude: attitude.toStringAsFixed(1),
+                      );
+                      evaluationController.submitScore(
+                        userId: widget.teammateId,
+                        courseID: coursesController.getCurrentCourseId()!,
+                        evaluationId: widget.evaluation.evaluationID,
+                        evaluatorID: currentUserId,
+                        groupID: widget.groupID,
+                        categoryID: widget.evaluation.categoryID,
+                        scores: score,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Evaluación enviada para ${widget.teammateName}',
+                          ),
+                        ),
+                      );
+                      reportController.fetchAllReports(courseId:  coursesController.getCurrentCourseId()!);
+                      Get.back(); // Vuelve a la página anterior
+                    },
+                    child: const Text('Enviar Evaluación'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildSlider({
@@ -171,7 +218,11 @@ class _EvaluatePageState extends State<EvaluatePage> {
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text(
             rubric,
-            style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey),
+            style: const TextStyle(
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
+              color: Colors.grey,
+            ),
           ),
         ),
         Slider(

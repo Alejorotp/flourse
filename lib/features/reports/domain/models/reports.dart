@@ -1,6 +1,8 @@
 class Report {
   final String id;
   final String userId;
+  final String evaluatorId;
+  final String courseId;
   final String evaluationId;
   final String groupId;
   final String categoryId;
@@ -12,6 +14,8 @@ class Report {
   Report({
     required this.id,
     required this.userId,
+    required this.courseId,
+    required this.evaluatorId,
     required this.evaluationId,
     required this.groupId,
     required this.categoryId,
@@ -25,7 +29,9 @@ class Report {
     return Report(
       id: json['_id'],
       userId: json['userID'],
+      courseId: json['courseID'],
       evaluationId: json['evaluationID'],
+      evaluatorId: json['evaluatorID'],
       groupId: json['groupID'],
       categoryId: json['categoryID'],
       punctuality: json['punctuality'],
@@ -39,7 +45,9 @@ class Report {
     return {
       '_id': id,
       'userID': userId,
+      'courseID': courseId,
       'evaluationID': evaluationId,
+      'evaluatorID': evaluatorId,
       'groupID': groupId,
       'categoryID': categoryId,
       'punctuality': punctuality,

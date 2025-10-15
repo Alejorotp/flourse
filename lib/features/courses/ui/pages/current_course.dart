@@ -3,7 +3,9 @@ import 'package:flourse/features/categories/ui/pages/current_category.dart';
 import 'package:flourse/features/categories/ui/widgets/create_category_card.dart';
 import 'package:flourse/features/categories/ui/widgets/category_list_card.dart';
 import 'package:flourse/features/categories/ui/widgets/create_category_dialog.dart';
+import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flourse/features/evaluations/ui/widgets/create_evaluation_dialog.dart';
+import 'package:flourse/features/reports/ui/controller/report_controller.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flourse/features/courses/domain/models/course_info.dart';
@@ -32,6 +34,8 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
   EvaluationController evaluationController = Get.find();
   int _selectedNavIndex = 0;
   CategoriesController categoriesController = Get.find();
+  ReportController reportController = Get.find();
+  CoursesController coursesController = Get.find();
 
   static const lilac = Color.fromRGBO(124, 77, 255, 1);
   static const darkBlue = Color.fromARGB(255, 0, 124, 182);
@@ -41,6 +45,8 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
     super.initState();
     categoriesController = Get.find<CategoriesController>();
     evaluationController = Get.find<EvaluationController>();
+    reportController = Get.find<ReportController>();
+    coursesController = Get.find<CoursesController>();
   }
 
   @override
@@ -50,8 +56,9 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
 
     final userId = auth.currentUser.value.id ?? '';
     final isProfessor = courseInfo.course.professorID == userId;
-
-  
+    
+    coursesController.setCurrentCourseId(courseInfo.course.courseCode);
+    reportController.fetchAllReports(courseId: courseInfo.course.courseCode);
     categoriesController.fetchCategories();
     evaluationController.fetchAllEvaluations();
     final courseCategories = categoriesController.categories
@@ -165,11 +172,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 32),
-                              child: Text(
-                                'No hay coevaluaciones para este curso.',
-                                style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
-                                textAlign: TextAlign.center,
-                              ),
+                              child: CircularProgressIndicator(),
                             ),
                           );
                         }
@@ -220,11 +223,7 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                         const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 32),
-                            child: Text(
-                              'No hay categorías para este curso.',
-                              style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.center,
-                            ),
+                            child: CircularProgressIndicator(),
                           ),
                         )
                       else ...courseCategoryIDs.map((catId) {

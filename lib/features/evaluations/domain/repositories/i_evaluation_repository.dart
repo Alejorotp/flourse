@@ -18,7 +18,7 @@ abstract class IEvaluationRepository {
 
   Future<List<String?>> getAllUserScores(String userId);
 
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores});
+  Future<void> submitScore({required String userId, required String evaluationId, required String courseID, required String evaluatorId, required String groupID, required String categoryID, required Score scores});
 
   Future<List<Evaluation>> getUserEvaluations(String userId);
 

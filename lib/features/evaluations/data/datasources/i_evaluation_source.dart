@@ -23,6 +23,6 @@ abstract class IEvaluationSource {
 
   Future<List<String?>> getAllUserScores(String userId);
 
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores});
+  Future<void> submitScore({required String userId, required String evaluationId, required String courseID, required String groupID, required String categoryID, required Score scores, required String evaluatorId});
 
 }

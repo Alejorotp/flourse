@@ -20,13 +20,16 @@ class ReportSourceService implements IReportsSource {
   Future<List<Report>> getAllReports({required String courseId}) async {
     try {
       final response = await httpClient.get(
-        Uri.parse('$_apiBaseUrl/$_databaseName/read?tablename=EvaluationScore&courseId=$courseId'),
+        Uri.parse('$_apiBaseUrl/$_databaseName/read?tableName=EvaluationScore&courseID=$courseId'),
         headers: {
           'Authorization': 'Bearer $_authToken',
         },
       );
+      logInfo(response.body);
+      logInfo(response.statusCode);
 
-      if (response.statusCode == 201) {
+
+      if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Report.fromJson(json)).toList();
       } else {

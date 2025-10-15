@@ -59,8 +59,8 @@ class EvaluationRepository implements IEvaluationRepository {
   }
 
   @override
-  Future<void> submitScore({required String userId, required String evaluationId, required String groupID, required String categoryID, required Score scores}) {
-    return evalSource.submitScore(userId: userId, evaluationId: evaluationId, groupID: groupID, categoryID: categoryID, scores: scores);
+  Future<void> submitScore({required String userId, required String evaluationId, required String courseID, required String groupID, required String categoryID, required Score scores, required String evaluatorId}) {
+    return evalSource.submitScore(userId: userId, evaluationId: evaluationId, courseID: courseID, evaluatorId: evaluatorId, groupID: groupID, categoryID: categoryID, scores: scores);
   }
 
   
