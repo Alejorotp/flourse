@@ -68,36 +68,52 @@ class ShowEvaluationPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Evaluación'),
+        title: const Text('Resultados de la evaluación'),
         centerTitle: true,
+        backgroundColor: Colors.deepPurple,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Resultados de la evaluación",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              Center(
+                child: Text(
+                  "Promedios de desempeño",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple[700],
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
-              const SizedBox(height: 16),
-              _buildScoreDisplay(
+              const SizedBox(height: 28),
+              _buildScoreCard(
+                icon: Icons.access_time,
+                iconColor: Colors.blue,
                 label: "Puntualidad",
                 value: punctuality,
                 rubric: getPunctualityRubric(punctuality),
               ),
-              _buildScoreDisplay(
+              _buildScoreCard(
+                icon: Icons.group_work,
+                iconColor: Colors.orange,
                 label: "Contribuciones",
                 value: contributions,
                 rubric: getContributionsRubric(contributions),
               ),
-              _buildScoreDisplay(
+              _buildScoreCard(
+                icon: Icons.assignment_turned_in,
+                iconColor: Colors.green,
                 label: "Compromiso",
                 value: commitment,
                 rubric: getCommitmentRubric(commitment),
               ),
-              _buildScoreDisplay(
+              _buildScoreCard(
+                icon: Icons.emoji_emotions,
+                iconColor: Colors.purple,
                 label: "Actitud",
                 value: attitude,
                 rubric: getAttitudeRubric(attitude),
@@ -109,27 +125,55 @@ class ShowEvaluationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreDisplay({
+  Widget _buildScoreCard({
+    required IconData icon,
+    required Color iconColor,
     required String label,
     required double value,
     required String rubric,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "$label: $value",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 22),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundColor: iconColor.withOpacity(0.15),
+              child: Icon(icon, color: iconColor, size: 28),
+              radius: 26,
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "$label: ${value.toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: iconColor,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    rubric,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Text(
-            rubric,
-            style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey),
-          ),
-        ),
-        const SizedBox(height: 18),
-      ],
+      ),
     );
   }
 }

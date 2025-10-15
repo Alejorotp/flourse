@@ -140,7 +140,8 @@ class _CurrentCoursePageState extends State<CurrentCoursePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //if (isProfessor)
+                      // Mostrar solo si es profesor
+                      if (isProfessor)
                         CreateEvaluationCard(
                           onTap: () {
                             showDialog(

@@ -6,9 +6,9 @@ import 'package:flourse/features/groups/domain/models/groups.dart';
 import 'package:flourse/features/auth/ui/controller/auth_controller.dart';
 import 'package:flourse/features/courses/ui/controller/courses_controller.dart';
 import 'package:flourse/features/reports/ui/controller/report_controller.dart';
-import 'package:loggy/loggy.dart';
 import 'evaluate.dart';
 import 'package:flourse/features/reports/ui/pages/averages.dart';
+import 'package:flourse/features/categories/ui/controller/categories_controller.dart';
 
 class CurrentEvaluationPage extends StatelessWidget {
   static const String id = '/evaluation-detail';
@@ -25,11 +25,17 @@ class CurrentEvaluationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final GroupsController groupsController = Get.find();
     final ReportController reportController = Get.find();
+    final CategoriesController categoriesController = Get.find();
     final String currentUserId =
         Get.find<AuthenticationController>().currentUser.value.id ?? '';
 
     // Calcula el promedio de la actividad una sola vez aquí
     final avg = reportController.activityAverageScore(evaluation.evaluationID);
+
+    // Busca el nombre de la categoría
+    final category = categoriesController.categories
+        .firstWhereOrNull((c) => c.id == evaluation.categoryID);
+    final categoryName = category?.name ?? "Categoría desconocida";
 
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +72,7 @@ class CurrentEvaluationPage extends StatelessWidget {
                   const Icon(Icons.category, size: 18, color: Colors.blueGrey),
                   const SizedBox(width: 8),
                   Text(
-                    "Categoría: ${evaluation.categoryID}",
+                    "Categoría: $categoryName",
                     style: const TextStyle(fontSize: 15, color: Colors.blueGrey),
                   ),
                 ],
