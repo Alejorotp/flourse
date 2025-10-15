@@ -65,29 +65,30 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                // --- NUEVO: Promedio del grupo ---
-                Card(
-                  color: Colors.blue[50],
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildAverageColumn('Puntualidad', groupAverage[0]),
-                            _buildAverageColumn('Contribuciones', groupAverage[1]),
-                            _buildAverageColumn('Compromiso', groupAverage[2]),
-                            _buildAverageColumn('Actitud', groupAverage[3]),
-                          ],
-                        ),
-                      ],
+                // SOLO mostrar el promedio del grupo si es profesor
+                if (canEdit)
+                  Card(
+                    color: Colors.blue[50],
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildAverageColumn('Puntualidad', groupAverage[0]),
+                              _buildAverageColumn('Contribuciones', groupAverage[1]),
+                              _buildAverageColumn('Compromiso', groupAverage[2]),
+                              _buildAverageColumn('Actitud', groupAverage[3]),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
                 if (group.memberIDs.isEmpty)
                   const Text('El grupo no tiene miembros.')
                 else
